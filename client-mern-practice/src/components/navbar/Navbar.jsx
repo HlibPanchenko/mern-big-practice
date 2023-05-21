@@ -1,30 +1,32 @@
 import React, { useState } from "react";
 import "./Navbar.scss";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
-  //   const [isOpen, setIsOpen] = useState(false);
-
-  //   const toggleMenu = () => {
-  //     setIsOpen(!isOpen);
-  //   };
+  const isAuth = useSelector((state) => state.auth.isAuth);
 
   return (
     <nav className="navbar">
       <div className="navbar-brand">
-        <a className="navbar-logo" href="/">
+        <Link className="navbar-logo" to="/">
           Logo
-        </a>
+        </Link>
       </div>
       <div className="navbar-menu">
         <ul className="navbar-menu-list">
+          {!isAuth && (
+            <li className="navbar-menu-item">
+              <Link to="/registration">Registration</Link>
+            </li>
+          )}
+          {!isAuth && (
+            <li className="navbar-menu-item">
+              <Link to="/login">Log in</Link>
+            </li>
+          )}
           <li className="navbar-menu-item">
-            <a href="/">Registration</a>
-          </li>
-          <li className="navbar-menu-item">
-            <a href="/">Log in</a>
-          </li>
-          <li className="navbar-menu-item">
-            <a href="/">Log out</a>
+            <Link to="/registration">Log out</Link>
           </li>
         </ul>
       </div>

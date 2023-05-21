@@ -44,8 +44,38 @@ export const register = async (req, res) => {
   }
 };
 
-export const login = (req, res) => {
-  res.status(200).json({
-    message: "login",
-  });
+export const login = async (req, res) => {
+  try {
+    // ищем пользователя в БД
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(404).json({
+        message: "Пользователь с такой почтой не найден",
+      });
+    }
+    // провереям правильно ли мы ввели пароль
+    const isValidPassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    // Если пароль неправильный
+    if (!isValidPassword) {
+      return res.status(404).json({
+        message: "Неверный пароль ",
+      });
+    }
+    // Достаем инфу о пользователе с БД
+    const { email, password } = user;
+
+    res.status(200).json({
+      message: "login",
+      email,
+      password,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      message: "Такогопользователя не существует ",
+    });
+  }
 };

@@ -1,8 +1,11 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { registerAction } from "../../redux/slices/authSlice.js";
 import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import "./auth.scss";
+import styles from "./auth.module.scss";
+import { useNavigate } from "react-router-dom";
 
 const Registration = () => {
   const [dataForm, setDataForm] = useState({});
@@ -15,6 +18,11 @@ const Registration = () => {
     formState: { errors, isValid },
   } = useForm({ mode: "onChange" });
 
+  const isAuth = useSelector((state) => state.auth.isAuth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  console.log(isAuth);
+
   // функция отправки данных на сервер
   const registrationHandler = async (obj) => {
     try {
@@ -24,29 +32,34 @@ const Registration = () => {
       );
       setEmailError("");
       setDataForm(obj);
-      console.log(response);
+      const { email, password } = response.data;
+      const user = { email, password };
+
+      dispatch(registerAction(user));
+
       reset();
+      navigate("/");
     } catch (error) {
-      console.log(error.response.data.errors.errors[0].msg);
-      const customEmailError = error.response.data.errors.errors[0].msg;
+      // console.log(error);
+      // console.log(error.response.data.message);
+      console.log(error?.response.data.errors.errors[0].msg);
+      const customEmailError = error?.response.data.errors.errors[0].msg;
       setEmailError(customEmailError);
+      // setEmailError(error.response.data.message);
     }
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
     registrationHandler(data);
-    // reset();
   };
-
-  console.log(watch("email")); // watch input value by passing the name of it
+  // if (isAuth) {return <Navigate to='/'>}
 
   return (
-    <div className="container">
+    <div className={styles.container}>
       {/*  */}
-      {emailErorr && <div className="emailError"> {emailErorr}</div>}
+      {emailErorr && <div className={styles.emailError}> {emailErorr}</div>}
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form className={styles.formAuth} onSubmit={handleSubmit(onSubmit)}>
         <input
           placeholder="email"
           {...register("email", {
