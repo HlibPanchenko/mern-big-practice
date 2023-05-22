@@ -21,7 +21,6 @@ const Registration = () => {
   const isAuth = useSelector((state) => state.auth.isAuth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log(isAuth);
 
   // функция отправки данных на сервер
   const registrationHandler = async (obj) => {
@@ -32,10 +31,14 @@ const Registration = () => {
       );
       setEmailError("");
       setDataForm(obj);
+      console.log(response);
       const { email, password } = response.data;
       const user = { email, password };
 
       dispatch(registerAction(user));
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
 
       reset();
       navigate("/");

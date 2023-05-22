@@ -2,6 +2,7 @@ import express from "express";
 const authRouter = express.Router();
 import * as UserController from "../controllers/UserController.js";
 import { check } from "express-validator";
+import checkAuth from "../utils/checkAuth.js";
 
 authRouter.post(
   "/registration",
@@ -13,5 +14,7 @@ authRouter.post(
 );
 
 authRouter.post("/login", UserController.login);
+
+authRouter.get("/getuser", checkAuth, UserController.getMe);
 
 export { authRouter };

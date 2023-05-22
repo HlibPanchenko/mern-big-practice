@@ -1,10 +1,19 @@
 import React, { useState } from "react";
 import "./Navbar.scss";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logoutSlice } from "../../redux/slices/authSlice";
 
 const Navbar = () => {
   const isAuth = useSelector((state) => state.auth.isAuth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const logOutHandler = () => {
+    dispatch(logoutSlice());
+    localStorage.removeItem("token");
+    navigate("/registration");
+  };
 
   return (
     <nav className="navbar">
@@ -17,17 +26,26 @@ const Navbar = () => {
         <ul className="navbar-menu-list">
           {!isAuth && (
             <li className="navbar-menu-item">
-              <Link to="/registration">Registration</Link>
+              <Link className="linkNav" to="/registration">
+                Registration
+              </Link>
             </li>
           )}
           {!isAuth && (
             <li className="navbar-menu-item">
-              <Link to="/login">Log in</Link>
+              <Link className="linkNav" to="/login">
+                Log in
+              </Link>
             </li>
           )}
-          <li className="navbar-menu-item">
-            <Link to="/registration">Log out</Link>
-          </li>
+          {isAuth && (
+            <li className="navbar-menu-item">
+              {/* <Link to="/registration" onClick={() => logOutHandler}> */}
+              <a className="linkNav" onClick={logOutHandler}>
+                Log out
+              </a>
+            </li>
+          )}
         </ul>
       </div>
     </nav>

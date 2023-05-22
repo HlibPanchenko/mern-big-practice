@@ -1,11 +1,10 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import { validationResult } from "express-validator";
+import { generateToken } from "../utils/generateJWTToken.js";
 
 export const register = async (req, res) => {
   try {
-    console.log(req.body); // { email: 'почта12345', password: '12345' }
-
     //Смотрим есть ли ошибки при валидации
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -28,19 +27,25 @@ export const register = async (req, res) => {
     const hashPassword = await bcrypt.hash(password, salt);
 
     // Создадим новго пользователя
-    const user = new User({ email, password: hashPassword });
+    const doc = new User({ email, password: hashPassword });
 
     // сохраним пользователя в БД
-    await user.save();
+    // и уже пользователя с бд положим в перемменную (у него будет поле _id, которое дает нам MongoDb)
+    const user = await doc.save();
+    console.log(user);
+    // Генерация JWT токена
+    const token = generateToken(user._id);
 
     return res.status(200).json({
       message: "user was created",
-      email,
-      password: hashPassword,
+      ...user._doc,
+      token,
     });
   } catch (error) {
     console.log(error);
-    res.send({ message: "Failed to register" });
+    res.status(400).json({
+      message: "Failed to register ",
+    });
   }
 };
 
@@ -64,18 +69,49 @@ export const login = async (req, res) => {
         message: "Неверный пароль ",
       });
     }
+
+    // Генерация JWT токена
+    const token = generateToken(user._id);
+
     // Достаем инфу о пользователе с БД
-    const { email, password } = user;
+    const { email, password, _id } = user;
 
     res.status(200).json({
       message: "login",
       email,
       password,
+      _id,
+      token,
     });
   } catch (error) {
     console.log(error);
     res.status(400).json({
       message: "Такогопользователя не существует ",
+    });
+  }
+};
+
+export const getMe = async (req, res) => {
+  try {
+    // ищем по Id с токена, который расшифровали, достали с него id
+    // вшили в req в middleware checkauth
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "нет такого пользователя",
+      });
+    }
+
+    // вытаскиваем информацию о пользователе
+    const { passwordHash, ...userData } = user._doc;
+
+    // вернем информацию о пользователе и токен
+    res.json(userData);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "нет доступа",
     });
   }
 };

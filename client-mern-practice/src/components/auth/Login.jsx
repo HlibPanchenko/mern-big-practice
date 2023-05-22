@@ -34,6 +34,9 @@ const Login = () => {
       const user = { email, password };
 
       dispatch(loginAction(user));
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
 
       reset();
       navigate("/");
