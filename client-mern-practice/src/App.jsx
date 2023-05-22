@@ -1,12 +1,21 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Routes, Route } from "react-router-dom";
 import "./App.scss";
 import Login from "./components/auth/Login";
 import Registration from "./components/auth/Registration";
 import Navbar from "./components/navbar/Navbar";
 import HomePage from "./page/HomePage";
+import { fetchAuthMe } from "./redux/slices/authSlice";
 
 function App() {
+  const dispatch = useDispatch();
+
+  // при первом рендере приложения проверяем авторизованы мы или нет
+  React.useEffect(() => {
+    dispatch(fetchAuthMe());
+  }, []);
+
   return (
     <div className="App">
       <Navbar />
