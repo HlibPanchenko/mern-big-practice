@@ -1,14 +1,20 @@
 import React from "react";
 import axios from "axios";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
-import { loginAction } from "../../redux/slices/authSlice.js";
+import { loginAction } from "../../redux/slices/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import styles from "./auth.module.scss";
+import "./auth.scss";
+import { useAppDispatch } from "../../redux/hooks";
 
-const Login = () => {
+type UserSubmitForm = {
+  email: string;
+  password: string;
+};
+
+const Login: React.FC = () => {
   const [emailErorr, setEmailError] = useState("");
   const {
     register,
@@ -16,13 +22,13 @@ const Login = () => {
     watch,
     reset,
     formState: { errors, isValid },
-  } = useForm({ mode: "onChange" });
+  } = useForm<UserSubmitForm>({ mode: "onChange" });
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   // функция отправки данных на сервер
-  const LoginHandler = async (obj) => {
+  const LoginHandler = async (obj:UserSubmitForm) => {
     try {
       const response = await axios.post(
         "http://localhost:4444/auth/login",
@@ -40,25 +46,25 @@ const Login = () => {
 
       reset();
       navigate("/");
-    } catch (error) {
+    } catch (error:any) {
       // console.log(error);
-      console.log(error.response.data.message);
+      console.log(error.response?.data?.message);
       // console.log(error?.response.data.errors.errors[0].msg);
       // const customEmailError = error?.response.data.errors.errors[0].msg;
       // setEmailError(customEmailError);
-      setEmailError(error.response.data.message);
+      setEmailError(error.response?.data?.message);
     }
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit: SubmitHandler<UserSubmitForm> = async (data) => {
     LoginHandler(data);
   };
 
   return (
-    <div className={styles.container}>
-      {emailErorr && <div className={styles.emailError}> {emailErorr}</div>}
+    <div className="container-auth">
+      {emailErorr && <div className="emailError-auth"> {emailErorr}</div>}
 
-      <form className={styles.formAuth} onSubmit={handleSubmit(onSubmit)}>
+      <form className="formAuth-auth" onSubmit={handleSubmit(onSubmit)}>
         <input
           placeholder="email"
           {...register("email", {

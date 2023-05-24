@@ -1,13 +1,19 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { registerAction } from "../../redux/slices/authSlice.js";
+import { registerAction } from "../../redux/slices/authSlice";
 import axios from "axios";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import styles from "./auth.module.scss";
+import { useForm, SubmitHandler } from "react-hook-form";
+import "./auth.scss";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../redux/hooks";
 
-const Registration = () => {
+type UserSubmitForm = {
+  email: string;
+  password: string;
+};
+
+const Registration: React.FC = () => {
   const [dataForm, setDataForm] = useState({});
   const [emailErorr, setEmailError] = useState("");
   const {
@@ -16,14 +22,14 @@ const Registration = () => {
     watch,
     reset,
     formState: { errors, isValid },
-  } = useForm({ mode: "onChange" });
+  } = useForm<UserSubmitForm>({ mode: "onChange" });
 
-  const isAuth = useSelector((state) => state.auth.isAuth);
+  const isAuth = useAppSelector((state) => state.auth.isAuth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // функция отправки данных на сервер
-  const registrationHandler = async (obj) => {
+  const registrationHandler = async (obj:UserSubmitForm) => {
     try {
       const response = await axios.post(
         "http://localhost:4444/auth/registration",
@@ -42,27 +48,27 @@ const Registration = () => {
 
       reset();
       navigate("/");
-    } catch (error) {
+    } catch (error:any) {
       // console.log(error);
       // console.log(error.response.data.message);
-      console.log(error?.response.data.errors.errors[0].msg);
-      const customEmailError = error?.response.data.errors.errors[0].msg;
+      console.log(error.response?.data?.errors.errors[0].msg);
+      const customEmailError = error.response?.data?.errors.errors[0].msg;
       setEmailError(customEmailError);
       // setEmailError(error.response.data.message);
     }
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit: SubmitHandler<UserSubmitForm> = async (data) => {
     registrationHandler(data);
   };
   // if (isAuth) {return <Navigate to='/'>}
 
   return (
-    <div className={styles.container}>
+    <div className="container-auth ">
       {/*  */}
-      {emailErorr && <div className={styles.emailError}> {emailErorr}</div>}
+      {emailErorr && <div className="emailError-auth"> {emailErorr}</div>}
 
-      <form className={styles.formAuth} onSubmit={handleSubmit(onSubmit)}>
+      <form className="formAuth-auth" onSubmit={handleSubmit(onSubmit)}>
         <input
           placeholder="email"
           {...register("email", {

@@ -3,9 +3,10 @@ import "./Navbar.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutSlice } from "../../redux/slices/authSlice";
+import { useAppSelector } from "../../redux/hooks";
 
-const Navbar = () => {
-  const isAuth = useSelector((state) => state.auth.isAuth);
+const Navbar: React.FC = () => {
+  const isAuth = useAppSelector((state) => state.auth.isAuth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

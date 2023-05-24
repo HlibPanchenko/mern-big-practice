@@ -1,4 +1,4 @@
-.container {
+.container-auth {
   padding: 0 20px;
   height: calc(100vh - 12%);
   //   min-height: 100%;
@@ -11,7 +11,7 @@
   gap: 20px;
 }
 
-.emailError {
+.emailError-auth {
   width: 40%;
   padding: 20px;
   color: red;
@@ -25,7 +25,7 @@
   }
 }
 
-.formAuth {
+.formAuth-auth {
   display: flex;
   flex-direction: column;
   width: 40%;

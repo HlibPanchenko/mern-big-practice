@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction  } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const token = localStorage.getItem("token");
@@ -13,10 +13,18 @@ export const fetchAuthMe = createAsyncThunk("auth/fetchAuthMe", async () => {
   return data;
 });
 
-const initialState = {
-  // isAuth: token ? true : false,
+interface User {
+  password: string;
+  email: string;
+}
+
+interface AuthState {
+  isAuth: boolean;
+  user: User | null;
+}
+
+const initialState: AuthState = {
   isAuth: false,
-  // user: {},
   user: null,
 };
 
@@ -24,19 +32,20 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    //  register(state, action) {
-    registerAction(state, action) {
+    // в PayloadAction передаем тип для нашего action.payload.
+    // у нас в action.payload попадает объект { email, password }
+    registerAction(state, action:PayloadAction<User>) {
       // console.log(action);
       state.isAuth = true;
       state.user = action.payload;
     },
-    loginAction(state, action) {
+    loginAction(state, action:PayloadAction<User>) {
       state.isAuth = true;
       state.user = action.payload;
     },
     logoutSlice(state) {
       state.isAuth = false;
-      state.user = {};
+      state.user = null;
     },
   },
   extraReducers: (builder) => {
