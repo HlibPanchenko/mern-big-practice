@@ -29,7 +29,7 @@ const Registration: React.FC = () => {
   const navigate = useNavigate();
 
   // функция отправки данных на сервер
-  const registrationHandler = async (obj:UserSubmitForm) => {
+  const registrationHandler = async (obj: UserSubmitForm) => {
     try {
       const response = await axios.post(
         "http://localhost:4444/auth/registration",
@@ -38,8 +38,8 @@ const Registration: React.FC = () => {
       setEmailError("");
       setDataForm(obj);
       console.log(response);
-      const { email, password } = response.data;
-      const user = { email, password };
+      const { email, password, _id, __v } = response.data;
+      const user = { email, password, _id, __v };
 
       dispatch(registerAction(user));
       if (response.data.token) {
@@ -48,7 +48,7 @@ const Registration: React.FC = () => {
 
       reset();
       navigate("/");
-    } catch (error:any) {
+    } catch (error: any) {
       // console.log(error);
       // console.log(error.response.data.message);
       console.log(error.response?.data?.errors.errors[0].msg);

@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
   const logOutHandler = () => {
     dispatch(logoutSlice());
     localStorage.removeItem("token");
-    navigate("/registration");
+    navigate("/login");
   };
 
   return (

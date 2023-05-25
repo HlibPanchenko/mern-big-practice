@@ -33,6 +33,7 @@ export const register = async (req, res) => {
     // и уже пользователя с бд положим в перемменную (у него будет поле _id, которое дает нам MongoDb)
     const user = await doc.save();
     console.log(user);
+    console.log(user._doc);
     // Генерация JWT токена
     const token = generateToken(user._id);
 
@@ -58,6 +59,8 @@ export const login = async (req, res) => {
         message: "Пользователь с такой почтой не найден",
       });
     }
+
+    console.log(user);
     // провереям правильно ли мы ввели пароль
     const isValidPassword = await bcrypt.compare(
       req.body.password,
@@ -74,13 +77,14 @@ export const login = async (req, res) => {
     const token = generateToken(user._id);
 
     // Достаем инфу о пользователе с БД
-    const { email, password, _id } = user;
+    const { email, password, _id, __v } = user;
 
     res.status(200).json({
       message: "login",
       email,
       password,
       _id,
+      __v,
       token,
     });
   } catch (error) {

@@ -28,7 +28,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   // функция отправки данных на сервер
-  const LoginHandler = async (obj:UserSubmitForm) => {
+  const LoginHandler = async (obj: UserSubmitForm) => {
     try {
       const response = await axios.post(
         "http://localhost:4444/auth/login",
@@ -36,8 +36,8 @@ const Login: React.FC = () => {
       );
       setEmailError("");
       // setDataForm(obj);
-      const { email, password } = response.data;
-      const user = { email, password };
+      const { email, password, _id,__v } = response.data;
+      const user = { email, password, _id,__v };
 
       dispatch(loginAction(user));
       if (response.data.token) {
@@ -46,7 +46,7 @@ const Login: React.FC = () => {
 
       reset();
       navigate("/");
-    } catch (error:any) {
+    } catch (error: any) {
       // console.log(error);
       console.log(error.response?.data?.message);
       // console.log(error?.response.data.errors.errors[0].msg);

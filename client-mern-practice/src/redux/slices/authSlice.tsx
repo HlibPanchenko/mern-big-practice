@@ -1,27 +1,39 @@
-import { createSlice, createAsyncThunk, PayloadAction  } from "@reduxjs/toolkit";
-import axios from "axios";
-
-const token = localStorage.getItem("token");
-console.log(token);
-//async action
-export const fetchAuthMe = createAsyncThunk("auth/fetchAuthMe", async () => {
-  const { data } = await axios.get("http://localhost:4444/auth/getuser", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return data;
-});
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import axios, { AxiosResponse } from "axios";
 
 interface User {
   password: string;
   email: string;
+  __v: number;
+  _id: string;
 }
 
 interface AuthState {
   isAuth: boolean;
   user: User | null;
 }
+
+//async action
+// в generic передаем:
+// 1) то, что ожидаем вернуть с этой функции - IcreateAsyncThunk
+// 2) Первый параметр асинхронной функции - у нас undefined (потому что мы не передаем параметр)
+// 3) AsyncThunkConfig
+export const fetchAuthMe = createAsyncThunk<User, string>(
+  "auth/fetchAuthMe",
+  async (token) => {
+    // const token = localStorage.getItem("token");
+    const response: AxiosResponse<User> = await axios.get(
+      "http://localhost:4444/auth/getuser",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return await response.data;
+  }
+);
 
 const initialState: AuthState = {
   isAuth: false,
@@ -34,12 +46,12 @@ const authSlice = createSlice({
   reducers: {
     // в PayloadAction передаем тип для нашего action.payload.
     // у нас в action.payload попадает объект { email, password }
-    registerAction(state, action:PayloadAction<User>) {
+    registerAction(state, action: PayloadAction<User>) {
       // console.log(action);
       state.isAuth = true;
       state.user = action.payload;
     },
-    loginAction(state, action:PayloadAction<User>) {
+    loginAction(state, action: PayloadAction<User>) {
       state.isAuth = true;
       state.user = action.payload;
     },

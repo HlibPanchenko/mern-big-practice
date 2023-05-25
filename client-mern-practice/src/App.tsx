@@ -14,8 +14,13 @@ const App: React.FC = () => {
 
   // при первом рендере приложения проверяем авторизованы мы или нет
   React.useEffect(() => {
-    dispatch(fetchAuthMe());
-  }, []);
+    const token = localStorage.getItem("token");
+    console.log(token);
+
+    if (token) {
+      dispatch(fetchAuthMe(token));
+    }
+  }, [dispatch]);
 
   return (
     <div className="App">
@@ -27,6 +32,6 @@ const App: React.FC = () => {
       </Routes>
     </div>
   );
-}
+};
 
 export default App;
