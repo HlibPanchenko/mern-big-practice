@@ -11,6 +11,7 @@ import { useAppSelector } from "../../redux/hooks";
 type UserSubmitForm = {
   email: string;
   password: string;
+  name: string;
 };
 
 const Registration: React.FC = () => {
@@ -38,8 +39,8 @@ const Registration: React.FC = () => {
       setEmailError("");
       setDataForm(obj);
       console.log(response);
-      const { email, password, _id, __v } = response.data;
-      const user = { email, password, _id, __v };
+      const { email, password, name, _id, avatar, __v } = response.data;
+      const user = { email, password, name, avatar, _id, __v };
 
       dispatch(registerAction(user));
       if (response.data.token) {
@@ -69,6 +70,13 @@ const Registration: React.FC = () => {
       {emailErorr && <div className="emailError-auth"> {emailErorr}</div>}
 
       <form className="formAuth-auth" onSubmit={handleSubmit(onSubmit)}>
+        <input
+          placeholder="name"
+          {...register("name", {
+            required: true,
+          })}
+        />
+        {errors.email && <span>Email is required</span>}
         <input
           placeholder="email"
           {...register("email", {

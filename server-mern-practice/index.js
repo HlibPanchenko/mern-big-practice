@@ -4,13 +4,17 @@ import mongoose from "mongoose";
 import config from "config";
 
 import { authRouter } from "./routes/auth.routes.js";
+import { fileRouter } from "./routes/file.routes.js";
 
 const app = express();
 const PORT = config.get("serverPORT");
 
 app.use(express.json());
 app.use(cors());
+app.use(express.static("static"));
+
 app.use("/auth", authRouter);
+app.use("/file", fileRouter);
 
 const init = async () => {
   try {

@@ -10,8 +10,8 @@ export const register = async (req, res) => {
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: "Uncorrect request", errors });
     }
-
-    const { email, password } = req.body;
+    console.log(req.body);
+    const { email, password, name } = req.body;
     // Проверяем есть ли уже зарегестрированный пользователь с такой почтой
     const alreadyRegistrated = await User.findOne({ email });
 
@@ -27,7 +27,7 @@ export const register = async (req, res) => {
     const hashPassword = await bcrypt.hash(password, salt);
 
     // Создадим новго пользователя
-    const doc = new User({ email, password: hashPassword });
+    const doc = new User({ email, password: hashPassword, name });
 
     // сохраним пользователя в БД
     // и уже пользователя с бд положим в перемменную (у него будет поле _id, которое дает нам MongoDb)
@@ -77,12 +77,14 @@ export const login = async (req, res) => {
     const token = generateToken(user._id);
 
     // Достаем инфу о пользователе с БД
-    const { email, password, _id, __v } = user;
+    const { email, password, name, avatar, _id, __v } = user;
 
     res.status(200).json({
       message: "login",
       email,
       password,
+      name,
+      avatar,
       _id,
       __v,
       token,

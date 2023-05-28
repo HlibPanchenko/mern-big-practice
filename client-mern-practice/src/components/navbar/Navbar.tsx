@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutSlice } from "../../redux/slices/authSlice";
 import { useAppSelector } from "../../redux/hooks";
+import ProfileIcon from "./ProfileIcon";
 
 const Navbar: React.FC = () => {
   const isAuth = useAppSelector((state) => state.auth.isAuth);
@@ -40,12 +41,15 @@ const Navbar: React.FC = () => {
             </li>
           )}
           {isAuth && (
-            <li className="navbar-menu-item">
-              {/* <Link to="/registration" onClick={() => logOutHandler}> */}
-              <a className="linkNav" onClick={logOutHandler}>
-                Log out
-              </a>
-            </li>
+            <>
+              <ProfileIcon />
+              <li className="navbar-menu-item">
+                {/* <Link to="/registration" onClick={() => logOutHandler}> */}
+                <a className="linkNav" onClick={logOutHandler}>
+                  Log out
+                </a>
+              </li>
+            </>
           )}
         </ul>
       </div>

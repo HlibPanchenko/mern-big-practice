@@ -7,7 +7,10 @@ import checkAuth from "../utils/checkAuth.js";
 authRouter.post(
   "/registration",
   [
-    check("email", "Please enter your email address in format yourname@example.com").isEmail(),
+    check(
+      "email",
+      "Please enter your email address in format yourname@example.com"
+    ).isEmail(),
     // check("password", "password must have 5+ symbols").isLength({ min: 5 }),
   ],
   UserController.register
