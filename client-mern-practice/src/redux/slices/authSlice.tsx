@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from "axios";
 
 interface User {
   password: string;
+  name: string;
   email: string;
   __v: number;
   _id: string;
@@ -94,5 +95,6 @@ const authSlice = createSlice({
   // },
 });
 
-export const { registerAction, loginAction, logoutSlice, setUser } = authSlice.actions;
+export const { registerAction, loginAction, logoutSlice, setUser } =
+  authSlice.actions;
 export default authSlice.reducer;

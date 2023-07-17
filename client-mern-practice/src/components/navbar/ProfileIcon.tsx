@@ -5,7 +5,11 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setUser } from "../../redux/slices/authSlice";
 import { API_URL } from "../../config.js";
 
-const ProfileIcon: React.FC = () => {
+interface ProfileIconProps {
+  size: "small" | "large";
+}
+
+const ProfileIcon: React.FC<ProfileIconProps> = ({ size }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   // const [uploadMessage, setUploadMessage] = useState<string>("");
   const [isAvatar, setIsAvatar] = useState(false);
@@ -63,13 +67,20 @@ const ProfileIcon: React.FC = () => {
     }
   };
 
+
+   // определение классов в зависимости от размера
+   const containerClassName = `profile-icon ${size === "large" ? "large" : ""}`;
+   const imgClassName = `profile-icon__img ${size === "large" ? "large" : ""}`;
+
   return (
     <div
-      className="profile-icon"
+      // className="profile-icon containerClassName"
+      className={containerClassName}
       onClick={() => myElementRef?.current?.click()}
     >
       <img
         // src="/images/user.png"
+        className={imgClassName}
         src={avatar}
         alt="Profile Icon"
       />

@@ -24,6 +24,8 @@ const Login: React.FC = () => {
     formState: { errors, isValid },
   } = useForm<UserSubmitForm>({ mode: "onChange" });
 
+  // const previousEmail = watch('email'); // Получение предыдущего значения поля "email"
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -70,6 +72,7 @@ const Login: React.FC = () => {
           {...register("email", {
             required: true,
           })}
+          // defaultValue={previousEmail} // Установка значения по умолчанию
         />
         {errors.email && <span>Email is required</span>}
 

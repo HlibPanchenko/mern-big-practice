@@ -121,3 +121,34 @@ export const getMe = async (req, res) => {
     });
   }
 };
+
+export const updateUser = async (req, res) => {
+  try {
+    // ищем пользователя в БД
+    // const user = await User.findOne({ email: req.body.email });
+    let user = await User.findOneAndUpdate(
+      { email: req.body.email },
+      { name: req.body.name }
+    );
+    if (!user) {
+      return res.status(404).json({
+        message: "Пользователь с такой почтой не найден",
+      });
+    }
+
+    console.log(user);
+
+    // получаем обновленного пользователя
+    user = await User.findOne({ email: req.body.email });
+
+    res.status(200).json({
+      message: "edited",
+      ...user._doc,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      message: "Такого пользователя не существует ",
+    });
+  }
+};

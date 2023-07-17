@@ -20,4 +20,6 @@ authRouter.post("/login", UserController.login);
 
 authRouter.get("/getuser", checkAuth, UserController.getMe);
 
+authRouter.post("/updateuser", checkAuth, UserController.updateUser);
+
 export { authRouter };
