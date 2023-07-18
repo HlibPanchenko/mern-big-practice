@@ -50,9 +50,12 @@ const Navbar: React.FC = () => {
                   {/* <Link to="/registration" onClick={() => logOutHandler}> */}
                   <a className="linkNav">Collections</a>
                 </li>
+
                 <li className="navbar-menu-item">
                   {/* <Link to="/registration" onClick={() => logOutHandler}> */}
-                  <a className="linkNav">Create post</a>
+                  <Link className="linkNav" to="/createpost">
+                    <a className="linkNav">Create post</a>
+                  </Link>
                 </li>
                 <Link className="navbar-logo" to="/myprofile">
                   <div className="navbar-menu-profile">
