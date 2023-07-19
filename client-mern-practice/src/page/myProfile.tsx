@@ -1,12 +1,12 @@
 import React from "react";
-import "./createPost.scss";
+import "./myProfile.scss";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useAppSelector } from "../redux/hooks";
 import PostCard from "../components/posts/PostCard";
 import PostForm from "../components/posts/PostForm";
 
-const CreatePost: React.FC = () => {
+const MyProfile: React.FC = () => {
   const token = localStorage.getItem("token");
   // const user = useSelector((state) => state.auth.user);
   const user = useAppSelector((state) => state.auth.user);
@@ -28,13 +28,9 @@ const CreatePost: React.FC = () => {
   };
 
   return (
-    <div className="createpost">
-      <div className="createpost-container">
-        <div className="createpost-create create-area">
-          {/* <div className="create-area-box">Create post</div> */}
-          <PostForm/>
-        </div>
-        {/* <div className="createpost-postlist postlist">
+    <div className="myprofile">
+      <div className="myprofile-container">
+        <div className="myprofile-postlist postlist">
           <div className="postlist-title">all your posts</div>
           <div className="postlist-list post-card">
             <PostCard />
@@ -49,10 +45,10 @@ const CreatePost: React.FC = () => {
               </h1>
             </div>
           </div>
-        </div> */}
+        </div>
       </div>
     </div>
   );
 };
 
-export default CreatePost;
+export default MyProfile;

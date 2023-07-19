@@ -1,6 +1,6 @@
 .createpost {
-  height: 100%;
-  //   height: calc(100vh - 12%);
+  // height: 100%;
+    height: calc(100vh - 16%);
 
   &-container {
     //  padding: 0 20px;
@@ -8,23 +8,32 @@
     min-height: 100%;
     //   min-height: 100%;
     max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
     display: flex;
-    //  justify-content: center;
-    //  align-items: center;
+     justify-content: center;
+     align-items: center;
     flex-direction: column;
     gap: 20px;
     border: 1px solid #000;
+  height: 100%;
   }
 
   &-create {
     border: 1px solid #000;
     max-width: 100%;
+    width: 70%;
     display: flex;
     // justify-content: space-around;
     align-items: center;
     padding: 20px;
     gap: 30px;
+    height: 50%;
+
+    @media (max-width: 1700px) {
+    height: 70%;
+
+    }
   }
 
   &-postlist {

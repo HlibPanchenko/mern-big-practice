@@ -11,6 +11,8 @@ const Navbar: React.FC = () => {
   const isAuth = useAppSelector((state) => state.auth.isAuth);
   const user = useAppSelector((state) => state.auth.user);
 
+  const [isOpen, setIsOpen] = React.useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -19,6 +21,11 @@ const Navbar: React.FC = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
+
+  // open modal
+  const classNameModal = isOpen
+    ? "profile-modal profile-modal__open"
+    : "profile-modal";
 
   return (
     <nav className="navbar">
@@ -57,12 +64,45 @@ const Navbar: React.FC = () => {
                     <a className="linkNav">Create post</a>
                   </Link>
                 </li>
-                <Link className="navbar-logo" to="/myprofile">
-                  <div className="navbar-menu-profile">
+                {/* <Link className="navbar-logo" to="/myprofile"> */}
+                  <div
+                    // className={classNameModal}
+                    className="navbar-menu-profile"
+                    onClick={() => {
+                      setIsOpen(!isOpen);
+                    }}
+                  >
                     <div className="navbar-menu-profile-name">{user?.name}</div>
                     <ProfileIcon size="small" />
+                    <div className={classNameModal}>
+                    {/* <div className="profile-modal"> */}
+                <Link className="navbar-logo" to="/myaccount">
+
+                      <div className="profile-modal-settings">
+                        <div className="profile-modal-settings-image">
+                          <img src="\images\user (1).png" alt="user-photo" />
+                        </div>
+                        <div className="profile-modal-settings-text">
+                          settings
+                        </div>
+                      </div>
+                      </Link>
+                <Link className="myprofile" to="/myprofile">
+
+                      <div className="profile-modal-myprofile">
+                        <div className="profile-modal-myprofile-image">
+                          <img
+                            src="\images\setting-lines.png"
+                            alt="user-photo"
+                          />
+                        </div>
+                        my profile
+                      </div>
+                      </Link>
+
+                    </div>
                   </div>
-                </Link>
+                {/* </Link> */}
               </>
             )}
           </ul>

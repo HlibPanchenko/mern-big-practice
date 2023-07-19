@@ -41,11 +41,14 @@
       justify-content: center;
       align-items: center;
       gap: 10px;
+      position: relative;
+
 
       &-name {
         color: #333;
       font-size: 1.2rem;
       text-decoration: none;
+      cursor: pointer;
       }
     }
 
@@ -98,6 +101,69 @@
     font-weight: 700;
     &:last-child {
       color: red;
+    }
+  }
+}
+
+
+
+// модальное окно "профиль - настройки"
+.profile-modal {
+  position: absolute;
+  left: 0;
+  top: 60px;
+  width: 120px;
+  height: 60px;
+  padding: 10px 10px 0px 10px;
+  border: 1px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  flex-direction: column;
+  background-color: white;
+  // gap: 15px;
+  display: none;
+
+  &__open {
+    display: block;
+  }
+  &-settings{
+
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    cursor: pointer;
+    margin-bottom: 5px;
+
+    &-image{
+
+      img {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    &-text {
+
+    }
+  }
+
+  &-myprofile{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    // justify-content: space-around;
+    cursor: pointer;
+
+
+  &-image{
+
+      img {
+        width: 20px;
+        height: 20px;
+        
+      }
     }
   }
 }
