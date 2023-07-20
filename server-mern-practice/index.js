@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import config from "config";
+import bodyParser from "body-parser";
 
 import { authRouter } from "./routes/auth.routes.js";
 import { fileRouter } from "./routes/file.routes.js";
@@ -10,7 +11,10 @@ import { postRouter } from "./routes/post.routes.js";
 const app = express();
 const PORT = config.get("serverPORT");
 
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+// app.use(express.json());
 app.use(cors());
 app.use(express.static("static"));
 

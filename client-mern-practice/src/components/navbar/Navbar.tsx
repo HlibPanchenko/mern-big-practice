@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
                 <li className="navbar-menu-item">
                   {/* <Link to="/registration" onClick={() => logOutHandler}> */}
                   <Link className="linkNav" to="/createpost">
-                    <a className="linkNav">Create post</a>
+                    <div className="linkNav">Create post</div>
                   </Link>
                 </li>
                 {/* <Link className="navbar-logo" to="/myprofile"> */}

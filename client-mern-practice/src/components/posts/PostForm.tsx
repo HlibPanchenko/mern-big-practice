@@ -17,12 +17,6 @@ const PostForm = () => {
     setDescription(event.target.value);
   };
 
-  // const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.files && event.target.files.length > 0) {
-  //     setImages(event.target.files);
-  //   }
-  // };
-
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setImages(event.target.files);
@@ -37,9 +31,10 @@ const PostForm = () => {
     formData.append("description", description);
     if (images) {
       for (let i = 0; i < images.length; i++) {
-        formData.append("images", images[i]);
+        formData.append("images[]", images[i]);
       }
     }
+    console.log(formData);
 
     try {
       const response = await axios.post(
@@ -47,7 +42,7 @@ const PostForm = () => {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            // "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
         }

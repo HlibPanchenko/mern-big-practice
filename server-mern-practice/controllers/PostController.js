@@ -9,8 +9,10 @@ import User from "../models/User.js";
 export const createPost = async (req, res) => {
   // Получим ID пользователя чтобы понять какой пользователь отправил запрос
   const userId = req.userId; // Получение ID пользователя
-  console.log(req.body);
+  console.log(userId);
   const { text, description } = req.body;
+  console.log(text, description);
+
   // Путь к папке пользователя
   const userFolderPath = path.join(config.get("staticPath"), userId);
 
@@ -20,7 +22,7 @@ export const createPost = async (req, res) => {
   }
 
   // юудем для каждого поста создавать отдельную папку в папке пользователя. Имя папки - название поста
-  // const userSubFolderPath = path.join(userFolderPath, text);
+  const userSubFolderPath = path.join(userFolderPath, text);
 
   const user = await User.findById(req.userId);
 
@@ -33,17 +35,17 @@ export const createPost = async (req, res) => {
   });
 
   // Создание хранилища для загруженных файлов
-  const storage = multer.diskStorage({
-    destination: userFolderPath, // Папка пользователя, в которую будут сохраняться файлы
-    filename: function (req, file, cb) {
-      // Генерация уникального имени файла
-      // Функция cb используется для передачи сформированного имени файла обратно в Multer.
-      cb(
-        null,
-        file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-      );
-    },
-  });
+  // const storage = multer.diskStorage({
+  //   destination: userFolderPath, // Папка пользователя, в которую будут сохраняться файлы
+  //   filename: function (req, file, cb) {
+  //     // Генерация уникального имени файла
+  //     // Функция cb используется для передачи сформированного имени файла обратно в Multer.
+  //     cb(
+  //       null,
+  //       file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+  //     );
+  //   },
+  // });
 
   // Expalanation
   /*
@@ -52,35 +54,35 @@ export const createPost = async (req, res) => {
   */
 
   // Инициализация multer с использованием созданного хранилища
-  const upload = multer({
-    storage: storage,
-    limits: { fileSize: 1024 * 1024 }, // Ограничение размера файла (в данном случае 1MB)
-    fileFilter: function (req, file, cb) {
-      // Проверка типа файла (допустимы только изображения)
-      if (file.mimetype.startsWith("image/")) {
-        cb(null, true);
-      } else {
-        cb(new Error("Only images are allowed."));
-      }
-    },
-  }).array("images", 10); // 'images' - это имя поля формы для изображений, 5 - максимальное количество изображений
+  // const upload = multer({
+  //   storage: storage,
+  //   limits: { fileSize: 1024 * 1024 }, // Ограничение размера файла (в данном случае 1MB)
+  //   fileFilter: function (req, file, cb) {
+  //     // Проверка типа файла (допустимы только изображения)
+  //     if (file.mimetype.startsWith("image/")) {
+  //       cb(null, true);
+  //     } else {
+  //       cb(new Error("Only images are allowed."));
+  //     }
+  //   },
+  // }).array("images[]", 10); // 'images' - это имя поля формы для изображений, 5 - максимальное количество изображений
   // single("avatar"): Это метод, указывающий Multer, что ожидается только один файл, и его поле формы имеет имя "avatar".
   // После инициализации Multer вызывается функция upload, передавая ей req, res и коллбэк-функцию:
   // В этой функции upload происходит загрузка файла на сервер. После загрузки файла и передачи коллбэка function (err), который будет вызван после загрузки, код проверяет наличие ошибок.
 
   try {
-    await upload(req, res, function (err) {
-      if (err instanceof multer.MulterError) {
-        // Ошибка Multer при загрузке файла
-        return res.status(400).json({ error: err.message });
-      } else if (err) {
-        // Другая ошибка
-        return res.status(500).json({ error: err.message });
-      }
+    // await upload(req, res, function (err) {
+    //   if (err instanceof multer.MulterError) {
+    //     // Ошибка Multer при загрузке файла
+    //     return res.status(400).json({ error: err.message });
+    //   } else if (err) {
+    //     // Другая ошибка
+    //     return res.status(500).json({ error: err.message });
+    //   }
 
-      // Вывод информации о загружаемом файле в консоль
-      console.log("Uploaded file:", req.file);
-      /*
+    //   // Вывод информации о загружаемом файле в консоль
+    //   console.log("Uploaded file:", req.file);
+    /*
   Uploaded file: {
   fieldname: 'avatar',
   originalname: 'h5mk7js_cat-generic_625x300_28_August_20.jpg',
@@ -93,44 +95,44 @@ export const createPost = async (req, res) => {
 }
   */
 
-      // Файл успешно загружен
-      // Изображения успешно загружены
-      const imagePaths = req.files.map((file) =>
-        path.join(userSubFolderPath, file.filename)
-      );
+    // Файл успешно загружен
+    // Изображения успешно загружены
+    const imagePaths = req.files.map((file) =>
+      path.join(userSubFolderPath, file.filename)
+    );
 
-      // Обновление записи пользователя в базе данных с ссылкой на загруженный файл
-      // Например, используя Mongoose:
+    // Обновление записи пользователя в базе данных с ссылкой на загруженный файл
+    // Например, используя Mongoose:
 
-      // Обновляем запись о посте с путями к изображениям
-      // await Post.findByIdAndUpdate(
-      //   post._id,
-      //   { images: imagePaths },
-      //   { new: true }
-      // );
+    // Обновляем запись о посте с путями к изображениям
+    // await Post.findByIdAndUpdate(
+    //   post._id,
+    //   { images: imagePaths },
+    //   { new: true }
+    // );
 
-      // return res.json({
-      //   message: "Пост успешно создан.",
-      //   post: post,
-      // });
+    // return res.json({
+    //   message: "Пост успешно создан.",
+    //   post: post,
+    // });
 
-      Post.findByIdAndUpdate(post._id, { images: imagePaths }, { new: true })
-        .exec()
-        .then((newPost) => {
-          if (!newPost) {
-            throw new Error("Post not found.");
-          }
-          return res.json({
-            message: "Пост успешно создан.",
-            post: newPost,
-          });
-        })
-        .catch((err) => {
-          return res
-            .status(500)
-            .json({ error: "Ошибка при обновлении записи о посте." });
+    Post.findByIdAndUpdate(post._id, { images: imagePaths }, { new: true })
+      .exec()
+      .then((newPost) => {
+        if (!newPost) {
+          throw new Error("Post not found.");
+        }
+        return res.json({
+          message: "Пост успешно создан.",
+          post: newPost,
         });
-    });
+      })
+      .catch((err) => {
+        return res
+          .status(500)
+          .json({ error: "Ошибка при обновлении записи о посте." });
+      });
+    // });
   } catch (err) {
     return res.status(500).json({ error: "Не удалось создать пост." });
   }
@@ -139,12 +141,15 @@ export const createPost = async (req, res) => {
 // export const createPost = async (req, res) => {
 //   // Получим ID пользователя чтобы понять какой пользователь отправил запрос
 //   const userId = req.userId; // Получение ID пользователя
-//   console.log(req.body);
-//   const { title, description } = req.body;
+//   const { text, description } = req.body;
+//   console.log(text, description);
+//   // console.log(req);
 
 //   try {
 //     return res.json({
 //       message: "Пост успешно создан.",
+//       description,
+//       text,
 //       // post: newPost,
 //     });
 //   } catch (error) {
@@ -153,3 +158,16 @@ export const createPost = async (req, res) => {
 //       .json({ error: "Ошибка при обновлении записи о посте." });
 //   }
 // };
+
+export const getallauthorposts = async (req, res) => {
+  const userId = req.userId; // Получение ID пользователя
+  try {
+    const posts = await Post.find({ author: userId });
+    return res.json({
+      message: "Посты успешно найдены.",
+      posts: posts, // Возвращаем найденные посты в ответе
+    });
+  } catch (err) {
+    return res.status(500).json({ error: "Не удалось найти посты." });
+  }
+};
