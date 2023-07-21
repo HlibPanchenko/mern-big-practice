@@ -38,8 +38,12 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
   return (
     <div className="post-card-box">
-      <h1 className="post-card-title">{title}</h1>
-      <p>{description}</p>
+      <div className="post-card-box-left">
+        <h1 className="post-card-title">{title}</h1>
+        <p>{description}</p>
+      </div>
+      <div className="post-card-box-right">
+
       {images.map((image) => (
         <img
           src={convertToLocalURL(image)}
@@ -48,6 +52,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           key={image}
         />
       ))}
+      </div>
     </div>
   );
 };

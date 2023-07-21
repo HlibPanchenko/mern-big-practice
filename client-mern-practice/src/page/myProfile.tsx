@@ -44,7 +44,7 @@ const MyProfile: React.FC = () => {
     <div className="myprofile">
       <div className="myprofile-container">
         <div className="myprofile-postlist postlist">
-          <div className="postlist-title">all your posts</div>
+          <h2 className="postlist-title">all your posts</h2>
           <div className="postlist-list post-card">
             {postsOfAuthor.map((post) => (
               <PostCard key={post._id} post={post} />
