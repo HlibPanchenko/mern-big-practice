@@ -1,0 +1,71 @@
+.collection {
+	height: 100%;
+	flex: 1 auto;
+	//   height: calc(100vh - 12%);
+ 
+	&-container {
+	  //  padding: 0 20px;
+	  // height: calc(100vh - 12%);
+	//   height: 100%;
+	  //   min-height: 100%;
+	  max-width: 1200px;
+	  margin: 0 auto;
+	  display: flex;
+	  //  justify-content: center;
+	  //  align-items: center;
+	  flex-direction: column;
+	  gap: 20px;
+	//   border: 1px solid #000;
+	}
+ 
+	&-create {
+	  border: 1px solid #000;
+	  max-width: 100%;
+	  display: flex;
+	  // justify-content: space-around;
+	  align-items: center;
+	  padding: 20px;
+	  gap: 30px;
+	}
+ 
+	&-postlist {
+		display: flex;
+		flex-direction: column;
+		align-content: space-between;
+		// justify-content: space-between;
+	//   flex: 1 auto;
+	//   border: 1px solid red;
+	}
+ }
+ 
+ .create-area {
+	&-box {
+	}
+ }
+ 
+ .allpostlist {
+	&-title {
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  height: 10%;
+	  min-height: 50px;
+ 
+	//   border: 1px solid #000;
+	}
+ 
+	&-list {
+	  height: 90%;
+	  width: 100%;
+	  display: flex;
+	  flex-direction: column;
+	//   justify-content: center;
+	  align-items: center;
+	  gap: 12px;
+	  padding: 10px;
+	}
+ }
+ 
+.paginationBlock {
+	height: 10%;
+}

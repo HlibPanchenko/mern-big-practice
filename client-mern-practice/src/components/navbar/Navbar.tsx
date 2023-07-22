@@ -54,8 +54,9 @@ const Navbar: React.FC = () => {
             {isAuth && (
               <>
                 <li className="navbar-menu-item">
-                  {/* <Link to="/registration" onClick={() => logOutHandler}> */}
-                  <a className="linkNav">Collections</a>
+                  <Link className="linkNav" to="/collection">
+                    Collection
+                  </Link>
                 </li>
 
                 <li className="navbar-menu-item">
@@ -65,19 +66,18 @@ const Navbar: React.FC = () => {
                   </Link>
                 </li>
                 {/* <Link className="navbar-logo" to="/myprofile"> */}
-                  <div
-                    // className={classNameModal}
-                    className="navbar-menu-profile"
-                    onClick={() => {
-                      setIsOpen(!isOpen);
-                    }}
-                  >
-                    <div className="navbar-menu-profile-name">{user?.name}</div>
-                    <ProfileIcon size="small" />
-                    <div className={classNameModal}>
+                <div
+                  // className={classNameModal}
+                  className="navbar-menu-profile"
+                  onClick={() => {
+                    setIsOpen(!isOpen);
+                  }}
+                >
+                  <div className="navbar-menu-profile-name">{user?.name}</div>
+                  <ProfileIcon size="small" />
+                  <div className={classNameModal}>
                     {/* <div className="profile-modal"> */}
-                <Link className="navbar-logo" to="/myaccount">
-
+                    <Link className="navbar-logo" to="/myaccount">
                       <div className="profile-modal-settings">
                         <div className="profile-modal-settings-image">
                           <img src="\images\user (1).png" alt="user-photo" />
@@ -86,9 +86,8 @@ const Navbar: React.FC = () => {
                           settings
                         </div>
                       </div>
-                      </Link>
-                <Link className="myprofile" to="/myprofile">
-
+                    </Link>
+                    <Link className="myprofile" to="/myprofile">
                       <div className="profile-modal-myprofile">
                         <div className="profile-modal-myprofile-image">
                           <img
@@ -98,10 +97,9 @@ const Navbar: React.FC = () => {
                         </div>
                         my profile
                       </div>
-                      </Link>
-
-                    </div>
+                    </Link>
                   </div>
+                </div>
                 {/* </Link> */}
               </>
             )}

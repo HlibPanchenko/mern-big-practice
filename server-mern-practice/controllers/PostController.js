@@ -189,3 +189,16 @@ export const getonepost = async (req, res) => {
     return res.status(500).json({ error: "Не удалось найти посты." });
   }
 };
+
+export const getallposts = async (req, res) => {
+  try {
+    const posts = await Post.find().populate("author"); 
+    return res.json({
+      message: "Posts successfully found.",
+      posts: posts, // Return the found posts in the response
+    });
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to find posts." });
+  }
+};
+

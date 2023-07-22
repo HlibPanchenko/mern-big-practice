@@ -4,8 +4,10 @@ import { Routes, Route } from "react-router-dom";
 import "./App.scss";
 import Login from "./components/auth/Login";
 import Registration from "./components/auth/Registration";
+import Footer from "./components/Footer/Footer";
 import Navbar from "./components/navbar/Navbar";
 import Account from "./page/Account";
+import Collection from "./page/Collection";
 import CreatePost from "./page/createPost";
 import EachPost from "./page/eachPost";
 import HomePage from "./page/HomePage";
@@ -29,15 +31,17 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <Navbar />
-      <Routes>
+      <Routes >
         <Route path="/" element={<HomePage />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/login" element={<Login />} />
         <Route path="/myaccount" element={<Account />} />
         <Route path="/myprofile" element={<MyProfile />} />
-        <Route path="/createpost" element={<CreatePost/>} />
-        <Route path="/myprofile/:postId" element={<EachPost/>} />
+        <Route path="/collection" element={<Collection />} />
+        <Route path="/createpost" element={<CreatePost />} />
+        <Route path="/myprofile/:postId" element={<EachPost />} />
       </Routes>
+      <Footer />
     </div>
   );
 };
