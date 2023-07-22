@@ -7,6 +7,7 @@ import Registration from "./components/auth/Registration";
 import Navbar from "./components/navbar/Navbar";
 import Account from "./page/Account";
 import CreatePost from "./page/createPost";
+import EachPost from "./page/eachPost";
 import HomePage from "./page/HomePage";
 import MyProfile from "./page/myProfile";
 import { useAppDispatch } from "./redux/hooks";
@@ -35,6 +36,7 @@ const App: React.FC = () => {
         <Route path="/myaccount" element={<Account />} />
         <Route path="/myprofile" element={<MyProfile />} />
         <Route path="/createpost" element={<CreatePost/>} />
+        <Route path="/myprofile/:postId" element={<EachPost/>} />
       </Routes>
     </div>
   );

@@ -17,4 +17,10 @@ postRouter.get(
   PostController.getallauthorposts
 );
 
+postRouter.get(
+  "/getonepost/:id",
+  checkAuth,
+  PostController.getonepost
+);
+
 export { postRouter };

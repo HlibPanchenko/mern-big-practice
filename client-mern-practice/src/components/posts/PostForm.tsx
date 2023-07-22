@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
 import "./PostForm.scss";
+import { useNavigate } from "react-router-dom";
 
 const PostForm = () => {
   const [titlePost, settitlePost] = useState("");
@@ -8,6 +9,7 @@ const PostForm = () => {
   const [images, setImages] = useState<FileList | null>(null);
   const [step, setStep] = React.useState(0);
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
     settitlePost(event.target.value);
@@ -54,6 +56,7 @@ const PostForm = () => {
       settitlePost("");
       setDescription("");
       setImages(null);
+      navigate("/myprofile");
     } catch (error) {
       // Обработка ошибки создания поста
       console.error(error);

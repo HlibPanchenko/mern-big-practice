@@ -53,7 +53,7 @@
     align-items: center;
     height: 10%;
     min-height: 50px;
-    text-transform: uppercase; 
+    text-transform: uppercase;
 
     // border: 1px solid #000;
   }
@@ -70,10 +70,10 @@
   &-box {
     max-width: 70%;
     width: 100%;
-    min-height: 150px;
-    max-height: 250px;
-    // max-height: 10%;
-    // height: 100%;
+    // min-height: 150px;
+    // max-height: 250px;
+    max-height: 10%;
+    height: 100%;
     // border: 1px solid #000;
     // border-bottom: 1px solid #000;
     display: flex;
@@ -92,7 +92,7 @@
       flex-wrap: wrap;
       // flex-wrap: no-wrap;
       gap: 5px;
-      justify-content:end;
+      justify-content: end;
       align-items: center;
       @media (max-width: 1180px) {
         // justify-content: center;
@@ -124,7 +124,8 @@
   }
 
   &-image {
-    width: 120px;
+    max-width: 170px;
     height: 120px;
+    object-fit: cover;
   }
 }

@@ -162,10 +162,28 @@ export const createPost = async (req, res) => {
 export const getallauthorposts = async (req, res) => {
   const userId = req.userId; // Получение ID пользователя
   try {
-    const posts = await Post.find({ author: userId });
+    const posts = await Post.find({ author: userId }).populate("author");
     return res.json({
       message: "Посты успешно найдены.",
       posts: posts, // Возвращаем найденные посты в ответе
+    });
+  } catch (err) {
+    return res.status(500).json({ error: "Не удалось найти посты." });
+  }
+};
+
+export const getonepost = async (req, res) => {
+  const userId = req.userId; // Получение ID пользователя
+  // const postId = req.id;
+  const postId = req.params.id;
+  try {
+    const post = await Post.findById(postId).populate("author"); // Чтобы модель поста содержала в себе модель автора
+    if (!post) {
+      return res.status(404).json({ error: "Post not found." });
+    }
+    return res.json({
+      message: "Post successfully found.",
+      post: post, // Return the found post in the response
     });
   } catch (err) {
     return res.status(500).json({ error: "Не удалось найти посты." });

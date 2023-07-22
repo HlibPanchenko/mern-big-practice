@@ -36,6 +36,8 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     return `${API_URL}/${folder}/${fileName}`;
   };
 
+  const firstImage = images.length > 0 ? images[0] : null;
+
   return (
     <div className="post-card-box">
       <div className="post-card-box-left">
@@ -43,15 +45,22 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         <p>{description}</p>
       </div>
       <div className="post-card-box-right">
-
-      {images.map((image) => (
+        {/* {images.map((image) => (
         <img
           src={convertToLocalURL(image)}
           alt="Photo"
           className="post-card-image"
           key={image}
         />
-      ))}
+      ))} */}
+        {firstImage && (
+          <img
+            src={convertToLocalURL(firstImage)}
+            alt="Photo"
+            className="post-card-image"
+            key={firstImage}
+          />
+        )}
       </div>
     </div>
   );

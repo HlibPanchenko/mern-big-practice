@@ -3,6 +3,7 @@ import "./myProfile.scss";
 import axios from "axios";
 import { useAppSelector } from "../redux/hooks";
 import PostCard from "../components/posts/PostCard";
+import { Link } from "react-router-dom";
 
 interface PostData {
   _id: string;
@@ -47,7 +48,10 @@ const MyProfile: React.FC = () => {
           <h2 className="postlist-title">all your posts</h2>
           <div className="postlist-list post-card">
             {postsOfAuthor.map((post) => (
-              <PostCard key={post._id} post={post} />
+              // <PostCard key={post._id} post={post} />
+              <Link key={post._id} to={`/myprofile/${post._id}`}>
+                <PostCard post={post} />
+              </Link>
             ))}
             {postsOfAuthor.length === 0 && (
               <div className="post-card-box">
