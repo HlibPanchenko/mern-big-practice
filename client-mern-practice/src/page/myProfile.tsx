@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./myProfile.scss";
 import axios from "axios";
 import { useAppSelector } from "../redux/hooks";
-import PostCard from "../components/posts/PostCard";
+import PostCard, { Author } from "../components/posts/PostCard";
 import { Link } from "react-router-dom";
 
 interface PostData {
@@ -12,7 +12,7 @@ interface PostData {
   images: string[];
   views: number;
   comments: any[]; // You can provide a more specific type for comments if needed
-  author: string;
+  author: Author;
 }
 
 const MyProfile: React.FC = () => {
@@ -49,9 +49,9 @@ const MyProfile: React.FC = () => {
           <div className="postlist-list post-card">
             {postsOfAuthor.map((post) => (
               // <PostCard key={post._id} post={post} />
-              <Link key={post._id} to={`/myprofile/${post._id}`}>
-                <PostCard post={post} />
-              </Link>
+              // <Link key={post._id} to={`/myprofile/${post._id}`}>
+                <PostCard post={post} quantity="one" />
+              // </Link>
             ))}
             {postsOfAuthor.length === 0 && (
               <div className="post-card-box">

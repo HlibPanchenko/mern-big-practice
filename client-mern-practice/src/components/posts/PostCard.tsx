@@ -2,6 +2,16 @@ import React from "react";
 import "../../page/createPost.scss";
 import { API_URL } from "../../config.js";
 import { useAppSelector } from "../../redux/hooks";
+import { Link } from "react-router-dom";
+
+export interface Author {
+  _id: string;
+  email: string;
+  password: string;
+  name: string;
+  avatar: string;
+  __v: number;
+}
 
 interface Post {
   _id: string;
@@ -10,14 +20,20 @@ interface Post {
   title: string;
   views: number;
   comments: string[]; // Assuming each comment is a string for simplicity
-  author: string;
+  author: Author;
 }
+
+// interface IQuantityOfUsers {
+//   quantity: "one" | "all";
+// }
 
 interface PostCardProps {
   post: Post;
+  // quantityUser: IQuantityOfUsers
+  quantity: "one" | "all";
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post }) => {
+const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
   const { title, description, images, views, comments, author } = post;
   const userInfo = useAppSelector((state) => state.auth);
 
@@ -31,7 +47,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
   const convertToLocalURL = (filePath: string): string => {
     const fileName = getFileNameFromPath(filePath);
-    const folder = userInfo?.user?._id;
+    const folder = quantity === "all" ? post.author._id : userInfo?.user?._id;
 
     return `${API_URL}/${folder}/${fileName}`;
   };
@@ -40,12 +56,13 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
   return (
     <div className="post-card-box">
-      <div className="post-card-box-left">
-        <h1 className="post-card-title">{title}</h1>
-        <p>{description}</p>
-      </div>
-      <div className="post-card-box-right">
-        {/* {images.map((image) => (
+      <Link className="linkCard" key={post._id} to={`/myprofile/${post._id}`}>
+        <div className="post-card-box-left">
+          <h1 className="post-card-title">{title}</h1>
+          <p>{description}</p>
+        </div>
+        <div className="post-card-box-right">
+          {/* {images.map((image) => (
         <img
           src={convertToLocalURL(image)}
           alt="Photo"
@@ -53,15 +70,16 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           key={image}
         />
       ))} */}
-        {firstImage && (
-          <img
-            src={convertToLocalURL(firstImage)}
-            alt="Photo"
-            className="post-card-image"
-            key={firstImage}
-          />
-        )}
-      </div>
+          {firstImage && (
+            <img
+              src={convertToLocalURL(firstImage)}
+              alt="Photo"
+              className="post-card-image"
+              key={firstImage}
+            />
+          )}
+        </div>
+      </Link>
     </div>
   );
 };

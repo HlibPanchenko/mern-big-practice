@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Collection.scss";
 import axios from "axios";
 import { useAppSelector } from "../redux/hooks";
-import PostCard from "../components/posts/PostCard";
+import PostCard, { Author } from "../components/posts/PostCard";
 import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import Pagination from "@mui/material/Pagination";
@@ -15,8 +15,11 @@ interface PostData {
   images: string[];
   views: number;
   comments: any[]; // You can provide a more specific type for comments if needed
-  author: string;
+  author: Author;
 }
+
+
+
 
 const Collection: React.FC = () => {
   const [page, setPage] = React.useState(1);
@@ -57,9 +60,9 @@ const Collection: React.FC = () => {
           <div className="allpostlist-list post-card">
             {postsAll.map((post) => (
               // <PostCard key={post._id} post={post} />
-              <Link key={post._id} to={`/myprofile/${post._id}`}>
-                <PostCard post={post} />
-              </Link>
+              // <Link className="linkCard" key={post._id} to={`/myprofile/${post._id}`}>
+                <PostCard post={post} quantity="all" />
+              // </Link>
             ))}
             {postsAll.length === 0 && (
               <div className="post-card-box">
