@@ -1,137 +1,187 @@
 .post-card {
-	&-box {
-	  max-width: 70%;
-	  width: 100%;
-	  height: 160px;
-	  display: flex;
-	  flex-direction: column;
-	  padding: 15px;
-	  gap: 20px;
-	  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-	  transition: transform 0.2s ease;
- 
-	  &:hover {
-		 transform: translateY(-4px);
-	  }
- 
-	  a {
-		 // display: block;
-		 display: flex;
-		 flex-direction: column;
-		 justify-content: space-between;
-		 width: 100%;
-		 color: inherit;
-		 text-decoration: inherit;
-		 gap: 7px;
-	  }
- 
-	  &-content {
-		 display: flex;
-		 justify-content: space-between;
-		 gap: 10px;
-	  }
-	  &-content-right {
-		 display: flex;
-		 flex-wrap: wrap;
-		 // flex-wrap: no-wrap;
-		 gap: 5px;
-		 justify-content: end;
-		 align-items: center;
-		 @media (max-width: 1180px) {
-			// justify-content: center;
-		 }
-	  }
- 
-	  &-content-left {
-		 // display: flex;
-		 // flex-direction: column;
-		 // justify-content: flex-start;
-		 flex: 0 0 75%;
-		 flex-grow: 1;
-		 // max-width: 100%;
-		 @media (max-width: 1180px) {
-			flex: 0 1 65%;
-		 }
- 
-		 // p {
-		 //   text-align: justify;
-		 // }
-	  }
-	}
- 
-	&-title {
-	  font-size: 20px;
-	  flex: 1 auto;
-	  // text-align: center;
-	  display: flex;
-	  align-items: center;
-	  // justify-content: center;
-	  text-align: left;
-	  padding: 0px 0px 0px 0px;
-	  margin: 0px 0px 0px 0px;
-	  // line-height: normal;
-	  /* Добавляем свойства для обрезки заголовка до двух строк */
-	  white-space: normal;
-	  overflow: hidden;
-	  text-overflow: ellipsis;
-	  display: -webkit-box;
-	  -webkit-line-clamp: 1;
-	  -webkit-box-orient: vertical;
-	}
- 
-	&-description {
-	  /* Обновляем свойство white-space, чтобы текст мог занимать несколько строк */
-	  white-space: normal;
-	  /* Добавляем свойства для обрезки текста и добавления троеточия */
-	  overflow: hidden;
-	  text-overflow: ellipsis;
-	  display: -webkit-box; /* Чтобы использовать многократные строки с префиксом -webkit- */
-	  -webkit-line-clamp: 3; /* Ограничиваем количество строк до двух */
-	  -webkit-box-orient: vertical; /* Устанавливаем вертикальное направление */
-	  text-align: justify;
-	}
- 
-	&-image {
-	  max-width: 170px;
-	  height: 120px;
-	  object-fit: cover;
- 
-	  @media (max-width: 640px) {
-		 max-width: 150px;
-		 height: 110px;
-	  }
- 
-	  @media (max-width: 540px) {
-		 max-width: 120px;
-		 height: 100px;
-	  }
- 
-	  @media (max-width: 440px) {
-		 max-width: 100px;
-		 height: 90px;
-	  }
-	}
- }
- 
- .infocard {
+  &-box {
+    max-width: 70%;
+    width: 100%;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    gap: 7px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+    }
+
+    a {
+      // display: block;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 100%;
+      color: inherit;
+      text-decoration: inherit;
+      gap: 7px;
+    }
+
+    &-content {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    &-content-right {
+      display: flex;
+      flex-wrap: wrap;
+      // flex-wrap: no-wrap;
+      gap: 5px;
+      justify-content: end;
+      align-items: center;
+      @media (max-width: 1180px) {
+        // justify-content: center;
+      }
+    }
+
+    &-content-left {
+      // display: flex;
+      // flex-direction: column;
+      // justify-content: flex-start;
+      flex: 0 0 75%;
+      flex-grow: 1;
+      // max-width: 100%;
+      @media (max-width: 1180px) {
+        flex: 0 1 65%;
+      }
+
+      // p {
+      //   text-align: justify;
+      // }
+    }
+  }
+
+  &-title {
+    font-size: 20px;
+    flex: 1 auto;
+    // text-align: center;
+    display: flex;
+    align-items: center;
+    // justify-content: center;
+    text-align: left;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+    // line-height: normal;
+    /* Добавляем свойства для обрезки заголовка до двух строк */
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
+
+  &-description {
+    /* Обновляем свойство white-space, чтобы текст мог занимать несколько строк */
+    white-space: normal;
+    /* Добавляем свойства для обрезки текста и добавления троеточия */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box; /* Чтобы использовать многократные строки с префиксом -webkit- */
+    -webkit-line-clamp: 3; /* Ограничиваем количество строк до двух */
+    -webkit-box-orient: vertical; /* Устанавливаем вертикальное направление */
+    text-align: justify;
+  }
+
+  &-image {
+    max-width: 170px;
+    height: 120px;
+    object-fit: cover;
+
+    @media (max-width: 640px) {
+      max-width: 150px;
+      height: 110px;
+    }
+
+    @media (max-width: 540px) {
+      max-width: 120px;
+      height: 100px;
+    }
+
+    @media (max-width: 440px) {
+      max-width: 100px;
+      height: 90px;
+    }
+  }
+}
+
+.infocard {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+//   padding: 0px 0px 10px 0px;
+
+  &-authorblock {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  &-image {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &-author {
+	overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box; /* Чтобы использовать многократные строки с префиксом -webkit- */
+    -webkit-line-clamp: 1; /* Ограничиваем количество строк до двух */
+    -webkit-box-orient: vertical; /* Устанавливаем вертикальное направление */
+    text-align: justify;
+  }
+
+  &-createdAt {
+	overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box; /* Чтобы использовать многократные строки с префиксом -webkit- */
+    -webkit-line-clamp: 1; /* Ограничиваем количество строк до двух */
+    -webkit-box-orient: vertical; /* Устанавливаем вертикальное направление */
+    text-align: start;
+  }
+
+  &-icons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  &-icon {
 	display: flex;
-	gap: 10px;
 	align-items: center;
-	&-image {
-	  position: relative;
-	  width: 40px;
-	  height: 40px;
-	  border-radius: 50%;
-	  overflow: hidden;
-	  img {
-		 width: 100%;
-		 height: 100%;
-		 object-fit: cover;
-	  }
+	justify-content: space-between;
+	gap: 3px;
+	p {
+		padding: 0px 0px 0px 0px;
+		margin: 0px 0px 0px 0px;
 	}
- 
-	&-author {
- 
-	}
- }
- 
+  }
+  .infocard-like svg,
+  .infocard-comment svg,
+  .infocard-view svg {
+	 fill: black;
+	 cursor: pointer;
+  }
+  
+  /* If you also want to style the stroke (border) of the icons, you can do it like this */
+  .infocard-like svg {
+	 stroke: black;
+  }
+
+}

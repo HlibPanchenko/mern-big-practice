@@ -13,6 +13,9 @@ interface PostData {
   views: number;
   comments: any[]; // You can provide a more specific type for comments if needed
   author: Author;
+  createdAt: string;
+  // likes: number;
+  likes: string[];
 }
 
 const MyProfile: React.FC = () => {
@@ -50,7 +53,7 @@ const MyProfile: React.FC = () => {
             {postsOfAuthor.map((post) => (
               // <PostCard key={post._id} post={post} />
               // <Link key={post._id} to={`/myprofile/${post._id}`}>
-                <PostCard post={post} quantity="one" />
+              <PostCard post={post} quantity="one" />
               // </Link>
             ))}
             {postsOfAuthor.length === 0 && (

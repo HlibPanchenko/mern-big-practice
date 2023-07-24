@@ -193,9 +193,9 @@ export const getonepost = async (req, res) => {
 export const getallposts = async (req, res) => {
   try {
     console.log(req.query.page);
-     // Convert req.query.page to a number
-     const page = parseInt(req.query.page, 10);
-     
+    // Convert req.query.page to a number
+    const page = parseInt(req.query.page, 10);
+
     const posts = await Post.find()
       .skip((page - 1) * 5)
       .limit(5)
@@ -211,5 +211,59 @@ export const getallposts = async (req, res) => {
     });
   } catch (err) {
     return res.status(500).json({ error: "Failed to find posts." });
+  }
+};
+
+export const likepost = async (req, res) => {
+  const postId = req.params.id;
+  const userId = req.userId;
+
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ error: "Пост не найден." });
+    }
+
+    // Check if the user has already liked the post
+    const isLiked = post.likes.includes(userId);
+
+    if (isLiked) {
+      // If the user has already liked the post, remove the userId from the likes array
+      post.likes.pull(userId);
+    } else {
+      // If the user has not liked the post, add the userId to the likes array
+      post.likes.push(userId);
+    }
+
+    // Save the updated post
+    await post.save();
+
+    // Update user's likedposts array based on the isLiked value
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "Пользователь не найден." });
+    }
+
+    if (isLiked) {
+      // If the user has already liked the post, remove the postId from the likedposts array
+      user.likedposts.pull(postId);
+    } else {
+      // If the user has not liked the post, add the postId to the likedposts array
+      user.likedposts.push(postId);
+    }
+
+    // Save the updated user
+    await user.save();
+
+    return res.json({
+      message: isLiked ? "Пост успешно анлайкнут." : "Пост успешно лайкнут.",
+      post: post,
+      isLiked: !isLiked,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ error: "Не удалось лайкнуть/анлайкнуть пост." });
   }
 };

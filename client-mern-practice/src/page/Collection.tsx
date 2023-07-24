@@ -3,8 +3,6 @@ import "./Collection.scss";
 import axios from "axios";
 import { useAppSelector } from "../redux/hooks";
 import PostCard, { Author } from "../components/posts/PostCard";
-import { Link } from "react-router-dom";
-import Typography from "@mui/material/Typography";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 
@@ -16,6 +14,9 @@ interface PostData {
   views: number;
   comments: any[]; // You can provide a more specific type for comments if needed
   author: Author;
+  createdAt: string;
+  // likes: number
+  likes: string[];
 }
 
 const Collection: React.FC = () => {
@@ -24,7 +25,7 @@ const Collection: React.FC = () => {
   const [postsAll, setpostsAll] = useState<PostData[]>([]);
   const token = localStorage.getItem("token");
   // const user = useSelector((state) => state.auth.user);
-  const user = useAppSelector((state) => state.auth.user);
+  // const user = useAppSelector((state) => state.auth.user);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
@@ -59,14 +60,12 @@ const Collection: React.FC = () => {
       <div className="collection-container">
         <div className="collection-postlist allpostlist">
           <h2 className="allpostlist-title">all posts</h2>
-          <div className="allpostlist-sort">
-            Блок сортировки
-          </div>
+          <div className="allpostlist-sort">Блок сортировки</div>
           <div className="allpostlist-list post-card">
             {postsAll.map((post) => (
               // <PostCard key={post._id} post={post} />
               // <Link className="linkCard" key={post._id} to={`/myprofile/${post._id}`}>
-              <PostCard post={post} quantity="all" />
+              <PostCard key={post._id} post={post} quantity="all" />
               // </Link>
             ))}
             {postsAll.length === 0 && (
@@ -80,10 +79,12 @@ const Collection: React.FC = () => {
           <div className="paginationBlock">
             <Stack spacing={2}>
               {/* <Typography>Page: {page}</Typography> */}
-              <Pagination 
-              // count={10} 
-              count={quantityOfPages} 
-              page={page} onChange={handleChange} />
+              <Pagination
+                // count={10}
+                count={quantityOfPages}
+                page={page}
+                onChange={handleChange}
+              />
             </Stack>
           </div>
         </div>

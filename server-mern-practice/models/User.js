@@ -5,6 +5,7 @@ const User = new mongoose.Schema({
   password: { type: String, required: true },
   name: { type: String, required: true },
   avatar: { type: String, default: "" }, // Указываем значение по умолчанию как пустую строку
+  likedposts: [{ type: String }],
 });
 
 export default mongoose.model("User", User);

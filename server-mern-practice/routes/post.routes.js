@@ -20,5 +20,6 @@ postRouter.get(
 postRouter.get("/getonepost/:id", checkAuth, PostController.getonepost);
 
 postRouter.get("/getallposts", checkAuth, PostController.getallposts);
+postRouter.post("/likepost/:id", checkAuth, PostController.likepost);
 
 export { postRouter };
