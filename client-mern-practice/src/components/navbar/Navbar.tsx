@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Navbar.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -12,9 +12,30 @@ const Navbar: React.FC = () => {
   const user = useAppSelector((state) => state.auth.user);
 
   const [isOpen, setIsOpen] = React.useState(false);
+  // Create a ref for the modal container
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  //  Attach click event listener to the window
+  useEffect(() => {
+    const handleClickOutsideModal = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("click", handleClickOutsideModal);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("click", handleClickOutsideModal);
+    };
+  }, []);
 
   const logOutHandler = () => {
     dispatch(logoutSlice());
@@ -68,6 +89,7 @@ const Navbar: React.FC = () => {
                 {/* <Link className="navbar-logo" to="/myprofile"> */}
                 <div
                   // className={classNameModal}
+                  ref={modalRef}
                   className="navbar-menu-profile"
                   onClick={() => {
                     setIsOpen(!isOpen);
@@ -75,7 +97,13 @@ const Navbar: React.FC = () => {
                 >
                   <div className="navbar-menu-profile-name">{user?.name}</div>
                   <ProfileIcon size="small" />
-                  <div className={classNameModal}>
+                  <div
+                    // className="navbar-menu-profile"
+                    className={classNameModal}
+                    // onClick={() => {
+                    //   setIsOpen(!isOpen);
+                    // }}
+                  >
                     {/* <div className="profile-modal"> */}
                     <Link className="navbar-logo" to="/myaccount">
                       <div className="profile-modal-settings">

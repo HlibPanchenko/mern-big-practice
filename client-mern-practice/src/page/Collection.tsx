@@ -18,11 +18,9 @@ interface PostData {
   author: Author;
 }
 
-
-
-
 const Collection: React.FC = () => {
   const [page, setPage] = React.useState(1);
+  const [quantityOfPages, setQuantityOfPages] = React.useState(1);
   const [postsAll, setpostsAll] = useState<PostData[]>([]);
   const token = localStorage.getItem("token");
   // const user = useSelector((state) => state.auth.user);
@@ -32,11 +30,14 @@ const Collection: React.FC = () => {
     setPage(value);
   };
 
+  // const quantityOfPages = Math.ceil(postsAll.length / 5);
+  console.log(quantityOfPages);
+
   useEffect(() => {
     const fetchPostsOfAuthor = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4444/post/getallposts?page=${page}&limit=5",
+          `http://localhost:4444/post/getallposts?page=${page}&limit=5`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -44,24 +45,28 @@ const Collection: React.FC = () => {
           }
         );
         setpostsAll(response.data.posts);
+        setQuantityOfPages(Math.ceil(response.data.quantity / 5));
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
     };
 
     fetchPostsOfAuthor();
-  }, [token]);
+  }, [token, page]);
 
   return (
     <div className="collection">
       <div className="collection-container">
         <div className="collection-postlist allpostlist">
           <h2 className="allpostlist-title">all posts</h2>
+          <div className="allpostlist-sort">
+            Блок сортировки
+          </div>
           <div className="allpostlist-list post-card">
             {postsAll.map((post) => (
               // <PostCard key={post._id} post={post} />
               // <Link className="linkCard" key={post._id} to={`/myprofile/${post._id}`}>
-                <PostCard post={post} quantity="all" />
+              <PostCard post={post} quantity="all" />
               // </Link>
             ))}
             {postsAll.length === 0 && (
@@ -75,7 +80,10 @@ const Collection: React.FC = () => {
           <div className="paginationBlock">
             <Stack spacing={2}>
               {/* <Typography>Page: {page}</Typography> */}
-              <Pagination count={10} page={page} onChange={handleChange} />
+              <Pagination 
+              // count={10} 
+              count={quantityOfPages} 
+              page={page} onChange={handleChange} />
             </Stack>
           </div>
         </div>

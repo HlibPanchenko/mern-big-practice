@@ -192,13 +192,24 @@ export const getonepost = async (req, res) => {
 
 export const getallposts = async (req, res) => {
   try {
-    const posts = await Post.find().populate("author"); 
+    console.log(req.query.page);
+     // Convert req.query.page to a number
+     const page = parseInt(req.query.page, 10);
+     
+    const posts = await Post.find()
+      .skip((page - 1) * 5)
+      .limit(5)
+      .populate("author");
+
+    // Get the total count of all posts (чтобы посчитать сколько надо станиц пагинации)
+    const totalPostsCount = await Post.countDocuments();
+
     return res.json({
       message: "Posts successfully found.",
       posts: posts, // Return the found posts in the response
+      quantity: totalPostsCount,
     });
   } catch (err) {
     return res.status(500).json({ error: "Failed to find posts." });
   }
 };
-

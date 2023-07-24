@@ -31,25 +31,8 @@ const CreatePost: React.FC = () => {
     <div className="createpost">
       <div className="createpost-container">
         <div className="createpost-create create-area">
-          {/* <div className="create-area-box">Create post</div> */}
-          <PostForm/>
+          <PostForm />
         </div>
-        {/* <div className="createpost-postlist postlist">
-          <div className="postlist-title">all your posts</div>
-          <div className="postlist-list post-card">
-            <PostCard />
-            <PostCard />
-            <PostCard />
-            <PostCard />
-            <PostCard />
-            <PostCard />
-            <div className="post-card-box">
-              <h1 className="post-card-title">
-                Вы пока не создали ни одного поста
-              </h1>
-            </div>
-          </div>
-        </div> */}
       </div>
     </div>
   );
