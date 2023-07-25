@@ -1,13 +1,14 @@
 .createpost {
-  // display: flex;
+  display: flex;
   flex: 1 auto;
-  // justify-content: center;
-  // align-items: center;
+  justify-content: center;
+  align-items: center;
   // height: 100%;
 
   &-container {
     // height: 100%;
-    height: 500px;
+    // height: 500px;
+    height: calc(100vh - 200px);
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;

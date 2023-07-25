@@ -52,129 +52,175 @@
 .postformzero {
   height: 100%;
   width: 100%;
-  position: relative;
+  // position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  // align-items: center;
+  justify-content: space-between;
+
+  &-content {
+    flex: 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    &[data-type="title"] {
+      justify-content: center;
+    }
+
+    &[data-type="description"] {
+      justify-content: space-around;
+    }
+  }
+
   &-title {
     text-align: center;
   }
 
   &-input {
     min-width: 150px;
-    max-width: 400px;
+    max-width: 600px;
+    // padding: 0px 0px 0px 0px;
+    // height: 70%;
     width: 100%;
-   //  height: 30px;
+    &[data-input="description"] {
+      height: 45%;
 
-	 
+      // border: 1px solid red;
+    }
 
-    //  input {
-    //    width: 100%;
-    //    height: 100%;
-    //    // border-bottom: 1px solid #000;
-    //    border: none;
-    //    border-bottom: 2px solid #ccc;
-    //    padding: 8px;
-    //    font-size: 16px;
-    //    &:focus {
-    //      outline: none;
-    //      border-bottom-color: #007bff;
-    //    }
-
-    //    &:hover {
-    //      border-bottom-color: #999;
-    //    }
-    //  }
-
-    input[type="text"],
-    textarea {
+    input[type="text"] {
       width: 100%;
-      height: 100%;
+      // height: 100%;
+      // height: 20%;
+      height: 40px;
       border: none;
       border-bottom: 1px solid #ccc;
-      padding: 8px;
+      // padding: 8px;
+      padding: 4px 8px;
       font-size: 16px;
     }
 
-    input[type="text"]:focus,
-    textarea:focus {
+    textarea {
+      width: 100%;
+      height: 45%;
+      border: none;
+      border-bottom: 1px solid #ccc;
+      font-size: 16px;
+      padding-bottom: 8px;
+    }
+
+    input[type="text"]:focus {
       outline: none;
       border-bottom-color: #007bff; /* For example, use blue for focus */
     }
 
-    input[type="text"]:hover,
-    textarea:hover {
+    textarea:focus {
+      outline: none;
+      // border-color: #007bff; /* For example, use blue for focus */
+      border-bottom: 2px solid #007bff;
+    }
+
+    input[type="text"]:hover {
       border-bottom-color: #999; /* For example, use a darker color on hover */
     }
+
+    textarea:hover {
+      border-color: #999; /* For example, use a darker color on hover */
+    }
+  }
+
+  &-inputImg {
+    display: none;
   }
 
   &-btn {
-    position: absolute;
-    right: 5%;
-    top: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
     cursor: pointer;
-    transition: all 0.1s ease 0s;
+    &-back {
+      transition: font-size 0.1s ease 0s;
 
-    &:hover {
-      font-size: 17px;
-      font-weight: 700;
-      color: #006400;
+      &:hover {
+        font-size: 17px;
+        font-weight: 700;
+        color: #aa0000;
+      }
     }
-  }
-
-  &-back {
-    position: absolute;
-    left: 5%;
-    top: 90%;
-    cursor: pointer;
-    transition: all 0.1s ease 0s;
-
-    &:hover {
-      font-size: 17px;
-      font-weight: 700;
-      color: #aa0000;
+    &-next {
+      &:hover {
+        font-size: 17px;
+        font-weight: 700;
+        color: #006400;
+      }
     }
   }
 }
 
-
+.zeropost {
+  justify-content: center;
+  align-items: center;
+}
 
 .preview {
-	width: 100%;
-	height: 100%;
-	padding: 0px 0px 0px 0px;
-	margin: 0px 0px 0px 0px;
-	&-title {
-margin: 0px 0px 0px 0px;
-	}
+  width: 100%;
+  height: 100%;
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+  &-title {
+    margin: 0px 0px 0px 0px;
+  }
 
-	&-article {
+  &-article {
+  }
 
-	}
+  &-posttitle {
+  }
 
-	&-posttitle {
+  &-description {
+  }
 
-	}
+  &-gallery {
+    img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+  }
 
-	&-description {
+  &-btn {
+    display: flex;
+    justify-content: space-between;
+  }
+  button {
+    // position: absolute;
+    // right: 5%;
+    // top: 90%;
+  }
+}
 
-	}
+.image-drop-zone {
+  border: 1px solid #999;
+  // flex: 1 1 90%;
+  // max-width: 90%;
+  width: 100%;
+  height: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: all 0.2s 0s;
+  border-radius: 5px;
+  font-size: 25px;
+  &:hover {
+    border: 2px solid #007bff;
+  }
 
-	&-gallery {
-
-		img {
-			width: 100px;
-			height: 100px;
-			object-fit: cover;
-			margin-right: 10px;
-			margin-bottom: 10px;
-		}
-	}
-
-	button {
-		position: absolute;
-    right: 5%;
-    top: 90%;
-	}
+  &-icon {
+    width: "100px";
+    height: "100px";
+  }
 }

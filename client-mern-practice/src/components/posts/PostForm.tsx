@@ -2,18 +2,58 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
 import "./PostForm.scss";
 import { useNavigate } from "react-router-dom";
-
+import { BsCloudDownload } from "react-icons/bs";
 const PostForm = () => {
   const [titlePost, settitlePost] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState<FileList | null>(null);
+  const [titleError, setTitleError] = useState<boolean>(false);
+  const [imageError, setImageError] = useState<boolean>(false);
   const [step, setStep] = React.useState(0);
+
   const token = localStorage.getItem("token");
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
   const navigate = useNavigate();
 
+  // сheck for empty input
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
-    settitlePost(event.target.value);
+    const value = event.target.value;
+    settitlePost(value);
+
+    // Set the error status based on whether the input is empty or not
+    setTitleError(value.trim() === "");
   };
+
+  // Update the button click handler in step 1 to check for input error
+  const handleStep1Next = () => {
+    if (titlePost.trim() === "") {
+      setTitleError(true);
+    } else {
+      setTitleError(false);
+      setStep(2);
+    }
+  };
+
+  const handleStep2Next = () => {
+    if (!images || images.length === 0) {
+      setImageError(true);
+    } else {
+      setImageError(false);
+      setStep(3);
+    }
+  };
+
+  // Function to open the file input dialog when clicking on the drop zone
+  const openFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //   settitlePost(event.target.value);
+  // };
 
   const handleDescriptionChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(event.target.value);
@@ -63,10 +103,41 @@ const PostForm = () => {
     }
   };
 
+  // Handle the drop event for drag and drop functionality
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const dataTransfer = event.dataTransfer;
+    if (dataTransfer.items) {
+      const files = dataTransfer.files;
+      setImages(files);
+    }
+  };
+
+  // Handle the drag over event to allow dropping
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
+
+  // Handle the paste event to get files from clipboard
+  const handlePaste = (event: ClipboardEvent) => {
+    const files = event.clipboardData?.files;
+    if (files) {
+      setImages(files);
+    }
+  };
+
+  // Add event listeners for drag and drop and paste
+  React.useEffect(() => {
+    document.addEventListener("paste", handlePaste);
+    return () => {
+      document.removeEventListener("paste", handlePaste);
+    };
+  }, []);
+
   return (
     <>
       {step === 0 && (
-        <div className="postformzero">
+        <div className="postformzero zeropost">
           <h2 className="postformzero-title">
             Привет, здесь ты можешь опубликовать информацию о своей
             коллекционной машинке всего в несколько кликов!
@@ -78,80 +149,113 @@ const PostForm = () => {
       )}
       {step === 1 && (
         <div className="postformzero">
-          <h2 className="postformzero-title">
-            Шаг: {step} <br />
-            Придумайте название для своего поста
-          </h2>
-          <div className="postformzero-input">
-            <input
-              type="text"
-              id="text"
-              value={titlePost}
-              onChange={handleTextChange}
-            />
+          <div className="postformzero-content" data-type="title">
+            <h2 className="postformzero-title">
+              Шаг: {step} <br />
+              Придумайте название для своего поста
+            </h2>
+            <div className="postformzero-input">
+              <input
+                type="text"
+                id="text"
+                value={titlePost}
+                onChange={handleTextChange}
+                style={{ borderColor: titleError ? "red" : "initial" }}
+              />
+              {titleError && (
+                <p style={{ color: "red" }}>Please enter a title.</p>
+              )}
+            </div>
           </div>
-          <div className="postformzero-btn" onClick={() => setStep(2)}>
-            Следующий шаг...
-          </div>
-          <div className="postformzero-back" onClick={() => setStep(0)}>
-            Вернуться назад...
+          <div className="postformzero-btn">
+            <div className="postformzero-btn-back" onClick={() => setStep(0)}>
+              Вернуться назад...
+            </div>
+            <div className="postformzero-btn-next" onClick={handleStep1Next}>
+              Следующий шаг...
+            </div>
           </div>
         </div>
       )}
       {step === 2 && (
-        <div className="postformzero">
+        <div
+          className="postformzero"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+        >
           <h2 className="postformzero-title">
             Шаг: {step} <br />
             Добавьте фотографии модели Hot Wheels
           </h2>
-          <div>
-            {/* <label htmlFor="images">Изображения:</label> */}
-            <input
-              type="file"
-              id="images"
-              accept="image/*"
-              multiple
-              onChange={handleImageChange}
-            />
+          <input
+            className="postformzero-inputImg"
+            type="file"
+            id="images"
+            ref={fileInputRef}
+            accept="image/*"
+            multiple
+            onChange={handleImageChange}
+            style={{ borderColor: imageError ? "red" : "initial" }}
+          />
+          {imageError && (
+            <p style={{ color: "red" }}>Please upload at least one image.</p>
+          )}
+          <div className="image-drop-zone" onClick={openFileInput}>
+            {/* Show the drop zone text */}
+            <p>Choose a file or drag it here</p>
+            <BsCloudDownload className="image-drop-zone-icon" />
+            {/* Show the image previews */}
+            <div className="image-preview">
+              {images &&
+                Array.from(images).map((image, index) => (
+                  <img
+                    key={index}
+                    src={URL.createObjectURL(image)}
+                    alt={`Image ${index + 1}`}
+                  />
+                ))}
+            </div>
           </div>
 
-          <div className="image-preview">
-            {images &&
-              Array.from(images).map((image, index) => (
-                <img
-                  key={index}
-                  src={URL.createObjectURL(image)}
-                  alt={`Image ${index + 1}`}
-                />
-              ))}
-          </div>
-          <div className="postformzero-btn" onClick={() => setStep(3)}>
-            Следующий шаг...
-          </div>
-          <div className="postformzero-back" onClick={() => setStep(1)}>
-            Вернуться назад...
+          <div className="postformzero-btn">
+            <div className="postformzero-btn-back" onClick={() => setStep(1)}>
+              Вернуться назад...
+            </div>
+            <div className="postformzero-btn-next" onClick={handleStep2Next}>
+              Следующий шаг...
+            </div>
           </div>
         </div>
       )}
       {step === 3 && (
         <div className="postformzero">
-          <h2 className="postformzero-title">
-            Шаг: {step} <br />
-            Добавьте описание модели Hot Wheels
-          </h2>
-          <div className="postformzero-input">
-            {/* <label htmlFor="description">Описание модели:</label> */}
-            <textarea
-              id="description"
-              value={description}
-              onChange={handleDescriptionChange}
-            />
+          <div className="postformzero-content" data-type="description">
+            <h2 className="postformzero-title">
+              Шаг: {step} <br />
+              Добавьте описание модели Hot Wheels
+            </h2>
+            <div className="postformzero-input" data-input="description">
+              {/* <label htmlFor="description">Описание модели:</label> */}
+              <textarea
+                id="description"
+                value={description}
+                placeholder="Write here your description..."
+                onChange={handleDescriptionChange}
+              />
+              {/* <textarea
+                id="description"
+                value={description}
+                onChange={handleDescriptionChange}
+              /> */}
+            </div>
           </div>
-          <div className="postformzero-btn" onClick={() => setStep(4)}>
-            Следующий шаг...
-          </div>
-          <div className="postformzero-back" onClick={() => setStep(2)}>
-            Вернуться назад...
+          <div className="postformzero-btn">
+            <div className="postformzero-btn-back" onClick={() => setStep(2)}>
+              Вернуться назад...
+            </div>
+            <div className="postformzero-btn-next" onClick={() => setStep(4)}>
+              Следующий шаг...
+            </div>
           </div>
         </div>
       )}
@@ -172,51 +276,15 @@ const PostForm = () => {
                 ))}
             </div>
           </div>
-
-          <button onClick={handleSubmit}>Опубликовать</button>
-          <div className="postformzero-back" onClick={() => setStep(3)}>
-            Вернуться назад...
+          <div className="preview-btn">
+            <div className="postformzero-btn-back " onClick={() => setStep(3)}>
+              Вернуться назад...
+            </div>
+            <button onClick={handleSubmit}>Опубликовать</button>
           </div>
         </div>
       )}
     </>
-
-    // <form className="post-form" onSubmit={handleSubmit}>
-    //   <div>
-    //     <label htmlFor="text">Название модели:</label>
-    //     <input type="text" id="text" value={text} onChange={handleTextChange} />
-    //   </div>
-    //   <div>
-    //     <label htmlFor="description">Описание модели:</label>
-    //     <textarea
-    //       id="description"
-    //       value={description}
-    //       onChange={handleDescriptionChange}
-    //     />
-    //   </div>
-    //   <div>
-    //     <label htmlFor="images">Изображения:</label>
-    //     <input
-    //       type="file"
-    //       id="images"
-    //       accept="image/*"
-    //       multiple
-    //       onChange={handleImageChange}
-    //     />
-    //   </div>
-
-    //   <div className="image-preview">
-    //     {images &&
-    //       Array.from(images).map((image, index) => (
-    //         <img
-    //           key={index}
-    //           src={URL.createObjectURL(image)}
-    //           alt={`Image ${index + 1}`}
-    //         />
-    //       ))}
-    //   </div>
-    //   <button type="submit">Создать пост</button>
-    // </form>
   );
 };
 

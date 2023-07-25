@@ -31,6 +31,6 @@ const fileFilter = function (req, file, cb) {
 // Экспортируем объект конфигурации multer
 export const upload = multer({
   storage: storage,
-  limits: { fileSize: 1024 * 1024 }, // Ограничение размера файла (в данном случае 1MB)
+  limits: { fileSize:5 * 1024 * 1024 }, // Ограничение размера файла (в данном случае 1MB)
   fileFilter: fileFilter,
 });
