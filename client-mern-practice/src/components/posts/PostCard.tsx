@@ -1,7 +1,7 @@
 import React from "react";
 import "./PostCard.scss";
 import { API_URL } from "../../config.js";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { Link } from "react-router-dom";
 import { FcLike, FcLikePlaceholder } from "react-icons/fc";
 // import { BiCommentDots } from "react-icons/bi";
@@ -10,6 +10,9 @@ import { AiOutlineHeart } from "react-icons/ai";
 import { GrView } from "react-icons/gr";
 import { formatDate } from "../../../src/utils/date.util";
 import axios from "axios";
+import { updateUser } from "../../redux/slices/authSlice";
+// import { useSelector, useDispatch } from "react-redux";
+
 export interface Author {
   _id: string;
   email: string;
@@ -17,6 +20,7 @@ export interface Author {
   name: string;
   avatar: string;
   __v: number;
+  likedposts: string[];
 }
 
 interface Post {
@@ -45,12 +49,41 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
   const token = localStorage.getItem("token");
   const [likes, setLikes] = React.useState(post.likes.length);
-  const [isLikedByUser, setIsLikedByUser] = React.useState(false);
+  // const [isLikedByUser, setIsLikedByUser] = React.useState(false);
+  // const [isViewed, setIsViewed] = React.useState(false);
   const { title, description, images, views, comments, author } = post;
   const userInfo = useAppSelector((state) => state.auth);
-  console.log(post.author.avatar);
+  // console.log(post.author.avatar);
+  const user = useAppSelector((state) => state.auth.user);
+  const dispatch = useAppDispatch();
 
   //   const imagePost = ${API_URL + userInfo?.user?._id + "/" + path.basename(images[1])}`
+
+  // React.useEffect(() => {
+  //   // Send a request to update post views when the component mounts
+  //   const viewPost = async () => {
+  //     try {
+  //       await axios.post(
+  //         `http://localhost:4444/post/viewpost/${post._id}`,
+  //         {},
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+
+  //       setIsViewed(true);
+  //     } catch (error) {
+  //       console.log("ошибка просмотра поста", error);
+  //     }
+  //   };
+
+  //   if (quantity === "one" && !isViewed && token) {
+  //     // View the post only for individual posts and when the user is logged in
+  //     viewPost();
+  //   }
+  // }, [post._id, token, quantity, isViewed]);
 
   async function likePostHandler() {
     try {
@@ -65,10 +98,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
         }
       );
 
-      const { isLiked, post: updatedPost } = response.data;
+      const { post: updatedPost } = response.data;
       setLikes(updatedPost.likes.length);
-      setIsLikedByUser(isLiked);
+      // setIsLikedByUser(isLiked);
       // setPostInfo(response.data.post);
+      dispatch(updateUser(response.data.user));
     } catch (error) {
       console.log("ошибка получения данных одного поста", error);
       // navigate("/");
@@ -94,13 +128,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
     ? `${API_URL + post.author._id + "/" + post.author.avatar}`
     : "/images/user.png";
 
-  // const formatDate = (dateString: string): string => {
-  //   const date = new Date(dateString);
-  //   const day = date.getDate().toString().padStart(2, "0");
-  //   const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are zero-based
-  //   const year = date.getFullYear();
-  //   return `${day}.${month}.${year}`;
-  // };
+  // Проверка, содержит ли массив likedposts строку post._id
+  const isLiked = user?.likedposts.includes(post._id);
 
   return (
     <div className="post-card-box">
@@ -133,6 +162,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
 
       <div className="post-card-box-info infocard">
         {/* author: Maxim Kuchka.   Date: 25/02/2023. Likes: 0. Commets: 3. */}
+        {/* <div className="infocard-viewed">
+          {isViewed && <span className="viewed-label">Просмотрено</span>}
+        </div> */}
         <div className="infocard-authorblock">
           <div className="infocard-image">
             <img src={avatar} alt="Profile Icon" />
@@ -144,13 +176,18 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
         <div className="infocard-icons">
           <div className="infocard-icon">
             <p>{likes} </p>
-            <AiOutlineHeart
-              className="infocard-like"
-              // color="black"
-              fill={isLikedByUser ? "red" : "black"}
-              color={isLikedByUser ? "red" : "black"}
-              onClick={likePostHandler}
-            />
+            {isLiked ? (
+              <FcLike className="infocard-like" onClick={likePostHandler} />
+            ) : (
+              <AiOutlineHeart
+                className="infocard-like"
+                // color="black"
+                // fill={isLikedByUser ? "red" : "black"}
+                // color={isLikedByUser ? "red" : "black"}
+                fill={isLiked ? "red" : "black"}
+                onClick={likePostHandler}
+              />
+            )}
           </div>
           <div className="infocard-icon">
             <p>{post.comments.length} </p>

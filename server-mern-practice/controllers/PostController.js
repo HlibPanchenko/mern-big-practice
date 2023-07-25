@@ -174,10 +174,16 @@ export const getallauthorposts = async (req, res) => {
 
 export const getonepost = async (req, res) => {
   const userId = req.userId; // Получение ID пользователя
-  // const postId = req.id;
   const postId = req.params.id;
   try {
-    const post = await Post.findById(postId).populate("author"); // Чтобы модель поста содержала в себе модель автора
+    // const post = await Post.findById(postId).populate("author"); // Чтобы модель поста содержала в себе модель автора
+    // Найдем пост по его ID и увеличим количество просмотров на 1
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      { $inc: { views: 1 } }, // $inc - оператор для увеличения значения на заданное число (в данном случае +1)
+      { new: true } // Опция new: true возвращает обновленный пост после обновления
+    ).populate("author");
+
     if (!post) {
       return res.status(404).json({ error: "Post not found." });
     }
@@ -219,7 +225,7 @@ export const likepost = async (req, res) => {
   const userId = req.userId;
 
   try {
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate("author");;
 
     if (!post) {
       return res.status(404).json({ error: "Пост не найден." });
@@ -259,6 +265,7 @@ export const likepost = async (req, res) => {
     return res.json({
       message: isLiked ? "Пост успешно анлайкнут." : "Пост успешно лайкнут.",
       post: post,
+      user,
       isLiked: !isLiked,
     });
   } catch (err) {
@@ -267,3 +274,28 @@ export const likepost = async (req, res) => {
       .json({ error: "Не удалось лайкнуть/анлайкнуть пост." });
   }
 };
+
+// export const viewPost = async (req, res) => {
+//   const postId = req.params.id;
+
+//   try {
+//     const post = await Post.findById(postId);
+
+//     if (!post) {
+//       return res.status(404).json({ error: "Пост не найден." });
+//     }
+
+//     // Increase the post views count by 1
+//     post.views += 1;
+
+//     // Save the updated post
+//     await post.save();
+
+//     return res.json({
+//       message: "Пост успешно просмотрен.",
+//       post: post,
+//     });
+//   } catch (err) {
+//     return res.status(500).json({ error: "Не удалось обновить просмотры поста." });
+//   }
+// };

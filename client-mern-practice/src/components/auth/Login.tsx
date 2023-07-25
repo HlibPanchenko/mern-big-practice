@@ -38,8 +38,8 @@ const Login: React.FC = () => {
       );
       setEmailError("");
       // setDataForm(obj);
-      const { email, password, name, avatar, _id,__v } = response.data;
-      const user = { email, password, name, avatar, _id,__v };
+      const { email, password, name, avatar, _id,__v, likedposts } = response.data;
+      const user = { email, password, name, avatar, _id,__v, likedposts };
 
       dispatch(loginAction(user));
       if (response.data.token) {

@@ -77,7 +77,7 @@ export const login = async (req, res) => {
     const token = generateToken(user._id);
 
     // Достаем инфу о пользователе с БД
-    const { email, password, name, avatar, _id, __v } = user;
+    const { email, password, name, avatar, _id, __v, likedposts } = user;
 
     res.status(200).json({
       message: "login",
@@ -88,6 +88,7 @@ export const login = async (req, res) => {
       _id,
       __v,
       token,
+      likedposts
     });
   } catch (error) {
     console.log(error);

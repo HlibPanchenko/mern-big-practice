@@ -8,6 +8,7 @@ interface User {
   __v: number;
   _id: string;
   avatar: string;
+  likedposts:string[];
 }
 
 interface AuthState {
@@ -61,6 +62,10 @@ const authSlice = createSlice({
       state.isAuth = true;
       state.user = action.payload;
     },
+    updateUser(state, action: PayloadAction<User>) {
+      state.isAuth = true;
+      state.user = action.payload;
+    },
     logoutSlice(state) {
       state.isAuth = false;
       state.user = null;
@@ -95,6 +100,6 @@ const authSlice = createSlice({
   // },
 });
 
-export const { registerAction, loginAction, logoutSlice, setUser } =
+export const { registerAction, loginAction, logoutSlice, setUser, updateUser } =
   authSlice.actions;
 export default authSlice.reducer;
