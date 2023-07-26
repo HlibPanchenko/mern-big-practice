@@ -2,7 +2,7 @@
   &-box {
     max-width: 70%;
     width: 100%;
-    height: 160px;
+    // height: 160px;
     display: flex;
     flex-direction: column;
     padding: 15px;
@@ -160,6 +160,7 @@
     display: flex;
     gap: 10px;
     align-items: center;
+    
   }
 
   &-icon {
@@ -172,16 +173,14 @@
 		margin: 0px 0px 0px 0px;
 	}
   }
-  .infocard-like svg,
-  .infocard-comment svg,
-  .infocard-view svg {
+  .infocard-like ,
+  .infocard-comment ,
+  .infocard-view  {
 	//  fill: black;
 	 cursor: pointer;
-  }
-  
-  /* If you also want to style the stroke (border) of the icons, you can do it like this */
-  .infocard-like svg {
-	//  stroke: black;
-  }
 
+   &:hover {
+    font-size: 17px;
+   }
+  }
 }

@@ -7,10 +7,16 @@ const PostForm = () => {
   const [titlePost, settitlePost] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState<FileList | null>(null);
+  // console.log(images);
+
   const [titleError, setTitleError] = useState<boolean>(false);
   const [imageError, setImageError] = useState<boolean>(false);
   const [step, setStep] = React.useState(0);
-
+  const [currentImg, setCurrentImg] = React.useState(null);
+  // Add state to keep track of the current index of the dragged image
+  const [draggedImageIndex, setDraggedImageIndex] = useState<number | null>(
+    null
+  );
   const token = localStorage.getItem("token");
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -61,6 +67,7 @@ const PostForm = () => {
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
+      // setImages( Array.from(event.target.files));
       setImages(event.target.files);
     }
   };
@@ -134,6 +141,53 @@ const PostForm = () => {
     };
   }, []);
 
+  // drag images logic
+
+  const dragStartHandler = (
+    e: React.DragEvent<HTMLDivElement>,
+    image: any,
+    index: number
+  ) => {
+    console.log("drag", image, index);
+    setCurrentImg(image);
+    setDraggedImageIndex(index);
+  };
+
+  const dropHandler = (
+    e: React.DragEvent<HTMLDivElement>,
+    image: any,
+    index: number
+  ) => {
+    e.preventDefault();
+    console.log("drop", image, index);
+    if (draggedImageIndex !== null) {
+      // Create a copy of the images array to avoid direct mutation
+      const imagesCopy = Array.from(images || []);
+
+      // Remove the dragged image from the images array
+      const [draggedImage] = imagesCopy.splice(draggedImageIndex, 1);
+
+      // Insert the dragged image at the dropped index
+      imagesCopy.splice(index, 0, draggedImage);
+
+      // Create a new DataTransfer object
+      const dataTransfer = new DataTransfer();
+
+      // Set the reordered files in the DataTransfer object
+      imagesCopy.forEach((file) => {
+        dataTransfer.items.add(file);
+      });
+
+      // Update the state with the reordered FileList
+      const reorderedFileList = dataTransfer.files;
+      setImages(reorderedFileList);
+    }
+  };
+
+  const dragOverHandler = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
   return (
     <>
       {step === 0 && (
@@ -201,10 +255,8 @@ const PostForm = () => {
             <p style={{ color: "red" }}>Please upload at least one image.</p>
           )}
           <div className="image-drop-zone" onClick={openFileInput}>
-            {/* Show the drop zone text */}
             <p>Choose a file or drag it here</p>
             <BsCloudDownload className="image-drop-zone-icon" />
-            {/* Show the image previews */}
             <div className="image-preview">
               {images &&
                 Array.from(images).map((image, index) => (
@@ -268,20 +320,39 @@ const PostForm = () => {
             <div className="preview-gallery">
               {images &&
                 Array.from(images).map((image, index) => (
-                  <img
+                  <div
                     key={index}
-                    src={URL.createObjectURL(image)}
-                    alt={`Image ${index + 1}`}
-                  />
+                    className={`image-container ${
+                      index === 0 ? "main-image" : ""
+                    }`}
+                  >
+                    {/* {index === 0 && (
+                      <p className="main-image-label">Main image</p>
+                    )} */}
+                    <img
+                      draggable={true}
+                      onDragStart={(e) => dragStartHandler(e, image, index)}
+                      // onDragLeave={(e)=> dragEndHandler(e)}
+                      // onDragEnd={  (e)=>dragEndHandler(e)}
+                      onDragOver={(e) => dragOverHandler(e)}
+                      onDrop={(e) => dropHandler(e, image, index)}
+                      key={index}
+                      src={URL.createObjectURL(image)}
+                      alt={`Image ${index + 1}`}
+                    />
+                  </div>
                 ))}
             </div>
           </div>
-          <div className="preview-btn">
-            <div className="postformzero-btn-back " onClick={() => setStep(3)}>
-              Вернуться назад...
+            <div className="preview-btn">
+              <div
+                className="postformzero-btn-back "
+                onClick={() => setStep(3)}
+              >
+                Вернуться назад...
+              </div>
+              <button onClick={handleSubmit}>Опубликовать</button>
             </div>
-            <button onClick={handleSubmit}>Опубликовать</button>
-          </div>
         </div>
       )}
     </>

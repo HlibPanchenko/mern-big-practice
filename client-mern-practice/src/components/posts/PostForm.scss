@@ -38,7 +38,8 @@
 .image-preview {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 10px;
+  // margin-top: 10px;
+  padding: 0px 15px 0px 15px;
 }
 
 .image-preview img {
@@ -65,15 +66,23 @@
     align-items: center;
     &[data-type="title"] {
       justify-content: center;
+      gap: 50px;
     }
 
     &[data-type="description"] {
-      justify-content: space-around;
+      // justify-content: space-around;
+      gap: 50px;
+
+      flex: 1;
     }
   }
 
   &-title {
     text-align: center;
+    @media (max-width: 768px) {
+      font-size: 20px;
+    
+      }
   }
 
   &-input {
@@ -83,7 +92,7 @@
     // height: 70%;
     width: 100%;
     &[data-input="description"] {
-      height: 45%;
+      height: 65%;
 
       // border: 1px solid red;
     }
@@ -92,7 +101,7 @@
       width: 100%;
       // height: 100%;
       // height: 20%;
-      height: 40px;
+      height: 45px;
       border: none;
       border-bottom: 1px solid #ccc;
       // padding: 8px;
@@ -102,7 +111,7 @@
 
     textarea {
       width: 100%;
-      height: 45%;
+      height: 100%;
       border: none;
       border-bottom: 1px solid #ccc;
       font-size: 16px;
@@ -168,26 +177,68 @@
   height: 100%;
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
+  display: flex;
+  flex-direction: column;
+  // gap: 10px;
+  // justify-content: flex-start;
   &-title {
     margin: 0px 0px 0px 0px;
+    @media (max-width: 402px) {
+     font-size: 16px;
+    }
   }
 
   &-article {
+    flex: 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 15px;
   }
 
   &-posttitle {
+    // margin-top: 0;
+    // margin-bottom: 0;
+    @media (max-width: 402px) {
+      font-size: 15px;
+     }
   }
 
   &-description {
+    margin-top: 0;
+    margin-bottom: 10px;
+    flex: 1 auto;
+  overflow-y: auto;
+    text-align: justify
   }
 
   &-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     img {
-      width: 100px;
-      height: 100px;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       margin-right: 10px;
       margin-bottom: 10px;
+      cursor: grab;
+    }
+    .image-container {
+      border: 2px solid #ccc;
+      width: 150px;
+      height: 150px;
+      // padding: 5px;
+    }
+
+    .main-image {
+      border-color: red;
+    }
+    
+    .main-image-label {
+      text-align: center;
+      margin: 5px 0;
+      color: red;
     }
   }
 
@@ -215,6 +266,9 @@
   transition: all 0.2s 0s;
   border-radius: 5px;
   font-size: 25px;
+  overflow-y: auto;
+
+  
   &:hover {
     border: 2px solid #007bff;
   }

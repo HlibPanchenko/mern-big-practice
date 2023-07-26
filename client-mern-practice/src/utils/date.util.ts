@@ -10,6 +10,8 @@ export const formatDate = (dateString: string): string => {
   const daysDiff = Math.floor(hoursDiff / 24);
   const weeksDiff = Math.floor(daysDiff / 7);
 
+
+
   // Format date as "dd.mm.yyyy" if it's older than a week
   if (weeksDiff >= 1) {
     const day = date.getDate().toString().padStart(2, "0");
