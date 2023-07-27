@@ -1,0 +1,98 @@
+.eachpost-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex: 1 auto;
+  flex-direction: column;
+  gap: 20px;
+//   border: 1px solid #000;
+}
+
+.eachpost {
+	margin: 40px 0px 40px 0px;
+	padding: 20px 20px 20px 20px;
+
+}
+
+.eachpost-content {
+	// padding: 20px 20px 20px 20px;
+
+}
+
+.eachpost-imgblock {
+}
+
+.eachpost-imgblock img {
+}
+
+.eachpost-title {
+//   padding: 0px 20px 0px 20px;
+
+}
+
+.eachpost-description {
+  padding: 20px 0px 20px 0px;
+  text-align: justify;
+}
+
+.eachpost-comments {
+}
+
+.commentblock-title {
+  height: 50px;
+  background-color: rgb(242, 242, 242);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  border-bottom: 1px solid rgb(195, 194, 194);
+}
+
+.commentblock-commentlist {
+	padding: 20px 0px 0px 0px;
+
+  display: flex;
+  flex-direction: column;
+//   gap: 10px;
+}
+
+.commentblock-card {
+  height: 80px;
+  border-bottom: 1px solid rgb(195, 194, 194);
+}
+
+.createcomment {
+	// Стили для контейнера комментария
+	height: 90px;
+	&-container {
+	  display: flex;
+	  align-items: center;
+	//   justify-content: space-between;
+	border: 1px solid #000;
+	// gap: 20px;
+	padding: 10px 20px;
+	height: 100%;
+	}
+ 
+	// Стили для автора комментария
+	&-author {
+	//   margin-right: 10px;
+	}
+ 
+	// Стили для поля ввода комментария
+	&-input {
+	  flex: 1;
+	  padding: 0px 10px 0px 30px;
+ 
+	  input {
+		 width: 100%;
+		 padding: 5px;
+		//  border: 1px solid #ccc;
+		//  border-radius: 5px;
+		 outline: none;
+		 border: none;
+		 border-bottom: 1px solid #000;
+	  }
+	}
+ }

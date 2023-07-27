@@ -1,0 +1,25 @@
+.commentpost {
+	// Стили для контейнера комментария
+	height: 90px;
+	&-container {
+	  display: flex;
+	  align-items: center;
+	//   justify-content: space-between;
+	border: 1px solid #000;
+	// gap: 20px;
+	padding: 10px 20px;
+	height: 100%;
+	}
+ 
+	// Стили для автора комментария
+	&-author {
+	//   margin-right: 10px;
+	}
+ 
+	// Стили для поля ввода комментария
+	&-text {
+	  flex: 1;
+	  padding: 0px 10px 0px 30px;
+	}
+ }
+ 
