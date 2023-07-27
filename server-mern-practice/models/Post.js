@@ -14,7 +14,7 @@ const postSchema = new mongoose.Schema(
     // likes: { type: Number, default: 0 },
     views: { type: Number, default: 0 },
     date: { type: Date, default: Date.now },
-    comments: [{ type: String }],
+    comments:  [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
   },
   { timestamps: true } // Добавляем поля createdAt и updatedAt
 );

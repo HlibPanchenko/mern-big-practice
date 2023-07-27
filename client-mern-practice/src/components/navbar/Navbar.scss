@@ -21,8 +21,7 @@
     align-items: center;
     @media (max-width: 768px) {
       flex-direction: column;
-    gap: 10px;
-
+      gap: 10px;
     }
   }
 
@@ -54,12 +53,11 @@
       gap: 10px;
       position: relative;
 
-
       &-name {
         color: #333;
-      font-size: 1.2rem;
-      text-decoration: none;
-      cursor: pointer;
+        font-size: 1.2rem;
+        text-decoration: none;
+        cursor: pointer;
       }
     }
 
@@ -119,8 +117,6 @@
   }
 }
 
-
-
 // модальное окно "профиль - настройки"
 .profile-modal {
   position: absolute;
@@ -142,16 +138,14 @@
   &__open {
     display: block;
   }
-  &-settings{
-
+  &-settings {
     display: flex;
     width: 100%;
     justify-content: space-between;
     cursor: pointer;
     margin-bottom: 5px;
 
-    &-image{
-
+    &-image {
       img {
         width: 20px;
         height: 20px;
@@ -159,24 +153,26 @@
     }
 
     &-text {
-
+      p {
+        color: inherit;
+        text-transform: uppercase;
+        font-size: 18px;
+        
+      }
     }
   }
 
-  &-myprofile{
+  &-myprofile {
     display: flex;
     width: 100%;
     justify-content: space-between;
     // justify-content: space-around;
     cursor: pointer;
 
-
-  &-image{
-
+    &-image {
       img {
         width: 20px;
         height: 20px;
-        
       }
     }
   }

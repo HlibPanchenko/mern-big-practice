@@ -23,13 +23,23 @@ export interface Author {
   likedposts: string[];
 }
 
+export interface IComment {
+  _id: string;
+  author: Author;
+  post: string;
+  text: string;
+  date: string;
+  subComments: string[];
+}
+
 interface Post {
   _id: string;
   description: string;
   images: string[];
   title: string;
   views: number;
-  comments: string[]; // Assuming each comment is a string for simplicity
+  comments: IComment[];
+  // comments: string[]; // Assuming each comment is a string for simplicity
   author: Author;
   createdAt: string;
   // likes: number;

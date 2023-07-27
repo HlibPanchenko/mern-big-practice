@@ -4,6 +4,7 @@ import config from "config";
 import fs from "fs";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
+import Comment from "../models/Comment.js";
 // import { Response } from "express";
 
 export const createPost = async (req, res) => {
@@ -182,7 +183,12 @@ export const getonepost = async (req, res) => {
       postId,
       { $inc: { views: 1 } }, // $inc - оператор для увеличения значения на заданное число (в данном случае +1)
       { new: true } // Опция new: true возвращает обновленный пост после обновления
-    ).populate("author");
+    ).populate("author").populate({
+      path: "comments",
+      populate: { path: "author" },
+    });
+
+    // .populate("author");
 
     if (!post) {
       return res.status(404).json({ error: "Post not found." });
@@ -225,7 +231,7 @@ export const likepost = async (req, res) => {
   const userId = req.userId;
 
   try {
-    const post = await Post.findById(postId).populate("author");;
+    const post = await Post.findById(postId).populate("author");
 
     if (!post) {
       return res.status(404).json({ error: "Пост не найден." });
@@ -275,27 +281,43 @@ export const likepost = async (req, res) => {
   }
 };
 
-// export const viewPost = async (req, res) => {
-//   const postId = req.params.id;
+export const commentpost = async (req, res) => {
+  const postId = req.params.id;
+  const userId = req.userId;
+  const { text } = req.body;
 
-//   try {
-//     const post = await Post.findById(postId);
+  try {
+    const post = await Post.findById(postId);
+    const user = await User.findById(userId);
 
-//     if (!post) {
-//       return res.status(404).json({ error: "Пост не найден." });
-//     }
+    if (!post) {
+      return res.status(404).json({ error: "Пост не найден." });
+    }
 
-//     // Increase the post views count by 1
-//     post.views += 1;
+    // create comment model
+    const comment = new Comment({ author: user, post: post, text });
+    // сохраним comment в БД
+    await comment.save();
 
-//     // Save the updated post
-//     await post.save();
+    // Add the full comment object to the post's comments array
+    post.comments.push(comment);
 
-//     return res.json({
-//       message: "Пост успешно просмотрен.",
-//       post: post,
-//     });
-//   } catch (err) {
-//     return res.status(500).json({ error: "Не удалось обновить просмотры поста." });
-//   }
-// };
+    // Save the updated post
+    await post.save();
+
+    // Populate the comments array with the full comment objects and associated user information
+    const populatedPost = await Post.findById(postId).populate("author").populate({
+      path: "comments",
+      populate: { path: "author" },
+    });
+
+    return res.json({
+      message: "Комментарий успешно создан.",
+      post: populatedPost,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ error: "Не удалось обновить просмотры поста." });
+  }
+};

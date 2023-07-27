@@ -111,7 +111,7 @@ const Navbar: React.FC = () => {
                           <img src="\images\user (1).png" alt="user-photo" />
                         </div>
                         <div className="profile-modal-settings-text">
-                          settings
+                        <p>Settings</p>
                         </div>
                       </div>
                     </Link>
@@ -123,7 +123,7 @@ const Navbar: React.FC = () => {
                             alt="user-photo"
                           />
                         </div>
-                        my profile
+                         <p>my profile</p>
                       </div>
                     </Link>
                   </div>

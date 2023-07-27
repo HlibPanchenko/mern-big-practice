@@ -23,6 +23,14 @@ import MyComment from "../components/Comment";
 //   createdAt: Date;
 //   updatedAt: Date;
 // }
+export interface IComment {
+  _id: string;
+  author: Author;
+  post: string;
+  text: string;
+  date: string;
+  subComments: string[];
+}
 
 interface PostData {
   _id: string;
@@ -30,20 +38,20 @@ interface PostData {
   description: string;
   images: string[];
   views: number;
-  comments: any[]; // You can provide a more specific type for comments if needed
+  comments: IComment[];
   author: Author;
   createdAt: string;
   // likes: number
   likes: string[];
 }
 const EachPost: React.FC = () => {
-  // const [postInfo, setPostInfo] = React.useState({})
   const [postInfo, setPostInfo] = React.useState<PostData | null>(null);
+  const [comment, setComment] = React.useState(""); // controlled input
+  const isCommentEmpty = comment.trim() === "";
   const token = localStorage.getItem("token");
   const { postId } = useParams();
   // const user = useSelector((state) => state.auth.user);
   const user = useAppSelector((state) => state.auth.user);
-  console.log(postId);
 
   // у нас есть id поста, надо делать запрос на получения этого одного поста
   // так же изменить модель поста чтобы в нем был полность объект юзер, а не только его id
@@ -77,6 +85,32 @@ const EachPost: React.FC = () => {
     return <div>Loading...</div>;
   }
 
+  async function handleAddComment() {
+    try {
+      const response = await axios.post(
+        `http://localhost:4444/post/comment/${postId}`,
+        { text: comment },
+        {
+          headers: {
+            // "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data.post);
+      setComment('');
+
+      // const { post: updatedPost } = response.data;
+      // setLikes(updatedPost.likes.lengt);
+      // setIsLikedByUser(isLiked);
+      setPostInfo(response.data.post);
+      // dispatch(updateUser(response.data.user));
+    } catch (error) {
+      console.log("ошибка создания комментария", error);
+      // navigate("/");
+    }
+  }
+
   const getFileNameFromPath = (filePath: string): string => {
     const parts = filePath.split("\\"); // Split by backslash to handle Windows file paths
     return parts[parts.length - 1];
@@ -88,6 +122,15 @@ const EachPost: React.FC = () => {
 
     return `${API_URL}/${folder}/${fileName}`;
   };
+
+  const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setComment(event.target.value);
+  };
+
+  const currentUserAvatar = user?.avatar
+    ? `${API_URL + user?._id + "/" + user.avatar}`
+    : "/images/user.png";
+
   return (
     <div className="eachpost-container ">
       <div className="eachpost">
@@ -111,28 +154,35 @@ const EachPost: React.FC = () => {
             <div className="createcomment">
               <div className="createcomment-container">
                 <div className="createcomment-author">
-                  <img
-                    src="/images/user.png"
-                    width="40px"
-                    height="40px"
-                    alt=""
-                  />
+                  <div className="createcomment-authorImg">
+                    <img
+                      src={currentUserAvatar}
+                      // src="/images/user.png"
+
+                      alt=""
+                    />
+                  </div>
                 </div>
                 <div className="createcomment-input">
-                  <input placeholder="Add a comment" type="text" />
+                  <input
+                    placeholder="Add a comment"
+                    type="text"
+                    value={comment}
+                    onChange={handleCommentChange}
+                  />
                 </div>
+                <button
+                  onClick={handleAddComment}
+                  disabled={isCommentEmpty} // Disable the button when the comment is empty
+                >
+                  Add
+                </button>
               </div>
             </div>
-            <MyComment/>
-
-            <div className="commentblock-card">Комментарий 1</div>
-            <div className="commentblock-card">Комментарий 2</div>
-            <div className="commentblock-card">Комментарий 3</div>
-            <div className="commentblock-card">Комментарий 4</div>
-            <div className="commentblock-card">Комментарий 5</div>
-            <div className="commentblock-card">Комментарий 6</div>
-            <div className="commentblock-card">Комментарий 7</div>
-            <div className="commentblock-card">Комментарий 8</div>
+            {postInfo.comments.map((comment) => (
+              <MyComment key={comment._id} comment={comment} />
+            ))}
+            {/* {postInfo.comments.map((comment) => <MyComment key={comment._id} comment={comment.text} />)} */}
           </div>
         </div>
       </div>

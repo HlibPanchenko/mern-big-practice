@@ -22,4 +22,6 @@ postRouter.get("/getonepost/:id", checkAuth, PostController.getonepost);
 postRouter.get("/getallposts", checkAuth, PostController.getallposts);
 postRouter.post("/likepost/:id", checkAuth, PostController.likepost);
 
+postRouter.post("/comment/:id", checkAuth, PostController.commentpost);
+
 export { postRouter };
