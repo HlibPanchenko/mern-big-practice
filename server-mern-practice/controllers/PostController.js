@@ -5,6 +5,7 @@ import fs from "fs";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import Comment from "../models/Comment.js";
+import SubComment from "../models/SubComment.js";
 // import { Response } from "express";
 
 export const createPost = async (req, res) => {
@@ -183,12 +184,23 @@ export const getonepost = async (req, res) => {
       postId,
       { $inc: { views: 1 } }, // $inc - оператор для увеличения значения на заданное число (в данном случае +1)
       { new: true } // Опция new: true возвращает обновленный пост после обновления
-    ).populate("author").populate({
-      path: "comments",
-      populate: { path: "author" },
-    });
-
-    // .populate("author");
+    )
+      .populate({
+        path: "author",
+      })
+      .populate({
+        path: "comments",
+        populate: [
+          { path: "author" },
+          {
+            path: "subComments",
+            populate: [
+              { path: "author" },
+              { path: "repliedOnComment", populate: { path: "author" } },
+            ],
+          },
+        ],
+      });
 
     if (!post) {
       return res.status(404).json({ error: "Post not found." });
@@ -306,10 +318,12 @@ export const commentpost = async (req, res) => {
     await post.save();
 
     // Populate the comments array with the full comment objects and associated user information
-    const populatedPost = await Post.findById(postId).populate("author").populate({
-      path: "comments",
-      populate: { path: "author" },
-    });
+    const populatedPost = await Post.findById(postId)
+      .populate("author")
+      .populate({
+        path: "comments",
+        populate: { path: "author" },
+      });
 
     return res.json({
       message: "Комментарий успешно создан.",
@@ -319,5 +333,58 @@ export const commentpost = async (req, res) => {
     return res
       .status(500)
       .json({ error: "Не удалось обновить просмотры поста." });
+  }
+};
+
+export const subcommentpost = async (req, res) => {
+  // const postId = req.params.id;
+  const commentId = req.params.id;
+  const userId = req.userId;
+  const { text } = req.body;
+
+  try {
+    const comment = await Comment.findById(commentId);
+    const post = await Post.findById(comment.post);
+    const user = await User.findById(userId);
+
+    if (!comment) {
+      return res.status(404).json({ error: "Комментарий не найден." });
+    }
+    if (!post) {
+      return res.status(404).json({ error: "post не найден." });
+    }
+    if (!user) {
+      return res.status(404).json({ error: "user не найден." });
+    }
+
+    const subcomment = new SubComment({
+      author: user,
+      repliedOnComment: comment,
+      text,
+    });
+    await subcomment.save();
+
+    comment.subComments.push(subcomment);
+
+    await comment.save();
+
+    const populatedComment = await Comment.findById(commentId)
+      .populate("author")
+      .populate("subComments")
+      .populate({
+        path: "subComments",
+        populate: { path: "author" },
+      });
+
+    // .populate("subComments")
+
+    return res.json({
+      message: "Ответ на комментарий успешно создан.",
+      comment: populatedComment,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ error: "Не удалось создать ответ на комментарий" });
   }
 };

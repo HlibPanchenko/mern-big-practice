@@ -1,15 +1,17 @@
 .commentpost {
   // Стили для контейнера комментария
-  height: 110px;
+  // height: 110px;
   &-container {
     display: flex;
-   //  align-items: center;
+    //  align-items: center;
     //   justify-content: space-between;
     // border: 1px solid #000;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     gap: 20px;
     padding: 10px 20px;
-    height: 100%;
+    // height: 100%;
+    height: 110px;
+
     &:hover {
       transform: translateY(-4px);
     }
@@ -22,8 +24,8 @@
     height: 40px;
     border-radius: 50%;
     overflow: hidden;
-	 display: flex;
-	 align-self: center;
+    display: flex;
+    align-self: center;
     img {
       width: 100%;
       height: 100%;
@@ -48,19 +50,214 @@
       color: rgb(18, 117, 215);
       font-weight: 600;
       cursor: pointer;
-		text-decoration: dashed;
-
+      text-decoration: dashed;
     }
   }
-&-text {
-	white-space: normal;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	display: -webkit-box;
-	-webkit-line-clamp: 1;
-	-webkit-box-orient: vertical;
-}
+  &-text {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
   &-date {
-	color: rgb(106, 185, 21);
+    color: rgb(106, 185, 21);
+  }
+
+  &-subcomment {
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    gap: 20px;
+    padding: 10px 20px;
+    // height: 100%;
+    min-height: 110px;
+    margin-left: 20px;
+    display: none;
+
+    &_open {
+      display: block;
+    }
+  }
+}
+
+.subcomment {
+  &-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    //   justify-content: space-between;
+    // border: 1px solid #000;
+    // box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    gap: 20px;
+    padding: 10px 20px;
+    height: 100%;
+  }
+
+  &-create {
+    width: 100%;
+    display: flex;
+  }
+
+  &-author {
+  }
+
+  &-authorImg {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &-input {
+    flex: 1;
+    padding: 0px 10px 0px 30px;
+    input {
+      width: 100%;
+      padding: 5px;
+      //  border: 1px solid #ccc;
+      //  border-radius: 5px;
+      outline: none;
+      border: none;
+      border-bottom: 1px solid #000;
+    }
+  }
+
+  &-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &-title {
+    // border-bottom: 1px solid #000;
+    // color: red;
+  }
+
+  &-card {
+  }
+
+  &-btn {
+    width: 15%;
+    background-color: #2ea44f;
+    border: 1px solid rgba(27, 31, 35, 0.15);
+    border-radius: 6px;
+    box-shadow: rgba(27, 31, 35, 0.1) 0 1px 0;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial,
+      sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    padding: 6px 16px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &:focus:not(:focus-visible):not(.focus-visible) {
+      box-shadow: none;
+      outline: none;
+    }
+
+    &:hover {
+      background-color: #2c974b;
+    }
+
+    &:focus {
+      box-shadow: rgba(46, 164, 79, 0.4) 0 0 0 3px;
+      outline: none;
+    }
+
+    &:disabled {
+      background-color: #dadada;
+      border-color: rgba(27, 31, 35, 0.1);
+      color: rgba(255, 255, 255, 0.8);
+      cursor: default;
+    }
+    &:active {
+      background-color: #298e46;
+      box-shadow: rgba(20, 70, 32, 0.2) 0 1px 0 inset;
+    }
+  }
+}
+
+.cardSubComment {
+  &-container {
+    display: flex;
+    //  align-items: center;
+    //   justify-content: space-between;
+    // border: 1px solid #000;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    gap: 20px;
+    padding: 10px 20px;
+    // height: 100%;
+    height: 110px;
+
+    &:hover {
+      transform: translateY(-4px);
+    }
+  }
+
+  // Стили для автора комментария
+  &-image {
+    //   margin-right: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-self: center;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    &-top {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+    &-bottom {
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: dashed;
+      span {
+        color: rgb(18, 117, 215);
+      }
+    }
+  }
+  &-text {
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
+  &-date {
+    color: rgb(106, 185, 21);
   }
 }

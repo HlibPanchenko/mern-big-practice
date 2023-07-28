@@ -23,13 +23,22 @@ import MyComment from "../components/Comment";
 //   createdAt: Date;
 //   updatedAt: Date;
 // }
+
+export interface ISubComment {
+  _id: string;
+  author: Author;
+  repliedOnComment: IComment;
+  text: string;
+  date: string;
+}
+
 export interface IComment {
   _id: string;
   author: Author;
   post: string;
   text: string;
   date: string;
-  subComments: string[];
+  subComments: ISubComment[];
 }
 
 interface PostData {
@@ -44,7 +53,7 @@ interface PostData {
   // likes: number
   likes: string[];
 }
-const EachPost: React.FC = () => {
+const EachPost: React.FC = (subComment) => {
   const [postInfo, setPostInfo] = React.useState<PostData | null>(null);
   const [comment, setComment] = React.useState(""); // controlled input
   const isCommentEmpty = comment.trim() === "";
@@ -56,6 +65,9 @@ const EachPost: React.FC = () => {
   // у нас есть id поста, надо делать запрос на получения этого одного поста
   // так же изменить модель поста чтобы в нем был полность объект юзер, а не только его id
   // в этом компоненте добавить возможность оставлять комментарии и лайки
+
+  console.log('eachpost перерисовался');
+  
 
   React.useEffect(() => {
     async function getOnePost() {
@@ -98,7 +110,7 @@ const EachPost: React.FC = () => {
         }
       );
       console.log(response.data.post);
-      setComment('');
+      setComment("");
 
       // const { post: updatedPost } = response.data;
       // setLikes(updatedPost.likes.lengt);
@@ -158,7 +170,6 @@ const EachPost: React.FC = () => {
                     <img
                       src={currentUserAvatar}
                       // src="/images/user.png"
-
                       alt=""
                     />
                   </div>
