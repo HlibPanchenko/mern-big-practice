@@ -1,6 +1,6 @@
 import React from "react";
 import "./Comment.scss";
-import { ISubComment } from "../page/eachPost";
+import { ISubComment } from "../page/Collection";
 import { API_URL } from "../config.js";
 import { formatDate } from "../utils/date.util";
 
@@ -11,6 +11,7 @@ interface PostSubComment {
 const SubComment: React.FC<PostSubComment>= (sub) => {
   const { author, repliedOnComment, text, date } = sub.sub
   // console.log(sub);  
+console.log(author);
 
   const avatar = author.avatar
     ? `${API_URL + author._id + "/" + author.avatar}`

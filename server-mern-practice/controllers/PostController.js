@@ -224,13 +224,14 @@ export const getallposts = async (req, res) => {
       .skip((page - 1) * 5)
       .limit(5)
       .populate("author");
+      // может надо будет дополнительно populate как в постах ниже
 
     // Get the total count of all posts (чтобы посчитать сколько надо станиц пагинации)
     const totalPostsCount = await Post.countDocuments();
 
     return res.json({
-      message: "Posts successfully found.",
-      posts: posts, // Return the found posts in the response
+      // message: "Posts successfully found.",
+      posts, // Return the found posts in the response
       quantity: totalPostsCount,
     });
   } catch (err) {
@@ -319,10 +320,26 @@ export const commentpost = async (req, res) => {
 
     // Populate the comments array with the full comment objects and associated user information
     const populatedPost = await Post.findById(postId)
-      .populate("author")
+      // .populate("author")
+      // .populate({
+      //   path: "comments",
+      //   populate: { path: "author" },
+      // });
+      .populate({
+        path: "author",
+      })
       .populate({
         path: "comments",
-        populate: { path: "author" },
+        populate: [
+          { path: "author" },
+          {
+            path: "subComments",
+            populate: [
+              { path: "author" },
+              { path: "repliedOnComment", populate: { path: "author" } },
+            ],
+          },
+        ],
       });
 
     return res.json({

@@ -9,51 +9,10 @@ import { Carousel } from "react-responsive-carousel";
 import { API_URL } from "../config";
 import { Author } from "../components/posts/PostCard";
 import MyComment from "../components/Comment";
+import { PostData } from "./Collection";
 
-// interface PostData {
-//   _id: string;
-//   author: string;
-//   title: string;
-//   description: string;
-//   images: string[];
-//   likes: number;
-//   views: number;
-//   comments: string[];
-//   date: Date;
-//   createdAt: Date;
-//   updatedAt: Date;
-// }
 
-export interface ISubComment {
-  _id: string;
-  author: Author;
-  repliedOnComment: IComment;
-  text: string;
-  date: string;
-}
-
-export interface IComment {
-  _id: string;
-  author: Author;
-  post: string;
-  text: string;
-  date: string;
-  subComments: ISubComment[];
-}
-
-interface PostData {
-  _id: string;
-  title: string;
-  description: string;
-  images: string[];
-  views: number;
-  comments: IComment[];
-  author: Author;
-  createdAt: string;
-  // likes: number
-  likes: string[];
-}
-const EachPost: React.FC = (subComment) => {
+const EachPost: React.FC = () => {
   const [postInfo, setPostInfo] = React.useState<PostData | null>(null);
   const [comment, setComment] = React.useState(""); // controlled input
   const isCommentEmpty = comment.trim() === "";

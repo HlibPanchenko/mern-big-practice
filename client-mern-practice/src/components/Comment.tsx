@@ -1,6 +1,6 @@
 import React from "react";
 import "./Comment.scss";
-import { IComment } from "../page/eachPost";
+import { IComment } from "../page/Collection";
 import { API_URL } from "../config.js";
 import { formatDate } from "../../src/utils/date.util";
 import SubComment from "./SubComment";

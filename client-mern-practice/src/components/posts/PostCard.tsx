@@ -23,36 +23,38 @@ export interface Author {
   likedposts: string[];
 }
 
+export interface ISubComment {
+  _id: string;
+  author: Author;
+  repliedOnComment: IComment;
+  text: string;
+  date: string;
+}
+
 export interface IComment {
   _id: string;
   author: Author;
   post: string;
   text: string;
   date: string;
-  subComments: string[];
+  subComments: ISubComment[];
 }
 
-interface Post {
+interface PostData {
   _id: string;
+  title: string;
   description: string;
   images: string[];
-  title: string;
   views: number;
   comments: IComment[];
-  // comments: string[]; // Assuming each comment is a string for simplicity
   author: Author;
   createdAt: string;
-  // likes: number;
+  // likes: number
   likes: string[];
 }
 
-// interface IQuantityOfUsers {
-//   quantity: "one" | "all";
-// }
-
 interface PostCardProps {
-  post: Post;
-  // quantityUser: IQuantityOfUsers
+  post: PostData;
   quantity: "one" | "all";
 }
 
