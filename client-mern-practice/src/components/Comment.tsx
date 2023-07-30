@@ -1,25 +1,27 @@
 import React from "react";
 import "./Comment.scss";
-import { IComment } from "../page/Collection";
+import { IComment, PostData } from "../page/Collection";
 import { API_URL } from "../config.js";
 import { formatDate } from "../../src/utils/date.util";
 import SubComment from "./SubComment";
 import axios from "axios";
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 interface PostComment {
   comment: IComment;
+  updateEachPost: (post: PostData | null) => void;
 }
 
-const MyComment: React.FC<PostComment> = (comment) => {
-  // console.log(comment);
-
+const MyComment: React.FC<PostComment> = ({ comment, updateEachPost }) => {
   const [isSubOpen, setIsSubOpen] = React.useState(false);
   const [subText, setSubText] = React.useState("");
-  const { author, text, date, _id, subComments } = comment.comment;
+  const { author, text, date, _id, subComments } = comment;
   const token = localStorage.getItem("token");
   const isCommentEmpty = subText.trim() === "";
   const user = useAppSelector((state) => state.auth.user);
+ 
+  console.log('comment перерисовался');
+
 
   const avatar = author.avatar
     ? `${API_URL + author._id + "/" + author.avatar}`
@@ -49,20 +51,15 @@ const MyComment: React.FC<PostComment> = (comment) => {
           },
         }
       );
-      // console.log(response.data);
-      setSubText("");
 
-      // const { post: updatedPost } = response.data;
-      // setLikes(updatedPost.likes.lengt);
-      // setIsLikedByUser(isLiked);
-      // setPostInfo(response.data.post);
-      // dispatch(updateUser(response.data.user));
+      // записываем в состояние родителя - eachpost, чтобы он перерисовался и отправил запрос на сервер на получение обновленного поста
+      updateEachPost(response.data.populatedPost)
+      setSubText("");
     } catch (error) {
       console.log("ошибка создания подкомментария", error);
       // navigate("/");
     }
   }
-
 
   const currentUserAvatar = user?.avatar
     ? `${API_URL + user?._id + "/" + user.avatar}`

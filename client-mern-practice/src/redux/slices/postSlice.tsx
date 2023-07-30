@@ -1,11 +1,17 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios, { AxiosResponse } from "axios";
-import { PostData } from "../../page/Collection";
+import { PostData, IComment } from "../../page/Collection";
 
 interface PostState {
   // isAuth: boolean;
   post: PostData[];
+  quantity: number;
 }
+// Добавить в PostState quantity?????
+//  builder.addCase(fetchGetPosts.fulfilled, (state, action) => {
+// state.quantity = action.payload.quantity;
+//   state.post = action.payload.posts;
+// });
 
 type FetchPostsArgs = {
   currentPage: string;
@@ -43,6 +49,7 @@ export const fetchGetPosts = createAsyncThunk(
 
 const initialState: PostState = {
   // isAuth: false,
+  quantity: 0,
   post: [],
 };
 
@@ -52,39 +59,21 @@ const postSlice = createSlice({
   reducers: {
     // // в PayloadAction передаем тип для нашего action.payload.
     // // у нас в action.payload попадает объект { email, password }
-    // registerAction(state, action: PayloadAction<PostData>) {
-    //   // console.log(action);
-    //   // state.isAuth = true;
+    // updateComment(state, action: PayloadAction<PostData[]>) {
     //   state.post = action.payload;
-    // },
-    // loginAction(state, action: PayloadAction<PostData>) {
-    //   // state.isAuth = true;
-    //   state.post = action.payload;
-    // },
-    // setUser(state, action: PayloadAction<PostData>) {
-    //   // state.isAuth = true;
-    //   state.post = action.payload;
-    // },
-    // updateUser(state, action: PayloadAction<PostData>) {
-    //   // state.isAuth = true;
-    //   state.post = action.payload;
-    // },
-    // logoutSlice(state) {
-    //   // state.isAuth = false;
-    //   state.post = null;
     // },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchGetPosts.pending, (state) => {
-      // state.isAuth = false;
+      state.quantity = 0;
       state.post = [];
     });
     builder.addCase(fetchGetPosts.fulfilled, (state, action) => {
-      // state.isAuth = true;
+      state.quantity = action.payload.quantity;
       state.post = action.payload.posts;
     });
     builder.addCase(fetchGetPosts.rejected, (state) => {
-      // state.isAuth = false;
+      state.quantity = 0;
       state.post = [];
     });
   },
@@ -103,6 +92,5 @@ const postSlice = createSlice({
   // },
 });
 
-// export const { registerAction, loginAction, logoutSlice, setUser, updateUser } =
-//   authSlice.actions;
+// export const { updateComment } = postSlice.actions;
 export default postSlice.reducer;

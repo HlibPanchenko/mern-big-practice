@@ -56,6 +56,7 @@ interface PostData {
 interface PostCardProps {
   post: PostData;
   quantity: "one" | "all";
+  
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {

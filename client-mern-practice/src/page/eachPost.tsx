@@ -11,22 +11,20 @@ import { Author } from "../components/posts/PostCard";
 import MyComment from "../components/Comment";
 import { PostData } from "./Collection";
 
-
 const EachPost: React.FC = () => {
   const [postInfo, setPostInfo] = React.useState<PostData | null>(null);
   const [comment, setComment] = React.useState(""); // controlled input
   const isCommentEmpty = comment.trim() === "";
   const token = localStorage.getItem("token");
   const { postId } = useParams();
-  // const user = useSelector((state) => state.auth.user);
   const user = useAppSelector((state) => state.auth.user);
 
-  // у нас есть id поста, надо делать запрос на получения этого одного поста
-  // так же изменить модель поста чтобы в нем был полность объект юзер, а не только его id
-  // в этом компоненте добавить возможность оставлять комментарии и лайки
+   console.log("eachpost перерисовался");
 
-  console.log('eachpost перерисовался');
-  
+   // Чтобы когда добавляем ответ на комментарий, перерисовывался eachpost и отправлял запрос на получение обновленного комментария
+  const updateEachPost = (post:PostData | null) => {
+    setPostInfo(post)
+  }
 
   React.useEffect(() => {
     async function getOnePost() {
@@ -129,7 +127,7 @@ const EachPost: React.FC = () => {
                     <img
                       src={currentUserAvatar}
                       // src="/images/user.png"
-                      alt=""
+                      alt="user photo"
                     />
                   </div>
                 </div>
@@ -150,7 +148,11 @@ const EachPost: React.FC = () => {
               </div>
             </div>
             {postInfo.comments.map((comment) => (
-              <MyComment key={comment._id} comment={comment} />
+              <MyComment
+                key={comment._id}
+                comment={comment}
+                updateEachPost={updateEachPost}
+              />
             ))}
             {/* {postInfo.comments.map((comment) => <MyComment key={comment._id} comment={comment.text} />)} */}
           </div>

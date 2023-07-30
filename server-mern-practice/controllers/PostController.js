@@ -223,9 +223,24 @@ export const getallposts = async (req, res) => {
     const posts = await Post.find()
       .skip((page - 1) * 5)
       .limit(5)
-      .populate("author");
+      // .populate("author");
       // может надо будет дополнительно populate как в постах ниже
-
+      .populate({
+        path: "author",
+      })
+      .populate({
+        path: "comments",
+        populate: [
+          { path: "author" },
+          {
+            path: "subComments",
+            populate: [
+              { path: "author" },
+              { path: "repliedOnComment", populate: { path: "author" } },
+            ],
+          },
+        ],
+      });
     // Get the total count of all posts (чтобы посчитать сколько надо станиц пагинации)
     const totalPostsCount = await Post.countDocuments();
 
@@ -393,11 +408,29 @@ export const subcommentpost = async (req, res) => {
         populate: { path: "author" },
       });
 
-    // .populate("subComments")
+      const populatedPost = await Post.findById(comment.post)
+      .populate({
+        path: "author",
+      })
+      .populate({
+        path: "comments",
+        populate: [
+          { path: "author" },
+          {
+            path: "subComments",
+            populate: [
+              { path: "author" },
+              { path: "repliedOnComment", populate: { path: "author" } },
+            ],
+          },
+        ],
+      });
+
 
     return res.json({
       message: "Ответ на комментарий успешно создан.",
       comment: populatedComment,
+      populatedPost
     });
   } catch (err) {
     return res

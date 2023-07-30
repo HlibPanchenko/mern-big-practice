@@ -39,11 +39,8 @@ export interface PostData {
 
 const Collection: React.FC = () => {
   const [page, setPage] = React.useState(1);
-  const [quantityOfPages, setQuantityOfPages] = React.useState(1);
   const [postsAll, setpostsAll] = useState<PostData[]>([]);
   const token = localStorage.getItem("token");
-  // const user = useSelector((state) => state.auth.user);
-  // const user = useAppSelector((state) => state.auth.user);
   const dispatch = useAppDispatch();
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -53,10 +50,11 @@ const Collection: React.FC = () => {
 
   const currentPage = useAppSelector((state) => state.postFilter.currentPage);
   const posts = useAppSelector((state) => state.postSlice.post);
+  const quantityOfPosts = useAppSelector((state) => state.postSlice.quantity);
   console.log(posts);
 
-  // const quantityOfPages = Math.ceil(postsAll.length / 5);
-  console.log(currentPage);
+  const quantityOfPages = Math.ceil(quantityOfPosts / 5);
+  console.log('collection перерисовался');
 
   useEffect(() => {
     try {
@@ -122,7 +120,7 @@ const Collection: React.FC = () => {
             ))} */}
             {posts.map((post) => (<PostCard key={post._id} post={post} quantity="all" />
             ))}
-            {postsAll.length === 0 && (
+            {posts.length === 0 && (
               <div className="post-card-box">
                 <h1 className="post-card-title">
                   Вы пока не создали ни одного поста

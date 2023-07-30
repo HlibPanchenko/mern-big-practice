@@ -8,43 +8,39 @@ interface PostSubComment {
   sub: ISubComment;
 }
 
-const SubComment: React.FC<PostSubComment>= (sub) => {
-  const { author, repliedOnComment, text, date } = sub.sub
-  // console.log(sub);  
-console.log(author);
+const SubComment: React.FC<PostSubComment> = ({ sub }) => {
+  const { author, repliedOnComment, text, date } = sub;
+  console.log('subcomment перерисовался');
 
   const avatar = author.avatar
     ? `${API_URL + author._id + "/" + author.avatar}`
     : "/images/user.png";
 
-    return (
+  return (
     <div className="subcomment-card cardSubComment">
-    <div className="cardSubComment-container">
-      <div className="cardSubComment-image">
-        {/* <img src="/images/user.png" alt="User photo" /> */}
-        <img src={avatar} alt="User photo" />
-      </div>
-      <div className="cardSubComment-content">
-      <div className="cardSubComment-content-bottom">
-          <p>Replied to <span>{repliedOnComment.author.name}</span></p>
+      <div className="cardSubComment-container">
+        <div className="cardSubComment-image">
+          {/* <img src="/images/user.png" alt="User photo" /> */}
+          <img src={avatar} alt="User photo" />
         </div>
-        <div className="cardSubComment-content-top">
-          <div className="cardSubComment-authorname">
-            {author.name}
-            {/* User name */}
+        <div className="cardSubComment-content">
+          <div className="cardSubComment-content-bottom">
+            <p>
+              Replied to <span>{repliedOnComment.author.name}</span>
+            </p>
           </div>
-          <div className="cardSubComment-date">
-            {formatDate(date)}
+          <div className="cardSubComment-content-top">
+            <div className="cardSubComment-authorname">
+              {author.name}
+              {/* User name */}
+            </div>
+            <div className="cardSubComment-date">{formatDate(date)}</div>
           </div>
+          <div className="cardSubComment-text">{text}</div>
         </div>
-        <div className="cardSubComment-text">
-          {text}
-          </div>
-        
       </div>
     </div>
-  </div>
-  )
+  );
 };
 
 export default SubComment;
