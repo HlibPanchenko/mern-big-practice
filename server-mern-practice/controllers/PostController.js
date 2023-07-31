@@ -236,30 +236,50 @@ export const getallposts = async (req, res) => {
         sortOptions = { views: -1 }; // Sort by least views (ascending order)
         break;
       case "-popularity":
-        sortOptions = { likes: 1 }; // Sort by most likes (descending order)
+        sortOptions = { likesCount: 1 }; // Sort by most likes (descending order)
         break;
       case "popularity":
-        sortOptions = { likes: -1 }; // Sort by least likes (ascending order)
+        sortOptions = { likesCount: -1 }; // Sort by least likes (ascending order)
         break;
       case "-comments":
-        sortOptions = { comments: -1 }; // Sort by most comments (descending order)
+        sortOptions = { commentsCount: 1 }; // Sort by least comments (ascending order)
         break;
       case "comments":
-        sortOptions = { comments: 1 }; // Sort by least comments (ascending order)
+        sortOptions = { commentsCount: -1 }; // Sort by most comments (descending order)
         break;
       default:
         // Default sorting by date in descending order
         sortOptions = { createdAt: -1 };
     }
 
-    const posts = await Post.find()
-      .sort(sortOptions)
-      .skip((page - 1) * 5)
-      .limit(5)
-      .populate({
-        path: "author",
-      })
-      .populate({
+    const posts = await Post.aggregate([
+      // $match - это оператор агрегации в MongoDB, используемый для фильтрации документов в коллекции. Когда вы передаете пустой объект {} в $match, это означает, что вы не применяете никакой дополнительной фильтрации, и все документы из коллекции будут включены в результаты запроса.
+      {
+        $match: {},
+      },
+      // добавляем новые поля likesCount и commentsCount, которые содержат длину массивов likes и comments. Затем используем эти новые поля для сортировки.
+      {
+        $addFields: {
+          likesCount: { $size: "$likes" },
+          commentsCount: { $size: "$comments" },
+        },
+      },
+      {
+        $sort: sortOptions,
+      },
+      {
+        $skip: (page - 1) * 5,
+      },
+      {
+        $limit: 5,
+      },
+    ]);
+
+    // Если нам нужны полные данные, включая популяции, мы должны использовать populate после завершения агрегации. Мы можем добавить этап популяции после $limit:
+
+    const populatedPosts = await Post.populate(posts, [
+      { path: "author" },
+      {
         path: "comments",
         populate: [
           { path: "author" },
@@ -271,14 +291,37 @@ export const getallposts = async (req, res) => {
             ],
           },
         ],
-      });
+      },
+    ]);
+    // Без агрегации, но тогда мы не можем сортировать по полям likes, comments, т.к. как это массивы, нам нужно сначала узнать их длину, а потом уже сортировать
+    // const posts = await Post.find()
+    //   .sort(sortOptions)
+    //   .skip((page - 1) * 5)
+    //   .limit(5)
+    //   .populate({
+    //     path: "author",
+    //   })
+    //   .populate({
+    //     path: "comments",
+    //     populate: [
+    //       { path: "author" },
+    //       {
+    //         path: "subComments",
+    //         populate: [
+    //           { path: "author" },
+    //           { path: "repliedOnComment", populate: { path: "author" } },
+    //         ],
+    //       },
+    //     ],
+    //   });
 
     // Get the total count of all posts (чтобы посчитать сколько надо станиц пагинации)
     const totalPostsCount = await Post.countDocuments();
 
     return res.json({
       // message: "Posts successfully found.",
-      posts, // Return the found posts in the response
+      // posts,
+      posts: populatedPosts,
       quantity: totalPostsCount,
     });
   } catch (err) {
