@@ -5,7 +5,7 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import PostCard, { Author } from "../components/posts/PostCard";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import { setCurrentPage } from "../redux/slices/postFilterSlice";
+import { setCurrentPage, setSort, Sort } from "../redux/slices/postFilterSlice";
 import { fetchGetPosts } from "../redux/slices/postSlice";
 
 export interface ISubComment {
@@ -48,13 +48,15 @@ const Collection: React.FC = () => {
     dispatch(setCurrentPage(value));
   };
 
+  const sortBy = useAppSelector((state) => state.postFilter.sort);
   const currentPage = useAppSelector((state) => state.postFilter.currentPage);
   const posts = useAppSelector((state) => state.postSlice.post);
   const quantityOfPosts = useAppSelector((state) => state.postSlice.quantity);
   console.log(posts);
+  console.log(sortBy);
 
   const quantityOfPages = Math.ceil(quantityOfPosts / 5);
-  console.log('collection перерисовался');
+  console.log("collection перерисовался");
 
   useEffect(() => {
     try {
@@ -69,6 +71,7 @@ const Collection: React.FC = () => {
           fetchGetPosts({
             token,
             currentPage: String(currentPage),
+            sortBy,
           })
         );
       }
@@ -78,7 +81,7 @@ const Collection: React.FC = () => {
         error
       );
     }
-  }, [currentPage]);
+  }, [currentPage, sortBy]);
 
   // useEffect(() => {
   //   const fetchPostsOfAuthor = async () => {
@@ -105,12 +108,28 @@ const Collection: React.FC = () => {
   //   dispatch(setCurrentPage(number));
   // };
 
+  const handleSort = (filter: Sort) => {
+    dispatch(setCurrentPage(1));
+    dispatch(setSort(filter));
+  };
+
   return (
     <div className="collection">
       <div className="collection-container">
         <div className="collection-postlist allpostlist">
-          <h2 className="allpostlist-title">all posts</h2>
-          <div className="allpostlist-sort">Блок сортировки</div>
+          {/* <h2 className="allpostlist-title">all posts</h2> */}
+          <div className="allpostlist-sort ">
+            <div className="allpostlist-sort-container">
+              <button onClick={() => handleSort("date")}> Date ⇈</button>
+              <button onClick={() => handleSort("-date")}> Date ⇊</button>
+              <button onClick={() => handleSort("popularity")}>Popularity ⇈</button>
+              <button onClick={() => handleSort("-popularity")}>Popularity ⇊</button>
+              <button onClick={() => handleSort("comments")}>Comments ⇈</button>
+              <button onClick={() => handleSort("-comments")}>Comments ⇊</button>
+              <button onClick={() => handleSort("visits")}>Views ⇈</button>
+              <button onClick={() => handleSort("-visits")}>Views ⇊</button>
+            </div>
+          </div>
           <div className="allpostlist-list post-card">
             {/* {postsAll.map((post) => (
               // <PostCard key={post._id} post={post} />
@@ -118,7 +137,8 @@ const Collection: React.FC = () => {
               <PostCard key={post._id} post={post} quantity="all" />
               // </Link>
             ))} */}
-            {posts.map((post) => (<PostCard key={post._id} post={post} quantity="all" />
+            {posts.map((post) => (
+              <PostCard key={post._id} post={post} quantity="all" />
             ))}
             {posts.length === 0 && (
               <div className="post-card-box">
@@ -134,8 +154,8 @@ const Collection: React.FC = () => {
               <Pagination
                 // count={10}
                 count={quantityOfPages}
-                page={page}
-                // page={currentPage}
+                // page={page}
+                page={currentPage}
                 onChange={handleChange}
                 // onChange={() => onChangePage(currentPage)}
               />

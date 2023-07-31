@@ -216,15 +216,46 @@ export const getonepost = async (req, res) => {
 
 export const getallposts = async (req, res) => {
   try {
-    console.log(req.query.page);
     // Convert req.query.page to a number
     const page = parseInt(req.query.page, 10);
+    const sortBy = req.query.sortBy || "date";
+    // console.log(req.query.sortBy +  "is" + typeof req.query.sortBy);
+    let sortOptions = {};
+
+    switch (sortBy) {
+      case "-date":
+        sortOptions = { createdAt: 1 }; // Sort from oldest to newest (ascending order)
+        break;
+      case "date":
+        sortOptions = { createdAt: -1 }; // Sort from newest to oldest (descending order)
+        break;
+      case "-visits":
+        sortOptions = { views: 1 }; // Sort by most views (descending order)
+        break;
+      case "visits":
+        sortOptions = { views: -1 }; // Sort by least views (ascending order)
+        break;
+      case "-popularity":
+        sortOptions = { likes: 1 }; // Sort by most likes (descending order)
+        break;
+      case "popularity":
+        sortOptions = { likes: -1 }; // Sort by least likes (ascending order)
+        break;
+      case "-comments":
+        sortOptions = { comments: -1 }; // Sort by most comments (descending order)
+        break;
+      case "comments":
+        sortOptions = { comments: 1 }; // Sort by least comments (ascending order)
+        break;
+      default:
+        // Default sorting by date in descending order
+        sortOptions = { createdAt: -1 };
+    }
 
     const posts = await Post.find()
+      .sort(sortOptions)
       .skip((page - 1) * 5)
       .limit(5)
-      // .populate("author");
-      // может надо будет дополнительно populate как в постах ниже
       .populate({
         path: "author",
       })
@@ -241,6 +272,7 @@ export const getallposts = async (req, res) => {
           },
         ],
       });
+
     // Get the total count of all posts (чтобы посчитать сколько надо станиц пагинации)
     const totalPostsCount = await Post.countDocuments();
 
@@ -408,7 +440,7 @@ export const subcommentpost = async (req, res) => {
         populate: { path: "author" },
       });
 
-      const populatedPost = await Post.findById(comment.post)
+    const populatedPost = await Post.findById(comment.post)
       .populate({
         path: "author",
       })
@@ -426,11 +458,10 @@ export const subcommentpost = async (req, res) => {
         ],
       });
 
-
     return res.json({
       message: "Ответ на комментарий успешно создан.",
       comment: populatedComment,
-      populatedPost
+      populatedPost,
     });
   } catch (err) {
     return res

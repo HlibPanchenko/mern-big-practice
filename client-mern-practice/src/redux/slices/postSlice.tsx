@@ -16,6 +16,7 @@ interface PostState {
 type FetchPostsArgs = {
   currentPage: string;
   token: string;
+  sortBy: string;
 };
 
 type responsePosts = {
@@ -33,9 +34,9 @@ export const fetchGetPosts = createAsyncThunk(
   "post/fetchGetPosts",
   async (props: FetchPostsArgs) => {
     // const token = localStorage.getItem("token");
-    const { token, currentPage } = props;
+    const { token, currentPage, sortBy } = props;
     const { data } = await axios.get<responsePosts>(
-      `http://localhost:4444/post/getallposts?page=${currentPage}&limit=5`,
+      `http://localhost:4444/post/getallposts?page=${currentPage}&limit=5&sortBy=${sortBy}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

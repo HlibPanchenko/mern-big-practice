@@ -31,3 +31,11 @@ export const formatDate = (dateString: string): string => {
     return `Less than a minute ago`;
   }
 };
+
+export const isLessThanTwoDaysOld = (createdAt: string): boolean => {
+  const twoDaysInMillis = 2 * 24 * 60 * 60 * 1000; // Two days in milliseconds
+  const postDateInMillis = new Date(createdAt).getTime();
+  const currentDateInMillis = Date.now();
+
+  return currentDateInMillis - postDateInMillis <= twoDaysInMillis;
+};

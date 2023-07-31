@@ -65,7 +65,28 @@
 
   &-sort {
 	width: 100%;
+  // margin: 0 auto;
+  // display: flex;
+  // justify-content: center;
+&-container{
+  max-width: 70%;
+  margin: 0 auto;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
 
+  button {
+    width: 100px;
+    height: 30px;
+    padding: 5px 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+  }
+}
   }
 
   &-list {

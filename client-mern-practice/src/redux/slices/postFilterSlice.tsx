@@ -1,15 +1,23 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
+export type Sort =
+  | "popularity"
+  | "-popularity"
+  | "date"
+  | "-date"
+  | "comments"
+  | "-comments"
+  | "visits"
+  | "-visits";
+
 interface FilterSLiceState {
-  //   seacrhValue: string;
   currentPage: number;
-  //   categoryId: number;
+  sort:Sort
 }
 
 const initialState: FilterSLiceState = {
-  //   seacrhValue: "",
   currentPage: 1,
-  //   categoryId: 0,
+  sort: "date",
 };
 
 export const postFilterSlice = createSlice({
@@ -19,9 +27,12 @@ export const postFilterSlice = createSlice({
     setCurrentPage(state, action: PayloadAction<number>) {
       state.currentPage = action.payload;
     },
+    setSort(state, action:PayloadAction<Sort>) {
+      state.sort = action.payload;
+    },
   },
 });
 
-export const { setCurrentPage } = postFilterSlice.actions;
+export const { setCurrentPage, setSort } = postFilterSlice.actions;
 
 export default postFilterSlice.reducer;

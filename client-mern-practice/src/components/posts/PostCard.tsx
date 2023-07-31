@@ -8,7 +8,7 @@ import { FcLike, FcLikePlaceholder } from "react-icons/fc";
 import { FaRegComment } from "react-icons/fa";
 import { AiOutlineHeart } from "react-icons/ai";
 import { GrView } from "react-icons/gr";
-import { formatDate } from "../../../src/utils/date.util";
+import { formatDate, isLessThanTwoDaysOld } from "../../../src/utils/date.util";
 import axios from "axios";
 import { updateUser } from "../../redux/slices/authSlice";
 // import { useSelector, useDispatch } from "react-redux";
@@ -56,10 +56,11 @@ interface PostData {
 interface PostCardProps {
   post: PostData;
   quantity: "one" | "all";
-  
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
+  console.log(post);
+
   const token = localStorage.getItem("token");
   const [likes, setLikes] = React.useState(post.likes.length);
   // const [isLikedByUser, setIsLikedByUser] = React.useState(false);
@@ -97,6 +98,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
   //     viewPost();
   //   }
   // }, [post._id, token, quantity, isViewed]);
+
+  const isFreshPost = isLessThanTwoDaysOld(post.createdAt);
 
   async function likePostHandler() {
     try {
@@ -183,7 +186,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
             <img src={avatar} alt="Profile Icon" />
           </div>
           <div className="infocard-author">{post.author.name}</div>
-          <div className="infocard-createdAt">{formatDate(post.createdAt)}</div>
+          <div
+            className="infocard-createdAt"
+            style={{ color: isFreshPost ? "green" : "black" }}
+          >
+            {formatDate(post.createdAt)}
+          </div>
         </div>
 
         <div className="infocard-icons">
