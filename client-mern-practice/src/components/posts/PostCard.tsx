@@ -59,7 +59,7 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
-  console.log(post);
+  // console.log(post);
 
   const token = localStorage.getItem("token");
   const [likes, setLikes] = React.useState(post.likes.length);

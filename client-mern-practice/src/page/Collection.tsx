@@ -7,6 +7,7 @@ import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import { setCurrentPage, setSort, Sort } from "../redux/slices/postFilterSlice";
 import { fetchGetPosts } from "../redux/slices/postSlice";
+import PostSkeleton from "../components/posts/PostSkeleton";
 
 export interface ISubComment {
   _id: string;
@@ -39,12 +40,16 @@ export interface PostData {
 
 const Collection: React.FC = () => {
   const [page, setPage] = React.useState(1);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [postsAll, setpostsAll] = useState<PostData[]>([]);
   const token = localStorage.getItem("token");
   const dispatch = useAppDispatch();
+  const [activeSort, setActiveSort] = useState<Sort | null>(null);
+  // console.log('Collection rerendered');
+  
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
+    // setPage(value);
     dispatch(setCurrentPage(value));
   };
 
@@ -52,14 +57,22 @@ const Collection: React.FC = () => {
   const currentPage = useAppSelector((state) => state.postFilter.currentPage);
   const posts = useAppSelector((state) => state.postSlice.post);
   const quantityOfPosts = useAppSelector((state) => state.postSlice.quantity);
-  console.log(posts);
-  console.log(sortBy);
+  // console.log(posts);
+  // console.log(sortBy);
 
   const quantityOfPages = Math.ceil(quantityOfPosts / 5);
-  console.log("collection перерисовался");
+  // console.log("collection перерисовался");
+
+  useEffect(() => {
+    if (posts.length > 0) {
+      setIsLoading(false);
+    }
+  }, [posts]);
 
   useEffect(() => {
     try {
+      setIsLoading(true);
+
       // const res = await axios.get(
       //   `https://64143c5f600d6c8387442d10.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`
       // );
@@ -111,7 +124,10 @@ const Collection: React.FC = () => {
   const handleSort = (filter: Sort) => {
     dispatch(setCurrentPage(1));
     dispatch(setSort(filter));
+    setActiveSort(filter);
   };
+
+  const skeletonArr = [...Array(5)];
 
   return (
     <div className="collection">
@@ -120,44 +136,81 @@ const Collection: React.FC = () => {
           {/* <h2 className="allpostlist-title">all posts</h2> */}
           <div className="allpostlist-sort ">
             <div className="allpostlist-sort-container">
-              <button onClick={() => handleSort("date")}> Date ⇈</button>
-              <button onClick={() => handleSort("-date")}> Date ⇊</button>
-              <button onClick={() => handleSort("popularity")}>Popularity ⇈</button>
-              <button onClick={() => handleSort("-popularity")}>Popularity ⇊</button>
-              <button onClick={() => handleSort("comments")}>Comments ⇈</button>
-              <button onClick={() => handleSort("-comments")}>Comments ⇊</button>
-              <button onClick={() => handleSort("visits")}>Views ⇈</button>
-              <button onClick={() => handleSort("-visits")}>Views ⇊</button>
+            <button
+            onClick={() => handleSort("date")}
+            className={activeSort === "date" ? "active-sortButton" : ""}
+          >
+            Date ⇈
+          </button>
+          <button
+            onClick={() => handleSort("-date")}
+            className={activeSort === "-date" ? "active-sortButton" : ""}
+          >
+            Date ⇊
+          </button>
+          <button
+            onClick={() => handleSort("popularity")}
+            className={activeSort === "popularity" ? "active-sortButton" : ""}
+          >
+            Popularity ⇈
+          </button>
+          <button
+            onClick={() => handleSort("-popularity")}
+            className={activeSort === "-popularity" ? "active-sortButton" : ""}
+          >
+            Popularity ⇊
+          </button>
+          <button
+            onClick={() => handleSort("comments")}
+            className={activeSort === "comments" ? "active-sortButton" : ""}
+          >
+            Comments ⇈
+          </button>
+          <button
+            onClick={() => handleSort("-comments")}
+            className={activeSort === "-comments" ? "active-sortButton" : ""}
+          >
+            Comments ⇊
+          </button>
+          <button
+            onClick={() => handleSort("visits")}
+            className={activeSort === "visits" ? "active-sortButton" : ""}
+          >
+            Views ⇈
+          </button>
+          <button
+            onClick={() => handleSort("-visits")}
+            className={activeSort === "-visits" ? "active-sortButton" : ""}
+          >
+            Views ⇊
+          </button>
             </div>
           </div>
           <div className="allpostlist-list post-card">
-            {/* {postsAll.map((post) => (
-              // <PostCard key={post._id} post={post} />
-              // <Link className="linkCard" key={post._id} to={`/myprofile/${post._id}`}>
-              <PostCard key={post._id} post={post} quantity="all" />
-              // </Link>
+            {isLoading
+              ? skeletonArr.map((_, index) => <PostSkeleton key={index} />)
+              : posts.map((post) => (
+                  <PostCard key={post._id} post={post} quantity="all" />
+                ))}
+
+            {/* {posts.map((post) => (
+              // <PostCard key={post._id} post={post} quantity="all" />
+              <PostSkeleton/>
             ))} */}
-            {posts.map((post) => (
-              <PostCard key={post._id} post={post} quantity="all" />
-            ))}
-            {posts.length === 0 && (
+            {/* {posts.length === 0 && (
               <div className="post-card-box">
                 <h1 className="post-card-title">
-                  Вы пока не создали ни одного поста
+                  Пользователи пока не создали ни одного поста
                 </h1>
               </div>
-            )}
+            )} */}
           </div>
           <div className="paginationBlock">
             <Stack spacing={2}>
-              {/* <Typography>Page: {page}</Typography> */}
               <Pagination
-                // count={10}
                 count={quantityOfPages}
-                // page={page}
                 page={currentPage}
                 onChange={handleChange}
-                // onChange={() => onChangePage(currentPage)}
               />
             </Stack>
           </div>

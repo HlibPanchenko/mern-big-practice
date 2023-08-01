@@ -47,11 +47,12 @@
   }
 }
 
-//  .linkCard {
-// 	display: block;
-//  }
 .allpostlist {
   min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   &-title {
     display: flex;
     justify-content: center;
@@ -59,8 +60,6 @@
     height: 10%;
     min-height: 50px;
     text-transform: uppercase;
-
-    //   border: 1px solid #000;
   }
 
   &-sort {
@@ -73,22 +72,72 @@
   margin: 0 auto;
   padding: 10px;
   display: flex;
-  justify-content: space-between;
+  justify-content: baseline;
   flex-wrap: wrap;
   gap: 10px;
 
   button {
-    width: 100px;
+    width: 120px;
     height: 30px;
-    padding: 5px 8px;
+    // padding: 5px 8px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 13px;
-  }
+  appearance: none;
+  background-color: #FAFBFC;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  border-radius: 6px;
+  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+  box-sizing: border-box;
+  color: #24292E;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: 500;
+  line-height: 20px;
+  list-style: none;
+  padding: 6px 16px;
+  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+  word-wrap: break-word;
+
+&:hover {
+  background-color: #F3F4F6;
+  text-decoration: none;
+  transition-duration: 0.1s;
+}
+
+&:disabled {
+  background-color: #FAFBFC;
+  border-color: rgba(27, 31, 35, 0.15);
+  color: #959DA5;
+  cursor: default;
+}
+
+&:active {
+  background-color: #EDEFF2;
+  box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
+  transition: none 0s;
+}
+
+&:focus {
+  outline: 1px transparent;
+}
+
+&:before {
+  display: none;
+}
+
+&:-webkit-details-marker {
+  display: none;
+}
 }
   }
-
+}
   &-list {
     height: 90%;
     width: 100%;
@@ -100,7 +149,10 @@
     padding: 10px;
     flex: 1 auto;
   }
+
 }
+
+
 
 .paginationBlock {
   height: 10%;
@@ -108,4 +160,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.active-sortButton {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.inactive-sortButton {
+  background-color: #f1f1f1;
 }
