@@ -5,9 +5,15 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import PostCard, { Author } from "../components/posts/PostCard";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import { setCurrentPage, setSort, Sort } from "../redux/slices/postFilterSlice";
+import {
+  setCurrentPage,
+  setSort,
+  Sort,
+  setSearch,
+} from "../redux/slices/postFilterSlice";
 import { fetchGetPosts } from "../redux/slices/postSlice";
 import PostSkeleton from "../components/posts/PostSkeleton";
+import { useDebouncedCallback } from "use-debounce";
 
 export interface ISubComment {
   _id: string;
@@ -23,6 +29,7 @@ export interface IComment {
   post: string;
   text: string;
   date: string;
+  createdAt: string;
   subComments: ISubComment[];
 }
 
@@ -42,11 +49,11 @@ const Collection: React.FC = () => {
   const [page, setPage] = React.useState(1);
   const [isLoading, setIsLoading] = React.useState(true);
   const [postsAll, setpostsAll] = useState<PostData[]>([]);
+  const [searchInputState, setSearchInputState] = useState("");
   const token = localStorage.getItem("token");
   const dispatch = useAppDispatch();
   const [activeSort, setActiveSort] = useState<Sort | null>(null);
   // console.log('Collection rerendered');
-  
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     // setPage(value);
@@ -55,13 +62,20 @@ const Collection: React.FC = () => {
 
   const sortBy = useAppSelector((state) => state.postFilter.sort);
   const currentPage = useAppSelector((state) => state.postFilter.currentPage);
+  const searchInput = useAppSelector((state) => state.postFilter.searchInput);
   const posts = useAppSelector((state) => state.postSlice.post);
   const quantityOfPosts = useAppSelector((state) => state.postSlice.quantity);
-  // console.log(posts);
-  // console.log(sortBy);
 
   const quantityOfPages = Math.ceil(quantityOfPosts / 5);
-  // console.log("collection перерисовался");
+
+  const debounced = useDebouncedCallback(
+    // function
+    (value) => {
+      dispatch(setSearch(value));
+    },
+    // delay in ms
+    1000
+  );
 
   useEffect(() => {
     if (posts.length > 0) {
@@ -85,6 +99,7 @@ const Collection: React.FC = () => {
             token,
             currentPage: String(currentPage),
             sortBy,
+            searchInput,
           })
         );
       }
@@ -94,7 +109,7 @@ const Collection: React.FC = () => {
         error
       );
     }
-  }, [currentPage, sortBy]);
+  }, [currentPage, sortBy, searchInput]);
 
   // useEffect(() => {
   //   const fetchPostsOfAuthor = async () => {
@@ -136,54 +151,78 @@ const Collection: React.FC = () => {
           {/* <h2 className="allpostlist-title">all posts</h2> */}
           <div className="allpostlist-sort ">
             <div className="allpostlist-sort-container">
-            <button
-            onClick={() => handleSort("date")}
-            className={activeSort === "date" ? "active-sortButton" : ""}
-          >
-            Date ⇈
-          </button>
-          <button
-            onClick={() => handleSort("-date")}
-            className={activeSort === "-date" ? "active-sortButton" : ""}
-          >
-            Date ⇊
-          </button>
-          <button
-            onClick={() => handleSort("popularity")}
-            className={activeSort === "popularity" ? "active-sortButton" : ""}
-          >
-            Popularity ⇈
-          </button>
-          <button
-            onClick={() => handleSort("-popularity")}
-            className={activeSort === "-popularity" ? "active-sortButton" : ""}
-          >
-            Popularity ⇊
-          </button>
-          <button
-            onClick={() => handleSort("comments")}
-            className={activeSort === "comments" ? "active-sortButton" : ""}
-          >
-            Comments ⇈
-          </button>
-          <button
-            onClick={() => handleSort("-comments")}
-            className={activeSort === "-comments" ? "active-sortButton" : ""}
-          >
-            Comments ⇊
-          </button>
-          <button
-            onClick={() => handleSort("visits")}
-            className={activeSort === "visits" ? "active-sortButton" : ""}
-          >
-            Views ⇈
-          </button>
-          <button
-            onClick={() => handleSort("-visits")}
-            className={activeSort === "-visits" ? "active-sortButton" : ""}
-          >
-            Views ⇊
-          </button>
+              <div className="allpostlist-sort-buttons">
+                <button
+                  onClick={() => handleSort("date")}
+                  className={activeSort === "date" ? "active-sortButton" : ""}
+                >
+                  Date ⇈
+                </button>
+                <button
+                  onClick={() => handleSort("-date")}
+                  className={activeSort === "-date" ? "active-sortButton" : ""}
+                >
+                  Date ⇊
+                </button>
+                <button
+                  onClick={() => handleSort("popularity")}
+                  className={
+                    activeSort === "popularity" ? "active-sortButton" : ""
+                  }
+                >
+                  Popularity ⇈
+                </button>
+                <button
+                  onClick={() => handleSort("-popularity")}
+                  className={
+                    activeSort === "-popularity" ? "active-sortButton" : ""
+                  }
+                >
+                  Popularity ⇊
+                </button>
+                <button
+                  onClick={() => handleSort("comments")}
+                  className={
+                    activeSort === "comments" ? "active-sortButton" : ""
+                  }
+                >
+                  Comments ⇈
+                </button>
+                <button
+                  onClick={() => handleSort("-comments")}
+                  className={
+                    activeSort === "-comments" ? "active-sortButton" : ""
+                  }
+                >
+                  Comments ⇊
+                </button>
+                <button
+                  onClick={() => handleSort("visits")}
+                  className={activeSort === "visits" ? "active-sortButton" : ""}
+                >
+                  Views ⇈
+                </button>
+                <button
+                  onClick={() => handleSort("-visits")}
+                  className={
+                    activeSort === "-visits" ? "active-sortButton" : ""
+                  }
+                >
+                  Views ⇊
+                </button>
+              </div>
+              <div className="allpostlist-sort-search">
+                <input
+                  type="text"
+                  placeholder="search a car"
+                  value={searchInputState}
+                  // value={searchInput}
+                  onChange={(event) => {
+                    debounced(event.target.value);
+                    setSearchInputState(event.target.value);
+                  }}
+                />
+              </div>
             </div>
           </div>
           <div className="allpostlist-list post-card">

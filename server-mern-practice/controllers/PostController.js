@@ -219,7 +219,7 @@ export const getallposts = async (req, res) => {
     // Convert req.query.page to a number
     const page = parseInt(req.query.page, 10);
     const sortBy = req.query.sortBy || "date";
-    // console.log(req.query.sortBy +  "is" + typeof req.query.sortBy);
+    const searchInput = req.query.search || '';
     let sortOptions = {};
 
     switch (sortBy) {
@@ -252,10 +252,14 @@ export const getallposts = async (req, res) => {
         sortOptions = { createdAt: -1 };
     }
 
+    const searchRegex = new RegExp(searchInput, 'i'); // Создаем регулярное выражение для поиска с учетом регистра
+
     const posts = await Post.aggregate([
       // $match - это оператор агрегации в MongoDB, используемый для фильтрации документов в коллекции. Когда вы передаете пустой объект {} в $match, это означает, что вы не применяете никакой дополнительной фильтрации, и все документы из коллекции будут включены в результаты запроса.
       {
-        $match: {},
+        $match: {
+          title: { $regex: searchRegex } // Применяем фильтр поиска к полю title с использованием регулярного выражения
+        },
       },
       // добавляем новые поля likesCount и commentsCount, которые содержат длину массивов likes и comments. Затем используем эти новые поля для сортировки.
       {

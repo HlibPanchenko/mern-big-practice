@@ -12,12 +12,14 @@ export type Sort =
 
 interface FilterSLiceState {
   currentPage: number;
-  sort:Sort
+  sort:Sort;
+  searchInput:string
 }
 
 const initialState: FilterSLiceState = {
   currentPage: 1,
   sort: "date",
+  searchInput: ''
 };
 
 export const postFilterSlice = createSlice({
@@ -30,9 +32,12 @@ export const postFilterSlice = createSlice({
     setSort(state, action:PayloadAction<Sort>) {
       state.sort = action.payload;
     },
+    setSearch(state, action:PayloadAction<string>) {
+      state.searchInput = action.payload;
+    },
   },
 });
 
-export const { setCurrentPage, setSort } = postFilterSlice.actions;
+export const { setCurrentPage, setSort,setSearch } = postFilterSlice.actions;
 
 export default postFilterSlice.reducer;

@@ -69,7 +69,7 @@
   margin: 0 auto;
   padding: 10px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
 
@@ -132,6 +132,21 @@
 &:-webkit-details-marker {
   display: none;
 }
+}
+  }
+
+  &-buttons {
+flex: 1 1 60%;
+display: flex;
+gap: 5px;
+flex-wrap: wrap;
+  }
+
+  &-search {
+input {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
 }
   }
 }

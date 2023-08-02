@@ -19,12 +19,14 @@ const EachPost: React.FC = () => {
   const { postId } = useParams();
   const user = useAppSelector((state) => state.auth.user);
 
-   console.log("eachpost перерисовался");
+  console.log(postInfo);
 
-   // Чтобы когда добавляем ответ на комментарий, перерисовывался eachpost и отправлял запрос на получение обновленного комментария
-  const updateEachPost = (post:PostData | null) => {
-    setPostInfo(post)
-  }
+  console.log("eachpost перерисовался");
+
+  // Чтобы когда добавляем ответ на комментарий, перерисовывался eachpost и отправлял запрос на получение обновленного комментария
+  const updateEachPost = (post: PostData | null) => {
+    setPostInfo(post);
+  };
 
   React.useEffect(() => {
     async function getOnePost() {
@@ -68,12 +70,7 @@ const EachPost: React.FC = () => {
       );
       console.log(response.data.post);
       setComment("");
-
-      // const { post: updatedPost } = response.data;
-      // setLikes(updatedPost.likes.lengt);
-      // setIsLikedByUser(isLiked);
       setPostInfo(response.data.post);
-      // dispatch(updateUser(response.data.user));
     } catch (error) {
       console.log("ошибка создания комментария", error);
       // navigate("/");
@@ -109,7 +106,6 @@ const EachPost: React.FC = () => {
               {postInfo.images.map((img) => (
                 <div>
                   <img src={convertToLocalURL(img)} />
-                  {/* <p className="legend">Legend 1</p> */}
                 </div>
               ))}
             </Carousel>
@@ -147,13 +143,16 @@ const EachPost: React.FC = () => {
                 </button>
               </div>
             </div>
-            {postInfo.comments.map((comment) => (
-              <MyComment
-                key={comment._id}
-                comment={comment}
-                updateEachPost={updateEachPost}
-              />
-            ))}
+            {postInfo.comments
+              .slice() // Create a copy of the comments array
+              .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+              .map((comment) => (
+                <MyComment
+                  key={comment._id}
+                  comment={comment}
+                  updateEachPost={updateEachPost}
+                />
+              ))}
             {/* {postInfo.comments.map((comment) => <MyComment key={comment._id} comment={comment.text} />)} */}
           </div>
         </div>
