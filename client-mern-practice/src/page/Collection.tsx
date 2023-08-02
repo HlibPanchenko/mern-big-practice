@@ -192,18 +192,6 @@ const Collection: React.FC = () => {
               : posts.map((post) => (
                   <PostCard key={post._id} post={post} quantity="all" />
                 ))}
-
-            {/* {posts.map((post) => (
-              // <PostCard key={post._id} post={post} quantity="all" />
-              <PostSkeleton/>
-            ))} */}
-            {/* {posts.length === 0 && (
-              <div className="post-card-box">
-                <h1 className="post-card-title">
-                  Пользователи пока не создали ни одного поста
-                </h1>
-              </div>
-            )} */}
           </div>
           <div className="paginationBlock">
             <Stack spacing={2}>
