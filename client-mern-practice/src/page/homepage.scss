@@ -12,3 +12,42 @@
   flex-direction: column;
   gap: 20px;
 }
+
+.welcomepage {
+
+  &-box {
+    margin: 40px 0px 180px 0px;
+  }
+
+  &-title {
+margin-bottom: 15px;
+span {
+  color: rgb(7, 98, 10);
+}
+
+  }
+  &-subtitle {
+    margin-bottom: 15px;
+
+  }
+
+  &-content {
+display: flex;
+justify-content: space-between;
+// align-items: center;
+gap: 20px;
+  }
+
+  &-text {
+flex: 1 1 65%;
+text-align: justify;
+  }
+
+  &-imgblock {
+    // width: 80%;
+
+    img {
+      width: 100%;
+    }
+  }
+}

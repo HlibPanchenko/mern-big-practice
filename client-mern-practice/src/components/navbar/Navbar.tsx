@@ -53,7 +53,7 @@ const Navbar: React.FC = () => {
       <div className="navbar-container">
         <div className="navbar-brand">
           <Link className="navbar-logo" to="/">
-            <img src="/images/logo-main.png" alt="" />
+            <img src="/images/logoAI2.png" alt="" />
           </Link>
         </div>
         <div className="navbar-menu">
@@ -97,35 +97,28 @@ const Navbar: React.FC = () => {
                 >
                   <div className="navbar-menu-profile-name">{user?.name}</div>
                   <ProfileIcon size="small" />
-                  <div
-                    // className="navbar-menu-profile"
-                    className={classNameModal}
-                    // onClick={() => {
-                    //   setIsOpen(!isOpen);
-                    // }}
-                  >
-                    {/* <div className="profile-modal"> */}
-                    <Link className="navbar-logo" to="/myaccount">
-                      <div className="profile-modal-settings">
+                  <div className={classNameModal}>
+                    <div className="profile-modal-settings">
+                      <Link className="navbar-logo" to="/myaccount">
                         <div className="profile-modal-settings-image">
                           <img src="\images\user (1).png" alt="user-photo" />
                         </div>
                         <div className="profile-modal-settings-text">
-                        <p>Settings</p>
+                          <p>Settings</p>
                         </div>
-                      </div>
-                    </Link>
-                    <Link className="myprofile" to="/myprofile">
-                      <div className="profile-modal-myprofile">
+                      </Link>
+                    </div>
+                    <div className="profile-modal-myprofile">
+                      <Link className="myprofile" to="/myprofile">
                         <div className="profile-modal-myprofile-image">
                           <img
                             src="\images\setting-lines.png"
                             alt="user-photo"
                           />
                         </div>
-                         <p>my profile</p>
-                      </div>
-                    </Link>
+                        <p>Account</p>
+                      </Link>
+                    </div>
                   </div>
                 </div>
                 {/* </Link> */}

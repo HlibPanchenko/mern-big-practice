@@ -35,7 +35,7 @@
       // text-decoration: none;
       // margin-right: 10px;
       img {
-        width: 150px;
+        width: 70px;
       }
     }
   }
@@ -120,15 +120,17 @@
 // модальное окно "профиль - настройки"
 .profile-modal {
   position: absolute;
-  left: 0;
+  left: -10px;
   top: 60px;
   width: 140px;
   height: 80px;
   padding: 10px 10px 10px 10px;
-  border: 1px solid #000;
-  display: flex;
+  // border: 1px solid #000;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  // display: flex;
+
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
   z-index: 2;
   flex-direction: column;
   background-color: white;
@@ -136,14 +138,28 @@
   display: none;
 
   &__open {
-    display: block;
+    // display: block;
+  display: flex;
+
   }
   &-settings {
-    display: flex;
     width: 100%;
-    justify-content: space-between;
-    cursor: pointer;
-    margin-bottom: 5px;
+
+    a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      color: inherit;
+      text-decoration: none;
+      width: 100%;
+      transition: all 0.3s ease 0s;
+      border-bottom: 1px dashed #000;
+      padding-bottom: 5px;
+      &:hover {
+        transform:translateY(-2px)
+      }
+    }
 
     &-image {
       img {
@@ -155,25 +171,42 @@
     &-text {
       p {
         color: inherit;
-        text-transform: uppercase;
-        font-size: 18px;
-        
+        // text-transform: uppercase;
+        font-size: 16px;
       }
     }
   }
 
   &-myprofile {
-    display: flex;
     width: 100%;
-    justify-content: space-between;
-    // justify-content: space-around;
-    cursor: pointer;
+
+    a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+
+      cursor: pointer;
+      color: inherit;
+      text-decoration: none;
+      transition: all 0.3s ease 0s;
+
+      &:hover {
+        transform:translateY(-2px)
+      }
+    }
 
     &-image {
       img {
         width: 20px;
         height: 20px;
       }
+    }
+
+    p {
+      color: inherit;
+      // text-transform: uppercase;
+      font-size: 16px;
     }
   }
 }
