@@ -1,9 +1,11 @@
-import User from "../models/User.js";
-import bcrypt from "bcryptjs";
+import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
+import bcrypt from "bcryptjs";
+import User from "../models/User.js";
 import { generateToken } from "../utils/generateJWTToken.js";
+import { IUserIdRequest } from "../utils/req.interface";
 
-export const register = async (req, res) => {
+export const register = async (req: Request, res: Response) => {
   try {
     //Смотрим есть ли ошибки при валидации
     const errors = validationResult(req);
@@ -33,13 +35,14 @@ export const register = async (req, res) => {
     // и уже пользователя с бд положим в перемменную (у него будет поле _id, которое дает нам MongoDb)
     const user = await doc.save();
     console.log(user);
-    console.log(user._doc);
+    // console.log(user._doc);
     // Генерация JWT токена
     const token = generateToken(user._id);
 
     return res.status(200).json({
       message: "user was created",
-      ...user._doc,
+      // ...user._doc,
+      ...user.toJSON(), // Вместо user._doc
       token,
     });
   } catch (error) {
@@ -50,7 +53,7 @@ export const register = async (req, res) => {
   }
 };
 
-export const login = async (req, res) => {
+export const login = async (req: Request, res: Response) => {
   try {
     // ищем пользователя в БД
     const user = await User.findOne({ email: req.body.email });
@@ -88,7 +91,7 @@ export const login = async (req, res) => {
       _id,
       __v,
       token,
-      likedposts
+      likedposts,
     });
   } catch (error) {
     console.log(error);
@@ -98,7 +101,7 @@ export const login = async (req, res) => {
   }
 };
 
-export const getMe = async (req, res) => {
+export const getMe = async (req: IUserIdRequest, res: Response) => {
   try {
     // ищем по Id с токена, который расшифровали, достали с него id
     // вшили в req в middleware checkauth
@@ -111,10 +114,11 @@ export const getMe = async (req, res) => {
     }
 
     // вытаскиваем информацию о пользователе
-    const { passwordHash, ...userData } = user._doc;
+    // const { passwordHash, ...userData } = user._doc;
 
     // вернем информацию о пользователе и токен
-    res.json(userData);
+    // res.json(userData);
+    res.json(user.toJSON()); // Вместо user._doc
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -123,7 +127,7 @@ export const getMe = async (req, res) => {
   }
 };
 
-export const updateUser = async (req, res) => {
+export const updateUser = async (req: Request, res: Response) => {
   try {
     // ищем пользователя в БД
     // const user = await User.findOne({ email: req.body.email });
@@ -142,9 +146,16 @@ export const updateUser = async (req, res) => {
     // получаем обновленного пользователя
     user = await User.findOne({ email: req.body.email });
 
+    if (!user) {
+      return res.status(404).json({
+        message: "Пользователь с такой почтой не найден",
+      });
+    }
+
     res.status(200).json({
       message: "edited",
-      ...user._doc,
+      // ...user._doc,
+      ...user.toJSON(), // Вместо user._doc
     });
   } catch (error) {
     console.log(error);

@@ -1,7 +1,7 @@
 import express from "express";
 const postRouter = express.Router();
 import * as PostController from "../controllers/PostController.js";
-import checkAuth from "../utils/checkAuth.js";
+import { checkAuth } from "../utils/checkAuth.js";
 import { upload } from "../utils/multerConfig.js";
 
 postRouter.post(

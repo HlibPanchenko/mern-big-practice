@@ -1,4 +1,3 @@
-import multer from "multer";
 import path from "path";
 import config from "config";
 import fs from "fs";
@@ -6,18 +5,30 @@ import Post from "../models/Post.js";
 import User from "../models/User.js";
 import Comment from "../models/Comment.js";
 import SubComment from "../models/SubComment.js";
-// import { Response } from "express";
+import { Request, Response, NextFunction } from "express";
+import { IUserIdRequest } from "../utils/req.interface.js";
 
-export const createPost = async (req, res) => {
+
+export const createPost = async (
+  req: Request,
+  // req: IUserIdRequest & { files: Express.Multer.File[] },
+  res: Response
+) => {
+  const typedReq = req as IUserIdRequest & { files: Express.Multer.File[] };
   // Получим ID пользователя чтобы понять какой пользователь отправил запрос
-  const userId = req.userId; // Получение ID пользователя
+  // const userId = req.userId; // Получение ID пользователя
+  const userId = typedReq.userId; // Получение ID пользователя
   console.log(userId);
+
+  if (!userId) {
+    return res.status(400).json({ error: "User ID not provided." });
+  }
+
   const { text, description } = req.body;
   console.log(text, description);
 
   // Путь к папке пользователя
   const userFolderPath = path.join(config.get("staticPath"), userId);
-
   // Создание папки пользователя, если она не существует
   if (!fs.existsSync(userFolderPath)) {
     fs.mkdirSync(userFolderPath);
@@ -26,7 +37,8 @@ export const createPost = async (req, res) => {
   // юудем для каждого поста создавать отдельную папку в папке пользователя. Имя папки - название поста
   const userSubFolderPath = path.join(userFolderPath, text);
 
-  const user = await User.findById(req.userId);
+  const user = await User.findById(typedReq.userId);
+  // const user = await User.findById(req.userId);
 
   // Создаем запись о посте в базе данных
   const post = await Post.create({
@@ -36,105 +48,48 @@ export const createPost = async (req, res) => {
     images: [], // Мы добавим пути к изображениям позже
   });
 
-  // Создание хранилища для загруженных файлов
-  // const storage = multer.diskStorage({
-  //   destination: userFolderPath, // Папка пользователя, в которую будут сохраняться файлы
-  //   filename: function (req, file, cb) {
-  //     // Генерация уникального имени файла
-  //     // Функция cb используется для передачи сформированного имени файла обратно в Multer.
-  //     cb(
-  //       null,
-  //       file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-  //     );
-  //   },
-  // });
-
-  // Expalanation
-  /*
-  file.fieldname: Это имя поля формы, из которого загружается файл. В данном случае, это "avatar", так как в коде указано .single("avatar").
-  Таким образом, после выполнения функции cb в методе filename, Multer получает сформированное имя файла и продолжает процесс сохранения файла на диск.
-  */
-
-  // Инициализация multer с использованием созданного хранилища
-  // const upload = multer({
-  //   storage: storage,
-  //   limits: { fileSize: 1024 * 1024 }, // Ограничение размера файла (в данном случае 1MB)
-  //   fileFilter: function (req, file, cb) {
-  //     // Проверка типа файла (допустимы только изображения)
-  //     if (file.mimetype.startsWith("image/")) {
-  //       cb(null, true);
-  //     } else {
-  //       cb(new Error("Only images are allowed."));
-  //     }
-  //   },
-  // }).array("images[]", 10); // 'images' - это имя поля формы для изображений, 5 - максимальное количество изображений
-  // single("avatar"): Это метод, указывающий Multer, что ожидается только один файл, и его поле формы имеет имя "avatar".
-  // После инициализации Multer вызывается функция upload, передавая ей req, res и коллбэк-функцию:
-  // В этой функции upload происходит загрузка файла на сервер. После загрузки файла и передачи коллбэка function (err), который будет вызван после загрузки, код проверяет наличие ошибок.
-
   try {
-    // await upload(req, res, function (err) {
-    //   if (err instanceof multer.MulterError) {
-    //     // Ошибка Multer при загрузке файла
-    //     return res.status(400).json({ error: err.message });
-    //   } else if (err) {
-    //     // Другая ошибка
-    //     return res.status(500).json({ error: err.message });
-    //   }
+    if (req.files) {
+      // Файл успешно загружен
+      // Изображения успешно загружены
+      // const imagePaths = req.files.map((file: Express.Multer.File) =>
+      const imagePaths = typedReq.files.map((file: Express.Multer.File) =>
+        path.join(userSubFolderPath, file.filename)
+      );
 
-    //   // Вывод информации о загружаемом файле в консоль
-    //   console.log("Uploaded file:", req.file);
-    /*
-  Uploaded file: {
-  fieldname: 'avatar',
-  originalname: 'h5mk7js_cat-generic_625x300_28_August_20.jpg',
-  encoding: '7bit',
-  mimetype: 'image/jpeg',
-  destination: 'C:\\Users\\Глеб\\Desktop\\Frontend\\node js\\mern-practice (all)\\mern-practice\\server-mern-practice\\static\\64aeb29e911801442cacd33f',
-  filename: 'avatar-1689173764423.jpg',
-  path: 'C:\\Users\\Глеб\\Desktop\\Frontend\\node js\\mern-practice (all)\\mern-practice\\server-mern-practice\\static\\64aeb29e911801442cacd33f\\avatar-1689173764423.jpg',
-  size: 42513
-}
-  */
+      // Обновление записи пользователя в базе данных с ссылкой на загруженный файл
+      // Например, используя Mongoose:
 
-    // Файл успешно загружен
-    // Изображения успешно загружены
-    const imagePaths = req.files.map((file) =>
-      path.join(userSubFolderPath, file.filename)
-    );
+      // Обновляем запись о посте с путями к изображениям
+      // await Post.findByIdAndUpdate(
+      //   post._id,
+      //   { images: imagePaths },
+      //   { new: true }
+      // );
 
-    // Обновление записи пользователя в базе данных с ссылкой на загруженный файл
-    // Например, используя Mongoose:
+      // return res.json({
+      //   message: "Пост успешно создан.",
+      //   post: post,
+      // });
 
-    // Обновляем запись о посте с путями к изображениям
-    // await Post.findByIdAndUpdate(
-    //   post._id,
-    //   { images: imagePaths },
-    //   { new: true }
-    // );
-
-    // return res.json({
-    //   message: "Пост успешно создан.",
-    //   post: post,
-    // });
-
-    Post.findByIdAndUpdate(post._id, { images: imagePaths }, { new: true })
-      .exec()
-      .then((newPost) => {
-        if (!newPost) {
-          throw new Error("Post not found.");
-        }
-        return res.json({
-          message: "Пост успешно создан.",
-          post: newPost,
+      Post.findByIdAndUpdate(post._id, { images: imagePaths }, { new: true })
+        .exec()
+        .then((newPost) => {
+          if (!newPost) {
+            throw new Error("Post not found.");
+          }
+          return res.json({
+            message: "Пост успешно создан.",
+            post: newPost,
+          });
+        })
+        .catch((err) => {
+          return res
+            .status(500)
+            .json({ error: "Ошибка при обновлении записи о посте." });
         });
-      })
-      .catch((err) => {
-        return res
-          .status(500)
-          .json({ error: "Ошибка при обновлении записи о посте." });
-      });
-    // });
+      // });
+    }
   } catch (err) {
     return res.status(500).json({ error: "Не удалось создать пост." });
   }
@@ -161,7 +116,7 @@ export const createPost = async (req, res) => {
 //   }
 // };
 
-export const getallauthorposts = async (req, res) => {
+export const getallauthorposts = async (req: IUserIdRequest, res: Response) => {
   const userId = req.userId; // Получение ID пользователя
   try {
     const posts = await Post.find({ author: userId }).populate("author");
@@ -174,7 +129,7 @@ export const getallauthorposts = async (req, res) => {
   }
 };
 
-export const getonepost = async (req, res) => {
+export const getonepost = async (req: IUserIdRequest, res: Response) => {
   const userId = req.userId; // Получение ID пользователя
   const postId = req.params.id;
   try {
@@ -214,12 +169,12 @@ export const getonepost = async (req, res) => {
   }
 };
 
-export const getallposts = async (req, res) => {
+export const getallposts = async (req: Request, res: Response) => {
   try {
     // Convert req.query.page to a number
-    const page = parseInt(req.query.page, 10);
+    const page = parseInt(req.query.page as string, 10);
     const sortBy = req.query.sortBy || "date";
-    const searchInput = req.query.search || '';
+    const searchInput = req.query.search || "";
     let sortOptions = {};
 
     switch (sortBy) {
@@ -252,13 +207,13 @@ export const getallposts = async (req, res) => {
         sortOptions = { createdAt: -1 };
     }
 
-    const searchRegex = new RegExp(searchInput, 'i'); // Создаем регулярное выражение для поиска с учетом регистра
+    const searchRegex = new RegExp(searchInput as string, "i"); // Создаем регулярное выражение для поиска с учетом регистра
 
     const posts = await Post.aggregate([
       // $match - это оператор агрегации в MongoDB, используемый для фильтрации документов в коллекции. Когда вы передаете пустой объект {} в $match, это означает, что вы не применяете никакой дополнительной фильтрации, и все документы из коллекции будут включены в результаты запроса.
       {
         $match: {
-          title: { $regex: searchRegex } // Применяем фильтр поиска к полю title с использованием регулярного выражения
+          title: { $regex: searchRegex }, // Применяем фильтр поиска к полю title с использованием регулярного выражения
         },
       },
       // добавляем новые поля likesCount и commentsCount, которые содержат длину массивов likes и comments. Затем используем эти новые поля для сортировки.
@@ -333,7 +288,7 @@ export const getallposts = async (req, res) => {
   }
 };
 
-export const likepost = async (req, res) => {
+export const likepost = async (req: IUserIdRequest, res: Response) => {
   const postId = req.params.id;
   const userId = req.userId;
 
@@ -344,12 +299,17 @@ export const likepost = async (req, res) => {
       return res.status(404).json({ error: "Пост не найден." });
     }
 
+    if (!userId) {
+      return res.status(400).json({ error: "User ID not provided." });
+    }
+
     // Check if the user has already liked the post
     const isLiked = post.likes.includes(userId);
 
     if (isLiked) {
       // If the user has already liked the post, remove the userId from the likes array
-      post.likes.pull(userId);
+      // post.likes.pull(userId);
+      post.likes = post.likes.filter((likeUserId) => likeUserId !== userId);
     } else {
       // If the user has not liked the post, add the userId to the likes array
       post.likes.push(userId);
@@ -366,7 +326,10 @@ export const likepost = async (req, res) => {
 
     if (isLiked) {
       // If the user has already liked the post, remove the postId from the likedposts array
-      user.likedposts.pull(postId);
+      // user.likedposts.pull(postId);
+      user.likedposts = user.likedposts.filter(
+        (likedPostId) => likedPostId !== postId
+      );
     } else {
       // If the user has not liked the post, add the postId to the likedposts array
       user.likedposts.push(postId);
@@ -388,7 +351,7 @@ export const likepost = async (req, res) => {
   }
 };
 
-export const commentpost = async (req, res) => {
+export const commentpost = async (req: IUserIdRequest, res: Response) => {
   const postId = req.params.id;
   const userId = req.userId;
   const { text } = req.body;
@@ -407,7 +370,8 @@ export const commentpost = async (req, res) => {
     await comment.save();
 
     // Add the full comment object to the post's comments array
-    post.comments.push(comment);
+    // post.comments.push(comment);
+    post.comments.push(comment._id); // Push the comment's ObjectId to the array
 
     // Save the updated post
     await post.save();
@@ -447,7 +411,7 @@ export const commentpost = async (req, res) => {
   }
 };
 
-export const subcommentpost = async (req, res) => {
+export const subcommentpost = async (req: IUserIdRequest, res: Response) => {
   // const postId = req.params.id;
   const commentId = req.params.id;
   const userId = req.userId;
@@ -455,15 +419,15 @@ export const subcommentpost = async (req, res) => {
 
   try {
     const comment = await Comment.findById(commentId);
-    const post = await Post.findById(comment.post);
+    // const post = await Post.findById(comment.post);
     const user = await User.findById(userId);
 
     if (!comment) {
       return res.status(404).json({ error: "Комментарий не найден." });
     }
-    if (!post) {
-      return res.status(404).json({ error: "post не найден." });
-    }
+    // if (!post) {
+    //   return res.status(404).json({ error: "post не найден." });
+    // }
     if (!user) {
       return res.status(404).json({ error: "user не найден." });
     }
@@ -475,7 +439,8 @@ export const subcommentpost = async (req, res) => {
     });
     await subcomment.save();
 
-    comment.subComments.push(subcomment);
+    // comment.subComments.push(subcomment);
+    comment.subComments.push(subcomment._id);
 
     await comment.save();
 

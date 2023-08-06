@@ -1,8 +1,10 @@
 import express from "express";
-const authRouter = express.Router();
 import * as UserController from "../controllers/UserController.js";
 import { check } from "express-validator";
-import checkAuth from "../utils/checkAuth.js";
+import {checkAuth} from "../utils/checkAuth";
+import { IUserIdRequest } from "../utils/req.interface";
+
+const authRouter = express.Router();
 
 authRouter.post(
   "/registration",
@@ -18,8 +20,8 @@ authRouter.post(
 
 authRouter.post("/login", UserController.login);
 
-authRouter.get("/getuser", checkAuth, UserController.getMe);
+authRouter.get("/getuser", checkAuth , UserController.getMe);
 
-authRouter.post("/updateuser", checkAuth, UserController.updateUser);
+authRouter.post("/updateuser", checkAuth , UserController.updateUser);
 
 export { authRouter };

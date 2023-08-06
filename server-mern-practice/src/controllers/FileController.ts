@@ -3,8 +3,14 @@ import path from "path";
 import config from "config";
 import fs from "fs";
 import User from "../models/User.js";
+import { Request, Response, NextFunction } from "express";
+import { IUserIdRequest } from "../utils/req.interface.js";
 
-export const uploadFile = async (req, res) => {
+export const uploadFile = async (req: IUserIdRequest, res: Response) => {
+  if (!req.userId) {
+    return res.status(400).json({ error: "User ID not provided." });
+  }
+
   // console.log(req.file);
   const userId = req.userId; // Получение ID пользователя
 
@@ -81,7 +87,7 @@ export const uploadFile = async (req, res) => {
       // Например, используя Mongoose:
       User.findByIdAndUpdate(
         req.userId, // ID пользователя, чья фотография загружается
-        { avatar: req.file.filename }, // Обновление поля "avatar" на имя загруженного файла
+        { avatar: req?.file?.filename }, // Обновление поля "avatar" на имя загруженного файла
         { new: true } // фото будет сразу же заменяться на новое
       )
         .exec()

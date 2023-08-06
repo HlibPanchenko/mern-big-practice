@@ -3,3 +3,4 @@ server-mern-practice/node_modules
 client-mern-practice/node_modules
 
 server-mern-practice/config/default.json
+server-mern-practice/dist/
