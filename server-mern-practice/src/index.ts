@@ -16,7 +16,8 @@ app.use(bodyParser.json());
 
 // app.use(express.json());
 app.use(cors());
-app.use(express.static("static"));
+// app.use(express.static("static"));
+app.use(express.static(config.get("staticPath")));
 
 app.use("/auth", authRouter);
 app.use("/file", fileRouter);
