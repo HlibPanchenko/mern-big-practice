@@ -2,7 +2,9 @@ import multer from "multer";
 import path from "path";
 import config from "config";
 import { Request, Response, NextFunction } from "express";
-import { IUserIdRequest } from "../utils/req.interface.js";
+// import { IUserIdRequest } from "../utils/req.interface.js";
+import { IUserIdRequest } from "./req.interface.js"
+
 
 // Создание хранилища для загруженных файлов
 const storage = multer.diskStorage({

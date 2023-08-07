@@ -1,5 +1,5 @@
 {
   "dbUrl": "mongodb+srv://glebpanchenk7:Z1e8klcsx9ocyC51@big-practice.y3ekheg.mongodb.net/",
   "serverPORT": 4444,
-  "staticPath": "C:\\Users\\Глеб\\Desktop\\Frontend\\node js\\mern-practice (all)\\mern-practice\\server-mern-practice\\src\\static"
+  "staticPath": "C:\\Users\\Глеб\\Desktop\\Frontend\\node js\\mern-practice (all)\\mern-practice\\server-mern-practice\\dist\\static"
 }

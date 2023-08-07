@@ -4,9 +4,9 @@ import mongoose from "mongoose";
 import config from "config";
 import bodyParser from "body-parser";
 
-import { authRouter } from "./routes/auth.routes";
-import { fileRouter } from "./routes/file.routes";
-import { postRouter } from "./routes/post.routes";
+import { authRouter } from "./routes/auth.routes.js";
+import { fileRouter } from "./routes/file.routes.js";
+import { postRouter } from "./routes/post.routes.js";
 
 const app = express();
 const PORT = config.get("serverPORT");

@@ -1,8 +1,8 @@
 import express from "express";
 import * as UserController from "../controllers/UserController.js";
 import { check } from "express-validator";
-import {checkAuth} from "../utils/checkAuth";
-import { IUserIdRequest } from "../utils/req.interface";
+import {checkAuth} from "../utils/checkAuth.js";
+import { IUserIdRequest } from "../utils/req.interface.js";
 
 const authRouter = express.Router();
 

@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import { generateToken } from "../utils/generateJWTToken.js";
-import { IUserIdRequest } from "../utils/req.interface";
+import { IUserIdRequest } from "../utils/req.interface.js";
 
 export const register = async (req: Request, res: Response) => {
   try {

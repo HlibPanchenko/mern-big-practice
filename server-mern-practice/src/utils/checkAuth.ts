@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { IUserIdRequest } from "./req.interface"
+import { IUserIdRequest } from "./req.interface.js"
 
 interface JwtPayload {
   userId: string;
