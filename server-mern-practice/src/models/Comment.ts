@@ -1,4 +1,15 @@
-import mongoose from "mongoose";
+import mongoose, { Document }  from "mongoose";
+
+interface IComment extends Document {
+  author: mongoose.Types.ObjectId;
+  post: mongoose.Types.ObjectId;
+  text: string;
+  date: Date;
+  subComments: mongoose.Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+}
 
 const commentSchema = new mongoose.Schema(
   {
@@ -19,7 +30,7 @@ const commentSchema = new mongoose.Schema(
   { timestamps: true } // Добавляем поля createdAt и updatedAt
 );
 
-const Comment = mongoose.model("Comment", commentSchema);
+const Comment = mongoose.model<IComment>("Comment", commentSchema);
 
 export default Comment;
 // export default mongoose.model("Comment", commentSchema);

@@ -1,4 +1,14 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
+
+interface ISubComment extends Document {
+  author: mongoose.Types.ObjectId;
+  repliedOnComment: mongoose.Types.ObjectId;
+  text: string;
+  date: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+}
 
 const subcommentSchema = new mongoose.Schema(
   {
@@ -7,7 +17,7 @@ const subcommentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-	 repliedOnComment: {
+    repliedOnComment: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment",
       required: true,
@@ -18,7 +28,7 @@ const subcommentSchema = new mongoose.Schema(
   { timestamps: true } // Добавляем поля createdAt и updatedAt
 );
 
-const SubComment = mongoose.model("SubComment", subcommentSchema);
+const SubComment = mongoose.model<ISubComment>("SubComment", subcommentSchema);
 
 export default SubComment;
 // export default mongoose.model("Comment", commentSchema);

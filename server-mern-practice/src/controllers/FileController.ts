@@ -11,7 +11,6 @@ export const uploadFile = async (req: IUserIdRequest, res: Response) => {
     return res.status(400).json({ error: "User ID not provided." });
   }
 
-  // console.log(req.file);
   const userId = req.userId; // Получение ID пользователя
 
   // Путь к папке пользователя

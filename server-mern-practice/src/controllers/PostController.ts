@@ -8,7 +8,6 @@ import SubComment from "../models/SubComment.js";
 import { Request, Response, NextFunction } from "express";
 import { IUserIdRequest } from "../utils/req.interface.js";
 
-
 export const createPost = async (
   req: Request,
   // req: IUserIdRequest & { files: Express.Multer.File[] },
@@ -18,14 +17,13 @@ export const createPost = async (
   // Получим ID пользователя чтобы понять какой пользователь отправил запрос
   // const userId = req.userId; // Получение ID пользователя
   const userId = typedReq.userId; // Получение ID пользователя
-  console.log(userId);
 
   if (!userId) {
     return res.status(400).json({ error: "User ID not provided." });
   }
 
   const { text, description } = req.body;
-  console.log(text, description);
+  // console.log(text, description);
 
   // Путь к папке пользователя
   const userFolderPath = path.join(config.get("staticPath"), userId);
@@ -49,47 +47,45 @@ export const createPost = async (
   });
 
   try {
-    if (req.files) {
-      // Файл успешно загружен
-      // Изображения успешно загружены
-      // const imagePaths = req.files.map((file: Express.Multer.File) =>
-      const imagePaths = typedReq.files.map((file: Express.Multer.File) =>
-        path.join(userSubFolderPath, file.filename)
-      );
+    // Файл успешно загружен
+    // Изображения успешно загружены
+    // const imagePaths = req.files.map((file: Express.Multer.File) =>
+    const imagePaths = typedReq.files.map((file: Express.Multer.File) =>
+      path.join(userSubFolderPath, file.filename)
+    );
 
-      // Обновление записи пользователя в базе данных с ссылкой на загруженный файл
-      // Например, используя Mongoose:
+    // Обновление записи пользователя в базе данных с ссылкой на загруженный файл
+    // Например, используя Mongoose:
 
-      // Обновляем запись о посте с путями к изображениям
-      // await Post.findByIdAndUpdate(
-      //   post._id,
-      //   { images: imagePaths },
-      //   { new: true }
-      // );
+    // Обновляем запись о посте с путями к изображениям
+    // await Post.findByIdAndUpdate(
+    //   post._id,
+    //   { images: imagePaths },
+    //   { new: true }
+    // );
 
-      // return res.json({
-      //   message: "Пост успешно создан.",
-      //   post: post,
-      // });
+    // return res.json({
+    //   message: "Пост успешно создан.",
+    //   post: post,
+    // });
 
-      Post.findByIdAndUpdate(post._id, { images: imagePaths }, { new: true })
-        .exec()
-        .then((newPost) => {
-          if (!newPost) {
-            throw new Error("Post not found.");
-          }
-          return res.json({
-            message: "Пост успешно создан.",
-            post: newPost,
-          });
-        })
-        .catch((err) => {
-          return res
-            .status(500)
-            .json({ error: "Ошибка при обновлении записи о посте." });
+    Post.findByIdAndUpdate(post._id, { images: imagePaths }, { new: true })
+      .exec()
+      .then((newPost) => {
+        if (!newPost) {
+          throw new Error("Post not found.");
+        }
+        return res.json({
+          message: "Пост успешно создан.",
+          post: newPost,
         });
-      // });
-    }
+      })
+      .catch((err) => {
+        return res
+          .status(500)
+          .json({ error: "Ошибка при обновлении записи о посте." });
+      });
+    // });
   } catch (err) {
     return res.status(500).json({ error: "Не удалось создать пост." });
   }

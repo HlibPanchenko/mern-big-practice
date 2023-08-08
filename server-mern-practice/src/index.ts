@@ -8,8 +8,8 @@ import { authRouter } from "./routes/auth.routes.js";
 import { fileRouter } from "./routes/file.routes.js";
 import { postRouter } from "./routes/post.routes.js";
 
-const app = express();
-const PORT = config.get("serverPORT");
+const app: express.Application = express();
+const PORT: number = config.get("serverPORT");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -23,7 +23,7 @@ app.use("/auth", authRouter);
 app.use("/file", fileRouter);
 app.use("/post", postRouter);
 
-const init = async () => {
+const init = async (): Promise<void> => {
   try {
     await mongoose.connect(config.get("dbUrl"));
     app.listen(PORT, () => {
