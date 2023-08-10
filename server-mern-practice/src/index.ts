@@ -38,11 +38,15 @@
 // init();
 //
 import { App } from "./app.js";
-import {MyLogger} from './logger/logger.service.js'
+import { UserController } from "./controllers/UserController.js";
+import { MyLogger } from "./logger/logger.service.js";
+import { AuthRouter } from "./routes/auth.routes.js";
 
 // oop
 async function initApp() {
-  const app = new App(new MyLogger());
+  const userController = new UserController();
+  const authRouter = new AuthRouter(userController);
+  const app = new App(new MyLogger(), authRouter);
   await app.start();
 }
 
