@@ -81,8 +81,7 @@
     text-align: center;
     @media (max-width: 768px) {
       font-size: 20px;
-    
-      }
+    }
   }
 
   &-input {
@@ -170,6 +169,15 @@
 .zeropost {
   justify-content: center;
   align-items: center;
+  position: relative;
+
+  &-title {
+  }
+  &-btn {
+    position: absolute;
+    right: 0;
+    top: 85%;
+  }
 }
 
 .preview {
@@ -184,7 +192,7 @@
   &-title {
     margin: 0px 0px 0px 0px;
     @media (max-width: 402px) {
-     font-size: 16px;
+      font-size: 16px;
     }
   }
 
@@ -201,15 +209,15 @@
     // margin-bottom: 0;
     @media (max-width: 402px) {
       font-size: 15px;
-     }
+    }
   }
 
   &-description {
     margin-top: 0;
     margin-bottom: 10px;
     flex: 1 auto;
-  overflow-y: auto;
-    text-align: justify
+    overflow-y: auto;
+    text-align: justify;
   }
 
   &-gallery {
@@ -234,7 +242,7 @@
     .main-image {
       border-color: red;
     }
-    
+
     .main-image-label {
       text-align: center;
       margin: 5px 0;
@@ -268,7 +276,6 @@
   font-size: 25px;
   overflow-y: auto;
 
-  
   &:hover {
     border: 2px solid #007bff;
   }

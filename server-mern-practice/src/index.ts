@@ -38,15 +38,23 @@
 // init();
 //
 import { App } from "./app.js";
+import { FileController } from "./controllers/FileController.js";
+import { PostController } from "./controllers/PostController.js";
 import { UserController } from "./controllers/UserController.js";
 import { MyLogger } from "./logger/logger.service.js";
 import { AuthRouter } from "./routes/auth.routes.js";
+import { FileRouter } from "./routes/file.routes.js";
+import { PostRouter } from "./routes/post.routes.js";
 
 // oop
 async function initApp() {
   const userController = new UserController();
+  const fileController = new FileController();
+  const postController = new PostController();
   const authRouter = new AuthRouter(userController);
-  const app = new App(new MyLogger(), authRouter);
+  const fileRouter = new FileRouter(fileController);
+  const postRouter = new PostRouter(postController);
+  const app = new App(new MyLogger(), authRouter, fileRouter, postRouter);
   await app.start();
 }
 

@@ -192,11 +192,11 @@ const PostForm = () => {
     <>
       {step === 0 && (
         <div className="postformzero zeropost">
-          <h2 className="postformzero-title">
+          <h2 className="postformzero-title zeropost-title">
             Привет, здесь ты можешь опубликовать информацию о своей
             коллекционной машинке всего в несколько кликов!
           </h2>
-          <div className="postformzero-btn" onClick={() => setStep(1)}>
+          <div className="postformzero-btn zeropost-btn" onClick={() => setStep(1)}>
             Перейти к созданию...
           </div>
         </div>

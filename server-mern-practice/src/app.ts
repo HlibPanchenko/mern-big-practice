@@ -5,8 +5,8 @@ import config from "config";
 import bodyParser from "body-parser";
 
 import { AuthRouter } from "./routes/auth.routes.js";
-import { fileRouter } from "./routes/file.routes.js";
-import { postRouter } from "./routes/post.routes.js";
+import { FileRouter } from "./routes/file.routes.js";
+import { PostRouter } from "./routes/post.routes.js";
 
 import { MyLogger } from "./logger/logger.service.js";
 
@@ -15,10 +15,19 @@ export class App {
   port: number;
   logger: MyLogger;
   authRouter: AuthRouter;
+  fileRouter: FileRouter;
+  postRouter: PostRouter;
 
-  constructor(logger: MyLogger, authRouter: AuthRouter) {
+  constructor(
+    logger: MyLogger,
+    authRouter: AuthRouter,
+    fileRouter: FileRouter,
+    postRouter: PostRouter
+  ) {
     this.logger = logger;
     this.authRouter = authRouter;
+    this.fileRouter = fileRouter;
+    this.postRouter = postRouter;
     this.app = express();
     this.port = config.get("serverPORT");
     this.configureMiddleware();
@@ -34,8 +43,8 @@ export class App {
 
   private configureRoutes(): void {
     this.app.use("/auth", this.authRouter.getRouter());
-    this.app.use("/file", fileRouter);
-    this.app.use("/post", postRouter);
+    this.app.use("/file", this.fileRouter.getRouter());
+    this.app.use("/post", this.postRouter.getRouter());
   }
 
   public async start(): Promise<void> {
