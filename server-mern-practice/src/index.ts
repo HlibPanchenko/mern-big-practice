@@ -45,11 +45,13 @@ import { MyLogger } from "./logger/logger.service.js";
 import { AuthRouter } from "./routes/auth.routes.js";
 import { FileRouter } from "./routes/file.routes.js";
 import { PostRouter } from "./routes/post.routes.js";
+import { FileService } from "./services/File.service.js";
 
 // oop
 async function initApp() {
+  const fileService = new FileService();
   const userController = new UserController();
-  const fileController = new FileController();
+  const fileController = new FileController(fileService);
   const postController = new PostController();
   const authRouter = new AuthRouter(userController);
   const fileRouter = new FileRouter(fileController);
