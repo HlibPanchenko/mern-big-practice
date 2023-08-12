@@ -46,15 +46,17 @@ import { AuthRouter } from "./routes/auth.routes.js";
 import { FileRouter } from "./routes/file.routes.js";
 import { PostRouter } from "./routes/post.routes.js";
 import { FileService } from "./services/File.service.js";
+import { UploadService } from "./services/multer.service.js";
 
 // oop
 async function initApp() {
   const fileService = new FileService();
+  const multerService = new UploadService();
   const userController = new UserController();
   const fileController = new FileController(fileService);
   const postController = new PostController();
   const authRouter = new AuthRouter(userController);
-  const fileRouter = new FileRouter(fileController);
+  const fileRouter = new FileRouter(fileController, multerService);
   const postRouter = new PostRouter(postController);
   const app = new App(new MyLogger(), authRouter, fileRouter, postRouter);
   await app.start();

@@ -6,7 +6,7 @@ import path from "path";
 import config from "config";
 import fs from "fs";
 import { IUserIdRequest } from "../utils/req.interface.js";
-
+import { UploadService } from "../services/multer.service.js";
 // const fileRouter = express.Router();
 // fileRouter.post("/uploadfile", checkAuth, fileController.uploadFile);
 // export { fileRouter };
@@ -14,50 +14,22 @@ import { IUserIdRequest } from "../utils/req.interface.js";
 export class FileRouter {
   private router: Router;
   private fileController: FileController;
+  private multerService: UploadService;
 
-  constructor(fileController: FileController) {
+  constructor(fileController: FileController, multerService: UploadService) {
     this.router = Router();
     this.fileController = fileController;
-    
-    const storage = multer.diskStorage({
-      destination: function (req: IUserIdRequest, file, cb) {
-        const userId = req.userId as string;
-        const userFolderPath = path.join(config.get("staticPath"), userId);
-        // Создание папки пользователя, если она не существует
-        if (!fs.existsSync(userFolderPath)) {
-          fs.mkdirSync(userFolderPath);
-        }
-        // Указываем путь, куда сохранять файл
-        cb(null, userFolderPath);
-      },
-      filename: function (req: IUserIdRequest, file, cb) {
-        cb(
-          null,
-          file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-        );
-      },
-    });
+    this.multerService = multerService;
 
-    const upload = multer({
-      storage: storage,
-      limits: { fileSize: 1024 * 1024 },
-      fileFilter: function (req, file, cb) {
-        if (file.mimetype.startsWith("image/")) {
-          cb(null, true);
-        } else {
-          cb(new Error("Only images are allowed."));
-        }
-      },
-    });
-
-    this.configureRoutes(upload);
+    this.configureRoutes();
   }
 
-  private configureRoutes(upload: multer.Multer): void {
+  private configureRoutes(): void {
     this.router.post(
       "/uploadfile",
       checkAuth,
-      upload.single("avatar"),
+      // upload.single("avatar"),
+      this.multerService.single("avatar"),
       this.fileController.uploadFile
     );
   }
