@@ -1,11 +1,6 @@
 import express, { Router } from "express";
 import { FileController } from "../controllers/FileController.js";
 import { checkAuth } from "../utils/checkAuth.js";
-import multer from "multer";
-import path from "path";
-import config from "config";
-import fs from "fs";
-import { IUserIdRequest } from "../utils/req.interface.js";
 import { UploadService } from "../services/multer.service.js";
 // const fileRouter = express.Router();
 // fileRouter.post("/uploadfile", checkAuth, fileController.uploadFile);

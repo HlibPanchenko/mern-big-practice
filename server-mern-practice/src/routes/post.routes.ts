@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import {PostController} from "../controllers/PostController.js";
 import { checkAuth } from "../utils/checkAuth.js";
-import { upload } from "../utils/multerConfig.js";
+import { UploadService } from "../services/multer.service.js";
 
 // functional
 // const postRouter = express.Router();
@@ -33,10 +33,13 @@ import { upload } from "../utils/multerConfig.js";
 export class PostRouter {
   private router: Router;
   private postController: PostController;
+  private multerService: UploadService;
 
-  constructor(postController: PostController) {
+  constructor(postController: PostController, multerService: UploadService) {
     this.router = Router();
     this.postController = postController;
+    this.multerService = multerService;
+
     this.configureRoutes();
   }
 
@@ -44,7 +47,8 @@ export class PostRouter {
     this.router.post(
       "/create",
       checkAuth,
-      upload.array("images[]", 10),
+      this.multerService.array("images[]", 10),
+      // upload.array("images[]", 10),
       this.postController.createPost
     );
     
