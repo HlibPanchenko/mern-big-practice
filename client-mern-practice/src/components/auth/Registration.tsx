@@ -50,11 +50,11 @@ const Registration: React.FC = () => {
       reset();
       navigate("/");
     } catch (error: any) {
-      // console.log(error);
+      console.log(error);
       // console.log(error.response.data.message);
-      console.log(error.response?.data?.errors.errors[0].msg);
-      const customEmailError = error.response?.data?.errors.errors[0].msg;
-      setEmailError(customEmailError);
+      // console.log(error.response?.data?.errors.errors[0].msg);
+      // const customEmailError = error.response?.data?.errors.errors[0].msg;
+      // setEmailError(customEmailError);
       // setEmailError(error.response.data.message);
     }
   };

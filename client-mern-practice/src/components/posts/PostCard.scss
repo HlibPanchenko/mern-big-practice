@@ -1,6 +1,8 @@
 .post-card {
+  min-width: 80%;
+  width: 100%;
+
   &-box {
-    max-width: 80%;
     width: 100%;
     // height: 160px;
     display: flex;

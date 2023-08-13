@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import { generateToken } from "../utils/generateJWTToken.js";
 import { IUserIdRequest } from "../utils/req.interface.js";
+import { UserService } from "../services/User.service.js";
 
 // export const register = async (req: Request, res: Response) => {
 //   try {
@@ -165,37 +166,34 @@ import { IUserIdRequest } from "../utils/req.interface.js";
 //   }
 // };
 
-
 export class UserController {
+  userService: UserService;
+
+  constructor(userService: UserService) {
+    this.userService = userService;
+    this.register = this.register.bind(this);
+    this.getMe = this.getMe.bind(this);
+    this.updateUser = this.updateUser.bind(this);
+    this.login = this.login.bind(this); // привязываем методы класса к его экземплярам
+  }
+
   async register(req: Request, res: Response) {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Uncorrect request", errors });
       }
-
       const { email, password, name } = req.body;
-      const alreadyRegistered = await User.findOne({ email });
+      // service
+      const registrationResult = await this.userService.registerService(
+        email,
+        password,
+        name
+      );
 
-      if (alreadyRegistered) {
-        return res.status(400).json({
-          message: `User with email ${email} already exists`,
-        });
-      }
-
-      const salt = await bcrypt.genSalt(10);
-      const hashPassword = await bcrypt.hash(password, salt);
-
-      const user = new User({ email, password: hashPassword, name });
-      const savedUser = await user.save();
-
-      const token = generateToken(savedUser._id);
-
-      return res.status(200).json({
-        message: "User was created",
-        ...savedUser.toJSON(),
-        token,
-      });
+      return res.status(200).json(
+        registrationResult
+      );
     } catch (error) {
       console.log(error);
       res.status(400).json({
@@ -206,36 +204,38 @@ export class UserController {
 
   async login(req: Request, res: Response) {
     try {
-      const user = await User.findOne({ email: req.body.email });
-      if (!user) {
-        return res.status(404).json({
-          message: "User with this email not found",
-        });
-      }
+      // const user = await User.findOne({ email: req.body.email });
+      // if (!user) {
+      //   return res.status(404).json({
+      //     message: "User with this email not found",
+      //   });
+      // }
 
-      const isValidPassword = await bcrypt.compare(
-        req.body.password,
-        user.password
-      );
-      if (!isValidPassword) {
-        return res.status(404).json({
-          message: "Invalid password",
-        });
-      }
+      // const isValidPassword = await bcrypt.compare(
+      //   req.body.password,
+      //   user.password
+      // );
+      // if (!isValidPassword) {
+      //   return res.status(404).json({
+      //     message: "Invalid password",
+      //   });
+      // }
 
-      const token = generateToken(user._id);
+      // const token = generateToken(user._id);
 
-      const { email, name, avatar, _id, __v, likedposts } = user;
-      res.status(200).json({
-        message: "Login successful",
-        email,
-        name,
-        avatar,
-        _id,
-        __v,
-        token,
-        likedposts,
-      });
+      // const { email, name, avatar, _id, __v, likedposts } = user;
+      // res.status(200).json({
+      //   message: "Login successful",
+      //   email,
+      //   name,
+      //   avatar,
+      //   _id,
+      //   __v,
+      //   token,
+      //   likedposts,
+      // });
+      const loginResult = await this.userService.loginService(req, res);
+      return res.status(200).json(loginResult);
     } catch (error) {
       console.log(error);
       res.status(400).json({
@@ -246,14 +246,8 @@ export class UserController {
 
   async getMe(req: IUserIdRequest, res: Response) {
     try {
-      const user = await User.findById(req.userId);
-      if (!user) {
-        return res.status(404).json({
-          message: "User not found",
-        });
-      }
-
-      res.json(user.toJSON());
+      const getUserResult = await this.userService.getUserService(req, res);
+      return res.status(200).json(getUserResult);
     } catch (error) {
       console.log(error);
       res.status(500).json({
@@ -264,27 +258,11 @@ export class UserController {
 
   async updateUser(req: Request, res: Response) {
     try {
-      let user = await User.findOneAndUpdate(
-        { email: req.body.email },
-        { name: req.body.name }
+      const updateUserResult = await this.userService.updateUserService(
+        req,
+        res
       );
-      if (!user) {
-        return res.status(404).json({
-          message: "User with this email not found",
-        });
-      }
-
-      user = await User.findOne({ email: req.body.email });
-      if (!user) {
-        return res.status(404).json({
-          message: "User with this email not found",
-        });
-      }
-
-      res.status(200).json({
-        message: "User updated",
-        ...user.toJSON(),
-      });
+      return res.status(200).json(updateUserResult);
     } catch (error) {
       console.log(error);
       res.status(400).json({
@@ -293,5 +271,3 @@ export class UserController {
     }
   }
 }
-
-
