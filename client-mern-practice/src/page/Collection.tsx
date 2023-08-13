@@ -66,6 +66,9 @@ const Collection: React.FC = () => {
   const posts = useAppSelector((state) => state.postSlice.post);
   const quantityOfPosts = useAppSelector((state) => state.postSlice.quantity);
 
+  // console.log(posts);
+  
+
   const quantityOfPages = Math.ceil(quantityOfPosts / 5);
 
   const debounced = useDebouncedCallback(

@@ -1,8 +1,5 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import bcrypt from "bcryptjs";
-import User from "../models/User.js";
-import { generateToken } from "../utils/generateJWTToken.js";
 import { IUserIdRequest } from "../utils/req.interface.js";
 import { UserService } from "../services/User.service.js";
 
@@ -191,9 +188,7 @@ export class UserController {
         name
       );
 
-      return res.status(200).json(
-        registrationResult
-      );
+      return res.status(200).json(registrationResult);
     } catch (error) {
       console.log(error);
       res.status(400).json({
@@ -204,38 +199,10 @@ export class UserController {
 
   async login(req: Request, res: Response) {
     try {
-      // const user = await User.findOne({ email: req.body.email });
-      // if (!user) {
-      //   return res.status(404).json({
-      //     message: "User with this email not found",
-      //   });
-      // }
-
-      // const isValidPassword = await bcrypt.compare(
-      //   req.body.password,
-      //   user.password
-      // );
-      // if (!isValidPassword) {
-      //   return res.status(404).json({
-      //     message: "Invalid password",
-      //   });
-      // }
-
-      // const token = generateToken(user._id);
-
-      // const { email, name, avatar, _id, __v, likedposts } = user;
-      // res.status(200).json({
-      //   message: "Login successful",
-      //   email,
-      //   name,
-      //   avatar,
-      //   _id,
-      //   __v,
-      //   token,
-      //   likedposts,
-      // });
-      const loginResult = await this.userService.loginService(req, res);
-      return res.status(200).json(loginResult);
+      const loginResult = await this.userService.loginService(req);
+      return res.status(200).json({
+        ...loginResult,
+      });
     } catch (error) {
       console.log(error);
       res.status(400).json({
@@ -246,7 +213,7 @@ export class UserController {
 
   async getMe(req: IUserIdRequest, res: Response) {
     try {
-      const getUserResult = await this.userService.getUserService(req, res);
+      const getUserResult = await this.userService.getUserService(req);
       return res.status(200).json(getUserResult);
     } catch (error) {
       console.log(error);
@@ -259,8 +226,7 @@ export class UserController {
   async updateUser(req: Request, res: Response) {
     try {
       const updateUserResult = await this.userService.updateUserService(
-        req,
-        res
+        req
       );
       return res.status(200).json(updateUserResult);
     } catch (error) {

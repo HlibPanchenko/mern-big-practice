@@ -31,13 +31,11 @@ export class UserService {
       throw new Error("Failed to register");
     }
   }
-  async loginService(req:IUserIdRequest, res: Response) {
+  async loginService(req: IUserIdRequest) {
     try {
       const user = await User.findOne({ email: req.body.email });
       if (!user) {
-        return res.status(404).json({
-          message: "User with this email not found",
-        });
+        throw new Error("User with this email not found");
       }
 
       const isValidPassword = await bcrypt.compare(
@@ -45,15 +43,13 @@ export class UserService {
         user.password
       );
       if (!isValidPassword) {
-        return res.status(404).json({
-          message: "Invalid password",
-        });
+        throw new Error("Invalid password");
       }
 
       const token = generateToken(user._id);
 
       const { email, name, avatar, _id, __v, likedposts } = user;
-      res.status(200).json({
+      return {
         message: "Login successful",
         email,
         name,
@@ -62,50 +58,47 @@ export class UserService {
         __v,
         token,
         likedposts,
-      });
+      };
     } catch (error) {
       console.log(error);
       throw new Error("Failed to login");
     }
   }
-  async getUserService(req:IUserIdRequest, res: Response) {
+  async getUserService(req: IUserIdRequest) {
     try {
-		const user = await User.findById(req.userId);
+      const user = await User.findById(req.userId);
       if (!user) {
-        return res.status(404).json({
-          message: "User not found",
-        });
+        throw new Error("User not found");
       }
 
-      res.json(user.toJSON());
+      return {
+        message: "User was got",
+        ...user.toJSON(),
+      };
     } catch (error) {
       console.log(error);
-      throw new Error("Failed to login");
+      throw new Error("Failed to get user");
     }
   }
-  async updateUserService(req:IUserIdRequest, res: Response) {
+  async updateUserService(req: IUserIdRequest) {
     try {
-		let user = await User.findOneAndUpdate(
-			{ email: req.body.email },
-			{ name: req.body.name }
-		 );
-		 if (!user) {
-			return res.status(404).json({
-			  message: "User with this email not found",
-			});
-		 }
- 
-		 user = await User.findOne({ email: req.body.email });
-		 if (!user) {
-			return res.status(404).json({
-			  message: "User with this email not found",
-			});
-		 }
- 
-		 res.status(200).json({
-			message: "User updated",
-			...user.toJSON(),
-		 });
+      let user = await User.findOneAndUpdate(
+        { email: req.body.email },
+        { name: req.body.name }
+      );
+      if (!user) {
+        throw new Error("User with this email not found");
+      }
+
+      user = await User.findOne({ email: req.body.email });
+      if (!user) {
+        throw new Error("User with this email not found");
+      }
+
+      return {
+        message: "User updated",
+        ...user.toJSON(),
+      };
     } catch (error) {
       console.log(error);
       throw new Error("Failed to login");

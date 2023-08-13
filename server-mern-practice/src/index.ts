@@ -49,6 +49,7 @@ import { FileService } from "./services/File.service.js";
 import { UploadService } from "./services/multer.service.js";
 import { MulterConfigs } from "./utils/multerConfig.js";
 import { UserService } from './services/User.service.js'
+import { PostService } from './services/Post.service.js'
 
 // oop
 async function initApp() {
@@ -57,7 +58,7 @@ async function initApp() {
   const multerService2 = new UploadService(MulterConfigs.config2); 
   const userController = new UserController(new UserService());
   const fileController = new FileController(fileService);
-  const postController = new PostController();
+  const postController = new PostController(new PostService());
   const authRouter = new AuthRouter(userController);
   const fileRouter = new FileRouter(fileController, multerService);
   const postRouter = new PostRouter(postController, multerService2);

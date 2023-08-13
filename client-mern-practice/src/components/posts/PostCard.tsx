@@ -3,15 +3,13 @@ import "./PostCard.scss";
 import { API_URL } from "../../config.js";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { Link } from "react-router-dom";
-import { FcLike, FcLikePlaceholder } from "react-icons/fc";
-// import { BiCommentDots } from "react-icons/bi";
+import { FcLike } from "react-icons/fc";
 import { FaRegComment } from "react-icons/fa";
 import { AiOutlineHeart } from "react-icons/ai";
 import { GrView } from "react-icons/gr";
 import { formatDate, isLessThanTwoDaysOld } from "../../../src/utils/date.util";
 import axios from "axios";
 import { updateUser } from "../../redux/slices/authSlice";
-// import { useSelector, useDispatch } from "react-redux";
 
 export interface Author {
   _id: string;
@@ -67,7 +65,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
   // const [isViewed, setIsViewed] = React.useState(false);
   const { title, description, images, views, comments, author } = post;
   const userInfo = useAppSelector((state) => state.auth);
-  // console.log(post.author.avatar);
   const user = useAppSelector((state) => state.auth.user);
   const dispatch = useAppDispatch();
 
@@ -132,10 +129,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
   };
 
   const convertToLocalURL = (filePath: string): string => {
-    const fileName = getFileNameFromPath(filePath);
-    const folder = quantity === "all" ? post.author._id : userInfo?.user?._id;
+    // const fileName = getFileNameFromPath(filePath);
+    // const folder = quantity === "all" ? post.author._id : userInfo?.user?._id;
 
-    return `${API_URL}/${folder}/${fileName}`;
+    // return `${API_URL}/${folder}/${fileName}`;
+    return `${API_URL}/${filePath}`;
+
   };
 
   const firstImage = images.length > 0 ? images[0] : null;

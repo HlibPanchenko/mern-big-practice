@@ -83,10 +83,11 @@ const EachPost: React.FC = () => {
   };
 
   const convertToLocalURL = (filePath: string): string => {
-    const fileName = getFileNameFromPath(filePath);
-    const folder = postInfo.author._id;
+    // const fileName = getFileNameFromPath(filePath);
+    // const folder = postInfo.author._id;
 
-    return `${API_URL}/${folder}/${fileName}`;
+    return `${API_URL}/${filePath}`;
+    // return `${API_URL}/${folder}/${fileName}`;
   };
 
   const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {

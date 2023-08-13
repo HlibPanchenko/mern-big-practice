@@ -4,6 +4,7 @@ import config from "config";
 import { Request, Response, NextFunction } from "express";
 import fs from "fs";
 import { IUserIdRequest } from "./req.interface.js";
+// import { ICreatePostRequest } from "../controllers/PostController.js";
 
 // Создание хранилища для загруженных файлов
 // const storage = multer.diskStorage({
@@ -83,6 +84,7 @@ export class MulterConfigs {
   static config2 = {
     destination: function (
       req: IUserIdRequest,
+      // req: IUserIdRequest,
       file: Express.Multer.File,
       cb: Function
     ) {
@@ -93,7 +95,19 @@ export class MulterConfigs {
         return cb(new Error("User ID not provided."), "");
       }
       const userFolderPath = path.join(config.get("staticPath"), userId);
-      cb(null, userFolderPath);
+       // Создание папки пользователя, если она не существует
+       if (!fs.existsSync(userFolderPath)) {
+        fs.mkdirSync(userFolderPath);
+      }
+      // теперь для каждого поста создаю свою подпапку
+      const userSubFolderPath = path.join(userFolderPath, req.body.text);
+
+      if (!fs.existsSync(userSubFolderPath)) {
+        fs.mkdirSync(userSubFolderPath);
+      }
+
+      cb(null, userSubFolderPath);
+      // cb(null, userFolderPath);
     },
     filename: function (
       req: IUserIdRequest,

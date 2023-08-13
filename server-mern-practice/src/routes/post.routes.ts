@@ -1,5 +1,9 @@
 import express, { Router } from "express";
-import {PostController} from "../controllers/PostController.js";
+import { RequestHandler } from "express";
+import {
+  // ICreatePostRequest,
+  PostController,
+} from "../controllers/PostController.js";
 import { checkAuth } from "../utils/checkAuth.js";
 import { UploadService } from "../services/multer.service.js";
 
@@ -28,7 +32,6 @@ import { UploadService } from "../services/multer.service.js";
 
 // export { postRouter };
 
-
 // OOP
 export class PostRouter {
   private router: Router;
@@ -51,20 +54,32 @@ export class PostRouter {
       // upload.array("images[]", 10),
       this.postController.createPost
     );
-    
+
     this.router.get(
       "/getallauthorposts",
       checkAuth,
       this.postController.getallauthorposts
     );
-    
-    this.router.get("/getonepost/:id", checkAuth, this.postController.getonepost);
-    
+
+    this.router.get(
+      "/getonepost/:id",
+      checkAuth,
+      this.postController.getonepost
+    );
+
     this.router.get("/getallposts", checkAuth, this.postController.getallposts);
     this.router.post("/likepost/:id", checkAuth, this.postController.likepost);
-    
-    this.router.post("/comment/:id", checkAuth, this.postController.commentpost);
-    this.router.post("/subcomment/:id", checkAuth, this.postController.subcommentpost);
+
+    this.router.post(
+      "/comment/:id",
+      checkAuth,
+      this.postController.commentpost
+    );
+    this.router.post(
+      "/subcomment/:id",
+      checkAuth,
+      this.postController.subcommentpost
+    );
   }
 
   public getRouter(): Router {
