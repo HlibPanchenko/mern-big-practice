@@ -9,6 +9,7 @@ import { FileRouter } from "./routes/file.routes.js";
 import { PostRouter } from "./routes/post.routes.js";
 
 import { MyLogger } from "./logger/logger.service.js";
+import { ExceptionFilter } from "./errors/exception.filter.js";
 
 export class App {
   private app: Application;
@@ -17,13 +18,16 @@ export class App {
   authRouter: AuthRouter;
   fileRouter: FileRouter;
   postRouter: PostRouter;
+  exceptionFilter: ExceptionFilter;
 
   constructor(
     logger: MyLogger,
     authRouter: AuthRouter,
     fileRouter: FileRouter,
-    postRouter: PostRouter
+    postRouter: PostRouter,
+    exceptionFilter: ExceptionFilter
   ) {
+    this.exceptionFilter = exceptionFilter;
     this.logger = logger;
     this.authRouter = authRouter;
     this.fileRouter = fileRouter;
@@ -32,6 +36,7 @@ export class App {
     this.port = config.get("serverPORT");
     this.configureMiddleware();
     this.configureRoutes();
+    this.useExceptionFilters();
   }
 
   private configureMiddleware(): void {
@@ -45,6 +50,12 @@ export class App {
     this.app.use("/auth", this.authRouter.getRouter());
     this.app.use("/file", this.fileRouter.getRouter());
     this.app.use("/post", this.postRouter.getRouter());
+  }
+
+  useExceptionFilters() {
+    // забиндим метод к экземпляру класса (мы по сути то же самое делали в контроллерах):
+    // this.getallposts = this.getallposts.bind(this);
+    this.app.use(this.exceptionFilter.catch.bind(this.exceptionFilter));
   }
 
   public async start(): Promise<void> {

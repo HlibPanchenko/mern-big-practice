@@ -48,21 +48,29 @@ import { PostRouter } from "./routes/post.routes.js";
 import { FileService } from "./services/File.service.js";
 import { UploadService } from "./services/multer.service.js";
 import { MulterConfigs } from "./utils/multerConfig.js";
-import { UserService } from './services/User.service.js'
-import { PostService } from './services/Post.service.js'
+import { UserService } from "./services/User.service.js";
+import { PostService } from "./services/Post.service.js";
+import { ExceptionFilter } from "./errors/exception.filter.js";
 
 // oop
 async function initApp() {
   const fileService = new FileService();
+  const logger = new MyLogger();
   const multerService = new UploadService(MulterConfigs.config1); // передайте объект конфигурации в конструктор
-  const multerService2 = new UploadService(MulterConfigs.config2); 
+  const multerService2 = new UploadService(MulterConfigs.config2);
   const userController = new UserController(new UserService());
   const fileController = new FileController(fileService);
   const postController = new PostController(new PostService());
   const authRouter = new AuthRouter(userController);
   const fileRouter = new FileRouter(fileController, multerService);
   const postRouter = new PostRouter(postController, multerService2);
-  const app = new App(new MyLogger(), authRouter, fileRouter, postRouter);
+  const app = new App(
+    logger,
+    authRouter,
+    fileRouter,
+    postRouter,
+    new ExceptionFilter(logger)
+  );
   await app.start();
 }
 

@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { IUserIdRequest } from "../utils/req.interface.js";
 import { UserService } from "../services/User.service.js";
+import { HTTPError } from "../errors/http-error.class.js";
 
 // export const register = async (req: Request, res: Response) => {
 //   try {
@@ -174,7 +175,7 @@ export class UserController {
     this.login = this.login.bind(this); // привязываем методы класса к его экземплярам
   }
 
-  async register(req: Request, res: Response) {
+  async register(req: Request, res: Response, next: NextFunction) {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -190,24 +191,27 @@ export class UserController {
 
       return res.status(200).json(registrationResult);
     } catch (error) {
-      console.log(error);
-      res.status(400).json({
-        message: "Failed to register",
-      });
+      // console.log(error);
+      // res.status(400).json({
+      //   message: "Failed to register",
+      // });
+      next(new HTTPError(400, "Failed to register", "register"));
+
     }
   }
 
-  async login(req: Request, res: Response) {
+  async login(req: Request, res: Response, next: NextFunction) {
     try {
       const loginResult = await this.userService.loginService(req);
       return res.status(200).json({
         ...loginResult,
       });
     } catch (error) {
-      console.log(error);
-      res.status(400).json({
-        message: "User doesn't exist",
-      });
+      // console.log(error);
+      // res.status(401).json({
+      //   message: "User doesn't exist",
+      // });
+      next(new HTTPError(401, "User doesn't exist", "login"));
     }
   }
 
@@ -225,9 +229,7 @@ export class UserController {
 
   async updateUser(req: Request, res: Response) {
     try {
-      const updateUserResult = await this.userService.updateUserService(
-        req
-      );
+      const updateUserResult = await this.userService.updateUserService(req);
       return res.status(200).json(updateUserResult);
     } catch (error) {
       console.log(error);
