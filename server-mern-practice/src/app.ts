@@ -10,18 +10,19 @@ import { PostRouter } from "./routes/post.routes.js";
 
 import { MyLogger } from "./logger/logger.service.js";
 import { ExceptionFilter } from "./errors/exception.filter.js";
+import { IMyLogger } from "./logger/logger.interface.js";
 
 export class App {
   private app: Application;
   port: number;
-  logger: MyLogger;
+  logger: IMyLogger;
   authRouter: AuthRouter;
   fileRouter: FileRouter;
   postRouter: PostRouter;
   exceptionFilter: ExceptionFilter;
 
   constructor(
-    logger: MyLogger,
+    logger: IMyLogger,
     authRouter: AuthRouter,
     fileRouter: FileRouter,
     postRouter: PostRouter,

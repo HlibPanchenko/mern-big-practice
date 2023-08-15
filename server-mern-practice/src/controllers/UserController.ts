@@ -191,12 +191,7 @@ export class UserController {
 
       return res.status(200).json(registrationResult);
     } catch (error) {
-      // console.log(error);
-      // res.status(400).json({
-      //   message: "Failed to register",
-      // });
       next(new HTTPError(400, "Failed to register", "register"));
-
     }
   }
 
