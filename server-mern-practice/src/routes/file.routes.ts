@@ -5,16 +5,23 @@ import { UploadService } from "../services/multer.service.js";
 // const fileRouter = express.Router();
 // fileRouter.post("/uploadfile", checkAuth, fileController.uploadFile);
 // export { fileRouter };
+import "reflect-metadata";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../utils/types.js";
 
+@injectable()
 export class FileRouter {
   private router: Router;
-  private fileController: FileController;
-  private multerService: UploadService;
+  // private fileController: FileController;
+  // private multerService: UploadService;
 
-  constructor(fileController: FileController, multerService: UploadService) {
+  constructor(
+    @inject(TYPES.FileController) private fileController: FileController,
+    @inject(TYPES.UploadService1) private multerService: UploadService
+  ) {
     this.router = Router();
-    this.fileController = fileController;
-    this.multerService = multerService;
+    // this.fileController = fileController;
+    // this.multerService = multerService;
 
     this.configureRoutes();
   }

@@ -1,10 +1,9 @@
-import Post from "../models/Post.js";
-import User from "../models/User.js";
-import Comment from "../models/Comment.js";
-import SubComment from "../models/SubComment.js";
 import { Request, Response, NextFunction } from "express";
 import { IUserIdRequest } from "../utils/req.interface.js";
 import { PostService } from "../services/Post.service.js";
+import "reflect-metadata";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../utils/types.js";
 
 // insted of "const typedReq = req as IUserIdRequest & { files: Express.Multer.File[] }" it's better to extend interface
 
@@ -15,12 +14,12 @@ import { PostService } from "../services/Post.service.js";
 //   };
 //   files: Express.Multer.File[];
 // }
-
+@injectable()
 export class PostController {
-  postService: PostService;
+  // postService: PostService;
 
-  constructor(postService: PostService) {
-    this.postService = postService;
+  constructor(@inject(TYPES.PostService) private postService: PostService) {
+    // this.postService = postService;
     this.createPost = this.createPost.bind(this);
     this.getallauthorposts = this.getallauthorposts.bind(this);
     this.getonepost = this.getonepost.bind(this);

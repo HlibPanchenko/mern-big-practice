@@ -42,64 +42,151 @@ import { IUserIdRequest } from "./req.interface.js";
 //   fileFilter: fileFilter,
 // });
 
-export class MulterConfigs {
-  static config1 = {
-    destination: function (
+export class MulterConfig {
+  constructor(
+    public destination: (
       req: IUserIdRequest,
       file: Express.Multer.File,
       cb: Function
-    ) {
+    ) => void,
+    public filename: (
+      req: IUserIdRequest,
+      file: Express.Multer.File,
+      cb: Function
+    ) => void,
+    public fileFilter: (
+      req: IUserIdRequest,
+      file: Express.Multer.File,
+      cb: Function
+    ) => void,
+    public limits?: { fileSize: number }
+  ) {}
+}
+
+// export class MulterConfigs {
+//   static config1 = {
+//     destination: function (
+//       req: IUserIdRequest,
+//       file: Express.Multer.File,
+//       cb: Function
+//     ) {
+//       const userId = req.userId as string;
+//       const userFolderPath = path.join(config.get("staticPath"), userId);
+//       // Создание папки пользователя, если она не существует
+//       if (!fs.existsSync(userFolderPath)) {
+//         fs.mkdirSync(userFolderPath);
+//       }
+//       // Указываем путь, куда сохранять файл
+//       cb(null, userFolderPath);
+//     },
+//     filename: function (
+//       req: IUserIdRequest,
+//       file: Express.Multer.File,
+//       cb: Function
+//     ) {
+//       cb(
+//         null,
+//         file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+//       );
+//     },
+//     fileFilter: function (
+//       req: IUserIdRequest,
+//       file: Express.Multer.File,
+//       cb: Function
+//     ) {
+//       if (file.mimetype.startsWith("image/")) {
+//         cb(null, true);
+//       } else {
+//         cb(new Error("Only images are allowed."));
+//       }
+//     },
+//   };
+
+//   static config2 = {
+//     destination: function (
+//       req: IUserIdRequest,
+//       // req: IUserIdRequest,
+//       file: Express.Multer.File,
+//       cb: Function
+//     ) {
+//       const typedReq = req as IUserIdRequest; // Cast req to your custom type
+//       // const userId = req.userId;
+//       const userId = typedReq.userId;
+//       if (!userId) {
+//         return cb(new Error("User ID not provided."), "");
+//       }
+//       const userFolderPath = path.join(config.get("staticPath"), userId);
+//        // Создание папки пользователя, если она не существует
+//        if (!fs.existsSync(userFolderPath)) {
+//         fs.mkdirSync(userFolderPath);
+//       }
+//       // теперь для каждого поста создаю свою подпапку
+//       const userSubFolderPath = path.join(userFolderPath, req.body.text);
+
+//       if (!fs.existsSync(userSubFolderPath)) {
+//         fs.mkdirSync(userSubFolderPath);
+//       }
+
+//       cb(null, userSubFolderPath);
+//       // cb(null, userFolderPath);
+//     },
+//     filename: function (
+//       req: IUserIdRequest,
+//       file: Express.Multer.File,
+//       cb: Function
+//     ) {
+//       cb(
+//         null,
+//         file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+//       );
+//     },
+//     fileFilter: function (req: Request, file: Express.Multer.File, cb: any) {
+//       if (file.mimetype.startsWith("image/")) {
+//         cb(null, true);
+//       } else {
+//         cb(new Error("Only images are allowed."));
+//       }
+//     },
+//     limits: { fileSize: 5 * 1024 * 1024 },
+//   };
+// }
+
+export class MulterConfigs {
+  static config1 = new MulterConfig(
+    (req: IUserIdRequest, file: Express.Multer.File, cb: Function) => {
       const userId = req.userId as string;
       const userFolderPath = path.join(config.get("staticPath"), userId);
-      // Создание папки пользователя, если она не существует
       if (!fs.existsSync(userFolderPath)) {
         fs.mkdirSync(userFolderPath);
       }
-      // Указываем путь, куда сохранять файл
       cb(null, userFolderPath);
     },
-    filename: function (
-      req: IUserIdRequest,
-      file: Express.Multer.File,
-      cb: Function
-    ) {
+    (req: IUserIdRequest, file: Express.Multer.File, cb: Function) => {
       cb(
         null,
         file.fieldname + "-" + Date.now() + path.extname(file.originalname)
       );
     },
-    fileFilter: function (
-      req: IUserIdRequest,
-      file: Express.Multer.File,
-      cb: Function
-    ) {
+    (req: IUserIdRequest, file: Express.Multer.File, cb: Function) => {
       if (file.mimetype.startsWith("image/")) {
         cb(null, true);
       } else {
         cb(new Error("Only images are allowed."));
       }
-    },
-  };
+    }
+  );
 
-  static config2 = {
-    destination: function (
-      req: IUserIdRequest,
-      // req: IUserIdRequest,
-      file: Express.Multer.File,
-      cb: Function
-    ) {
-      const typedReq = req as IUserIdRequest; // Cast req to your custom type
-      // const userId = req.userId;
+  static config2 = new MulterConfig(
+    (req: IUserIdRequest, file: Express.Multer.File, cb: Function) => {
+      const typedReq = req as IUserIdRequest;
       const userId = typedReq.userId;
       if (!userId) {
         return cb(new Error("User ID not provided."), "");
       }
       const userFolderPath = path.join(config.get("staticPath"), userId);
-       // Создание папки пользователя, если она не существует
-       if (!fs.existsSync(userFolderPath)) {
+      if (!fs.existsSync(userFolderPath)) {
         fs.mkdirSync(userFolderPath);
       }
-      // теперь для каждого поста создаю свою подпапку
       const userSubFolderPath = path.join(userFolderPath, req.body.text);
 
       if (!fs.existsSync(userSubFolderPath)) {
@@ -107,25 +194,20 @@ export class MulterConfigs {
       }
 
       cb(null, userSubFolderPath);
-      // cb(null, userFolderPath);
     },
-    filename: function (
-      req: IUserIdRequest,
-      file: Express.Multer.File,
-      cb: Function
-    ) {
+    (req: IUserIdRequest, file: Express.Multer.File, cb: Function) => {
       cb(
         null,
         file.fieldname + "-" + Date.now() + path.extname(file.originalname)
       );
     },
-    fileFilter: function (req: Request, file: Express.Multer.File, cb: any) {
+    (req: IUserIdRequest, file: Express.Multer.File, cb: any) => {
       if (file.mimetype.startsWith("image/")) {
         cb(null, true);
       } else {
         cb(new Error("Only images are allowed."));
       }
     },
-    limits: { fileSize: 5 * 1024 * 1024 },
-  };
+    { fileSize: 5 * 1024 * 1024 }
+  );
 }

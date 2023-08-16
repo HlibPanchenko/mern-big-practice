@@ -1,4 +1,5 @@
 import express, { Application } from "express";
+import "reflect-metadata";
 import cors from "cors";
 import mongoose from "mongoose";
 import config from "config";
@@ -11,28 +12,21 @@ import { PostRouter } from "./routes/post.routes.js";
 import { MyLogger } from "./logger/logger.service.js";
 import { ExceptionFilter } from "./errors/exception.filter.js";
 import { IMyLogger } from "./logger/logger.interface.js";
+import { inject, injectable } from "inversify";
+import { TYPES } from "./utils/types.js";
 
+@injectable()
 export class App {
   private app: Application;
   port: number;
-  logger: IMyLogger;
-  authRouter: AuthRouter;
-  fileRouter: FileRouter;
-  postRouter: PostRouter;
-  exceptionFilter: ExceptionFilter;
 
   constructor(
-    logger: IMyLogger,
-    authRouter: AuthRouter,
-    fileRouter: FileRouter,
-    postRouter: PostRouter,
-    exceptionFilter: ExceptionFilter
+    @inject(TYPES.IMyLogger) private logger: IMyLogger,
+    @inject(TYPES.AuthRouter) private authRouter: AuthRouter,
+    @inject(TYPES.FileRouter) private fileRouter: FileRouter,
+    @inject(TYPES.PostRouter) private postRouter: PostRouter,
+    @inject(TYPES.IExceptionFilter) private exceptionFilter: ExceptionFilter
   ) {
-    this.exceptionFilter = exceptionFilter;
-    this.logger = logger;
-    this.authRouter = authRouter;
-    this.fileRouter = fileRouter;
-    this.postRouter = postRouter;
     this.app = express();
     this.port = config.get("serverPORT");
     this.configureMiddleware();

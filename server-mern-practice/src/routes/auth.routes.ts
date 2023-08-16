@@ -2,6 +2,10 @@ import express, { Router } from "express";
 import {UserController} from "../controllers/UserController.js";
 import { check } from "express-validator";
 import {checkAuth} from "../utils/checkAuth.js";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../utils/types.js";
+import { IUserController } from "../controllers/UserController.interface.js";
+import "reflect-metadata";
 
 // const authRouter = express.Router();
 
@@ -24,14 +28,14 @@ import {checkAuth} from "../utils/checkAuth.js";
 // authRouter.post("/updateuser", checkAuth , UserController.updateUser);
 
 // export { authRouter };
-
+@injectable()
 export class AuthRouter {
   private router: Router;
-  private userController: UserController;
+  // private userController: UserController;
 
-  constructor(userController: UserController) {
+  constructor(@inject(TYPES.IUserController) private userController: IUserController) {
     this.router = Router();
-    this.userController = userController;
+    // this.userController = userController;
     this.configureRoutes();
 
   }

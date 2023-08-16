@@ -2,8 +2,10 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/generateJWTToken.js";
 import { IUserIdRequest } from "../utils/req.interface.js";
-import { Response } from "express";
+import "reflect-metadata";
+import { injectable } from "inversify";
 
+@injectable()
 export class UserService {
   async registerService(email: string, password: string, name: string) {
     try {

@@ -1,11 +1,10 @@
 import express, { Router } from "express";
-import { RequestHandler } from "express";
-import {
-  // ICreatePostRequest,
-  PostController,
-} from "../controllers/PostController.js";
+import {PostController} from "../controllers/PostController.js";
 import { checkAuth } from "../utils/checkAuth.js";
 import { UploadService } from "../services/multer.service.js";
+import "reflect-metadata";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../utils/types.js";
 
 // functional
 // const postRouter = express.Router();
@@ -33,15 +32,20 @@ import { UploadService } from "../services/multer.service.js";
 // export { postRouter };
 
 // OOP
+@injectable()
 export class PostRouter {
   private router: Router;
-  private postController: PostController;
-  private multerService: UploadService;
+  // private postController: PostController;
+  // private multerService: UploadService;
 
-  constructor(postController: PostController, multerService: UploadService) {
+  constructor(
+    @inject(TYPES.PostController) private postController: PostController, 
+    @inject(TYPES.UploadService2) private multerService: UploadService, 
+    
+    ) {
     this.router = Router();
-    this.postController = postController;
-    this.multerService = multerService;
+    // this.postController = postController;
+    // this.multerService = multerService;
 
     this.configureRoutes();
   }

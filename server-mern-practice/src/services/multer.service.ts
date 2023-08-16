@@ -1,5 +1,7 @@
 import multer from "multer";
 import { IUserIdRequest } from "../utils/req.interface";
+import "reflect-metadata";
+import { injectable } from "inversify";
 
 type UploadConfig = {
   destination: (
@@ -16,6 +18,7 @@ type UploadConfig = {
   fileFilter: (req: any, file: Express.Multer.File, cb: Function) => void;
 };
 
+@injectable()
 export class UploadService {
   private upload: multer.Multer;
 

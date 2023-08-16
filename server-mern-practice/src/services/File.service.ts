@@ -1,10 +1,7 @@
-import multer from "multer";
-import fs from "fs";
-import path from "path";
 import User from "../models/User.js";
-import config from "config";
 import { IUserIdRequest } from "../utils/req.interface.js";
-
+import "reflect-metadata";
+import { injectable } from "inversify";
 // export class FileService {
 //   async uploadUserAvatar(userId:string, file:Express.Multer.File) {
 //     const userFolderPath = path.join(config.get("staticPath"), userId);
@@ -128,6 +125,7 @@ import { IUserIdRequest } from "../utils/req.interface.js";
 //   }
 // }
 
+@injectable()
 export class FileService {
   async uploadUserAvatar(req: IUserIdRequest): Promise<any> {
     console.log("Inside fileService:", req.file?.filename);

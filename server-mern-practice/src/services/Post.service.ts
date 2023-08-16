@@ -7,7 +7,10 @@ import Post from "../models/Post.js";
 import User from "../models/User.js";
 import Comment from "../models/Comment.js";
 import SubComment from "../models/SubComment.js";
+import "reflect-metadata";
+import { injectable } from "inversify";
 
+@injectable()
 export class PostService {
   async createPostService(req: Request) {
     try {

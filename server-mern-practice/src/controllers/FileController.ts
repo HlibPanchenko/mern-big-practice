@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { IUserIdRequest } from "../utils/req.interface.js";
 import { FileService } from "../services/File.service.js";
+import "reflect-metadata";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../utils/types.js";
+
 // functional
 // export const uploadFile = async (req: IUserIdRequest, res: Response) => {
 //   if (!req.userId) {
@@ -115,11 +119,12 @@ import { FileService } from "../services/File.service.js";
 // ООП
 
 // OOP
+@injectable()
 export class FileController {
-  fileService: FileService;
+  // fileService: FileService;
 
-  constructor(fileService: FileService) {
-    this.fileService = fileService;
+  constructor(@inject(TYPES.FileService) private fileService: FileService) {
+    // this.fileService = fileService;
     this.uploadFile = this.uploadFile.bind(this); // привязка к контексту
   }
   async uploadFile(req: IUserIdRequest, res: Response) {
@@ -127,7 +132,7 @@ export class FileController {
       if (!req.userId) {
         return res.status(400).json({ error: "User ID not provided." });
       }
-      
+
       if (!req.file) {
         return res.status(400).json({ error: "image not provided." });
       }

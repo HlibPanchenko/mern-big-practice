@@ -3,6 +3,10 @@ import { validationResult } from "express-validator";
 import { IUserIdRequest } from "../utils/req.interface.js";
 import { UserService } from "../services/User.service.js";
 import { HTTPError } from "../errors/http-error.class.js";
+import { IUserController } from "./UserController.interface.js";
+import { inject, injectable } from "inversify";
+import "reflect-metadata";
+import { TYPES } from "../utils/types.js";
 
 // export const register = async (req: Request, res: Response) => {
 //   try {
@@ -163,12 +167,12 @@ import { HTTPError } from "../errors/http-error.class.js";
 //     });
 //   }
 // };
+@injectable()
+export class UserController implements IUserController {
+  // userService: UserService;
 
-export class UserController {
-  userService: UserService;
-
-  constructor(userService: UserService) {
-    this.userService = userService;
+  constructor(@inject(TYPES.UserService) private userService: UserService) {
+    // this.userService = userService;
     this.register = this.register.bind(this);
     this.getMe = this.getMe.bind(this);
     this.updateUser = this.updateUser.bind(this);
