@@ -1,44 +1,5 @@
-// functional
-// import express from "express";
-// import cors from "cors";
-// import mongoose from "mongoose";
-// import config from "config";
-// import bodyParser from "body-parser";
-
-// import { authRouter } from "./routes/auth.routes.js";
-// import { fileRouter } from "./routes/file.routes.js";
-// import { postRouter } from "./routes/post.routes.js";
-
-// const app: express.Application = express();
-// const PORT: number = config.get("serverPORT");
-
-// app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(bodyParser.json());
-
-// // app.use(express.json());
-// app.use(cors());
-// // app.use(express.static("static"));
-// app.use(express.static(config.get("staticPath")));
-
-// app.use("/auth", authRouter);
-// app.use("/file", fileRouter);
-// app.use("/post", postRouter);
-
-// const init = async (): Promise<void> => {
-//   try {
-//     await mongoose.connect(config.get("dbUrl"));
-//     app.listen(PORT, () => {
-//       console.log("server started on port", PORT);
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
-// init();
-//
 import "reflect-metadata";
-import { Container } from "inversify";
+import { Container, ContainerModule, interfaces } from "inversify";
 
 import { App } from "./app.js";
 import { FileController } from "./controllers/FileController.js";
@@ -89,12 +50,9 @@ const appContainer = new Container();
 // в generic указываем какой интерфейс будем биндить (можно и реализацию интерфейса - т.е. класс)
 // to(MyLogger) - конкретная реализация интерфейса
 // после generic в () пишем символ связи
-appContainer.bind<IMyLogger>(TYPES.IMyLogger).to(MyLogger);
-appContainer.bind<IExceptionFilter>(TYPES.IExceptionFilter).to(ExceptionFilter);
-appContainer.bind<FileService>(TYPES.FileService).to(FileService);
-// appContainer.bind<UploadService>(TYPES.UploadService).to(UploadService);
-
-/**
+// можем использовать ContainerModule из InversifyJS для создания модулей, которые объединяют биндинги для определенных функциональных блоков
+const multerConfigModule = new ContainerModule((bind: interfaces.Bind) => {
+  /**
  * нижние 4 абзаца это реализация этого:
  * const multerService = new UploadService(MulterConfigs.config1); // передайте объект конфигурации в конструктор
 //   const multerService2 = new UploadService(MulterConfigs.config2);
@@ -124,43 +82,63 @@ appContainer.bind<FileService>(TYPES.FileService).to(FileService);
 или TYPES.UploadService2, контейнер будет создавать экземпляр UploadService, используя соответствующий
  объект MulterConfig, который вы предварительно связали в контейнере.
  */
-/**
+  /**
  связываем UploadService с типами TYPES.UploadService1 и TYPES.UploadService2 в контейнере с помощью 
  toDynamicValue. Это позволяет вам создать экземпляр UploadService с зависимостями, 
  которые вы разрешите динамически во время выполнения, используя функцию, переданную в toDynamicValue. 
  По-сути, то же самое что и .to(UploadService(config))
- *  */ 
-appContainer
-  .bind<UploadService>(TYPES.UploadService1)
-  .toDynamicValue((context) => {
-    const config = context.container.get<MulterConfig>(TYPES.MulterConfig1);
-    return new UploadService(config);
-  });
+ *  */
+  // в контенйер кладем переменные  MulterConfigs.config1 и MulterConfigs.config2 которые содержат в себе настройки конфигурации для мультера
+  appContainer
+    .bind<MulterConfig>(TYPES.MulterConfig1)
+    .toConstantValue(MulterConfigs.config1);
+  appContainer
+    .bind<MulterConfig>(TYPES.MulterConfig2)
+    .toConstantValue(MulterConfigs.config2);
+  // а тут уже достаем из контейнера переменные  MulterConfigs.config1 и MulterConfigs.config2 и передаем в конструктор UploadService
+  appContainer
+    .bind<UploadService>(TYPES.UploadService1)
+    .toDynamicValue((context) => {
+      const config = context.container.get<MulterConfig>(TYPES.MulterConfig1);
+      return new UploadService(config);
+    });
 
-appContainer
-  .bind<UploadService>(TYPES.UploadService2)
-  .toDynamicValue((context) => {
-    const config = context.container.get<MulterConfig>(TYPES.MulterConfig2);
-    return new UploadService(config);
-  });
+  appContainer
+    .bind<UploadService>(TYPES.UploadService2)
+    .toDynamicValue((context) => {
+      const config = context.container.get<MulterConfig>(TYPES.MulterConfig2);
+      return new UploadService(config);
+    });
+});
+const servicesModule = new ContainerModule((bind: interfaces.Bind) => {
+  appContainer.bind<IMyLogger>(TYPES.IMyLogger).to(MyLogger);
+  appContainer
+    .bind<IExceptionFilter>(TYPES.IExceptionFilter)
+    .to(ExceptionFilter);
+  appContainer.bind<FileService>(TYPES.FileService).to(FileService);
+  appContainer.bind<PostService>(TYPES.PostService).to(PostService);
+  appContainer.bind<UserService>(TYPES.UserService).to(UserService);
+});
 
-appContainer
-  .bind<MulterConfig>(TYPES.MulterConfig1)
-  .toConstantValue(MulterConfigs.config1);
-appContainer
-  .bind<MulterConfig>(TYPES.MulterConfig2)
-  .toConstantValue(MulterConfigs.config2);
+const routesModule = new ContainerModule((bind: interfaces.Bind) => {
+  appContainer.bind<AuthRouter>(TYPES.AuthRouter).to(AuthRouter);
+  appContainer.bind<FileRouter>(TYPES.FileRouter).to(FileRouter);
+  appContainer.bind<PostRouter>(TYPES.PostRouter).to(PostRouter);
+});
 
-appContainer.bind<PostService>(TYPES.PostService).to(PostService);
-appContainer.bind<UserService>(TYPES.UserService).to(UserService);
-appContainer.bind<IUserController>(TYPES.IUserController).to(UserController);
-appContainer.bind<PostController>(TYPES.PostController).to(PostController);
-appContainer.bind<FileController>(TYPES.FileController).to(FileController);
-appContainer.bind<AuthRouter>(TYPES.AuthRouter).to(AuthRouter);
-appContainer.bind<FileRouter>(TYPES.FileRouter).to(FileRouter);
-appContainer.bind<PostRouter>(TYPES.PostRouter).to(PostRouter);
-appContainer.bind<App>(TYPES.Application).to(App);
+const controllersModule = new ContainerModule((bind: interfaces.Bind) => {
+  appContainer.bind<IUserController>(TYPES.IUserController).to(UserController);
+  appContainer.bind<PostController>(TYPES.PostController).to(PostController);
+  appContainer.bind<FileController>(TYPES.FileController).to(FileController);
+  appContainer.bind<App>(TYPES.Application).to(App);
+});
 
+appContainer.load(
+  multerConfigModule,
+  servicesModule,
+  routesModule,
+  controllersModule
+);
 // получим экземпляр класса App чтобы запустить приложение
 // раньше мы делали это так:  const app = new App(); await app.start();
 // теперь можем получать экземпляр любого класса с контейнера с помощью get
