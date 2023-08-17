@@ -79,14 +79,17 @@ const Navbar: React.FC = () => {
                     Collection
                   </Link>
                 </li>
-
                 <li className="navbar-menu-item">
-                  {/* <Link to="/registration" onClick={() => logOutHandler}> */}
-                  <Link className="linkNav" to="/createpost">
-                    <div className="linkNav">Create post</div>
+                  <Link className="linkNav" to="/recognition">
+                    RecognitionAi
                   </Link>
                 </li>
-                {/* <Link className="navbar-logo" to="/myprofile"> */}
+
+                <li className="navbar-menu-item">
+                  <Link className="linkNav" to="/createpost">
+                    Create post
+                  </Link>
+                </li>
                 <div
                   // className={classNameModal}
                   ref={modalRef}

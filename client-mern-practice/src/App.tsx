@@ -12,6 +12,7 @@ import CreatePost from "./page/createPost";
 import EachPost from "./page/eachPost";
 import HomePage from "./page/HomePage";
 import MyProfile from "./page/myProfile";
+import RecognitionPage from "./page/recognitionPage";
 import { useAppDispatch } from "./redux/hooks";
 import { fetchAuthMe } from "./redux/slices/authSlice";
 
@@ -40,6 +41,7 @@ const App: React.FC = () => {
         <Route path="/collection" element={<Collection />} />
         <Route path="/createpost" element={<CreatePost />} />
         <Route path="/myprofile/:postId" element={<EachPost />} />
+        <Route path="/recognition" element={<RecognitionPage />} />
       </Routes>
       <Footer />
     </div>

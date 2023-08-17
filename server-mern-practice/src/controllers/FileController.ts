@@ -1,4 +1,9 @@
 import { Request, Response, NextFunction } from "express";
+// import SerpApi from 'google-search-results-nodejs';
+// import type { GoogleLensParameters } from "serpapi";
+import { getJson } from "serpapi";
+import config from "config";
+
 import { IUserIdRequest } from "../utils/req.interface.js";
 import { FileService } from "../services/File.service.js";
 import "reflect-metadata";
@@ -122,7 +127,6 @@ import { TYPES } from "../utils/types.js";
 @injectable()
 export class FileController {
   // fileService: FileService;
-
   constructor(@inject(TYPES.FileService) private fileService: FileService) {
     // this.fileService = fileService;
     this.uploadFile = this.uploadFile.bind(this); // привязка к контексту
@@ -242,6 +246,42 @@ export class FileController {
     } catch (err) {
       console.error(err);
       return res.status(500).json({ error: "Failed to update user photo." });
+    }
+  }
+  async recognizeFile(req: IUserIdRequest, res: Response) {
+    try {
+      if (!req.userId) {
+        return res.status(400).json({ error: "User ID not provided." });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ error: "image not provided." });
+      }
+
+      console.log(req.file);
+
+      // api
+      // http://localhost:4444//64beb4d7b2f33b2e457a2609/imageForAi-1692287191701.webp
+      const imageURL = `http://localhost:4444//${req.userId}/${req.file.filename}`;
+      // console.log(imageURL);
+      // апи работате для фоток с интернета, для фоток с моего компютера - нет. Надо каки-то образом сначала загружать картинку в облако,а потом ссылку на нее отправлять апи
+      const response = await getJson({
+        engine: "google_lens",
+        api_key: config.get("apiKEY"),
+        // url: "https://i.imgur.com/HBrB8p0.png",
+        url: imageURL,
+        // url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Skoda_Kodiaq_Vienna_19-20_IMG_2247.jpg/640px-Skoda_Kodiaq_Vienna_19-20_IMG_2247.jpg',
+        // image_base64: imageBase64
+      });
+      console.log(response);
+      return res.json({
+        message: "Photo for Ai successfully delivered to controller.",
+      });
+    } catch (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .json({ error: "Failed to delivered Photo for Ai to controller" });
     }
   }
 }

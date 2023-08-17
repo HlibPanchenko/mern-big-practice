@@ -34,6 +34,13 @@ export class FileRouter {
       this.multerService.single("avatar"),
       this.fileController.uploadFile
     );
+    this.router.post(
+      "/recognition",
+      checkAuth,
+      // upload.single("avatar"),
+      this.multerService.single("imageForAi"),
+      this.fileController.recognizeFile
+    );
   }
 
   public getRouter(): Router {
