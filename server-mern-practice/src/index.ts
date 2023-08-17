@@ -111,10 +111,10 @@ const multerConfigModule = new ContainerModule((bind: interfaces.Bind) => {
     });
 });
 const servicesModule = new ContainerModule((bind: interfaces.Bind) => {
-  appContainer.bind<IMyLogger>(TYPES.IMyLogger).to(MyLogger);
+  appContainer.bind<IMyLogger>(TYPES.IMyLogger).to(MyLogger).inSingletonScope()
   appContainer
     .bind<IExceptionFilter>(TYPES.IExceptionFilter)
-    .to(ExceptionFilter);
+    .to(ExceptionFilter).inSingletonScope();
   appContainer.bind<FileService>(TYPES.FileService).to(FileService);
   appContainer.bind<PostService>(TYPES.PostService).to(PostService);
   appContainer.bind<UserService>(TYPES.UserService).to(UserService);

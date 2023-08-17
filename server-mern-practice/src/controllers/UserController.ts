@@ -7,6 +7,7 @@ import { IUserController } from "./UserController.interface.js";
 import { inject, injectable } from "inversify";
 import "reflect-metadata";
 import { TYPES } from "../utils/types.js";
+import { UpdateUserDTO, UserLoginDTO, UserRegistrationDTO } from "../dtos/user.dto.js";
 
 // export const register = async (req: Request, res: Response) => {
 //   try {
@@ -179,7 +180,7 @@ export class UserController implements IUserController {
     this.login = this.login.bind(this); // привязываем методы класса к его экземплярам
   }
 
-  async register(req: Request, res: Response, next: NextFunction) {
+  async register(req: Request<{}, {}, UserRegistrationDTO>, res: Response, next: NextFunction) {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -199,7 +200,7 @@ export class UserController implements IUserController {
     }
   }
 
-  async login(req: Request, res: Response, next: NextFunction) {
+  async login(req: Request<{}, {}, UserLoginDTO>, res: Response, next: NextFunction) {
     try {
       const loginResult = await this.userService.loginService(req);
       return res.status(200).json({
@@ -226,7 +227,7 @@ export class UserController implements IUserController {
     }
   }
 
-  async updateUser(req: Request, res: Response) {
+  async updateUser(req: Request<{}, {}, UpdateUserDTO>, res: Response) {
     try {
       const updateUserResult = await this.userService.updateUserService(req);
       return res.status(200).json(updateUserResult);
