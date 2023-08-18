@@ -1,14 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-// import SerpApi from 'google-search-results-nodejs';
-// import type { GoogleLensParameters } from "serpapi";
 import { getJson } from "serpapi";
 import config from "config";
-
 import { IUserIdRequest } from "../utils/req.interface.js";
 import { FileService } from "../services/File.service.js";
 import "reflect-metadata";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../utils/types.js";
+import { uploadToImgur } from "../services/imgur.service.js";
 
 // functional
 // export const uploadFile = async (req: IUserIdRequest, res: Response) => {
@@ -262,20 +260,33 @@ export class FileController {
 
       // api
       // http://localhost:4444//64beb4d7b2f33b2e457a2609/imageForAi-1692287191701.webp
-      const imageURL = `http://localhost:4444//${req.userId}/${req.file.filename}`;
-      // console.log(imageURL);
+      // const imageURL = `http://localhost:4444//${req.userId}/${req.file.filename}`;
+      // imgur
+      // const imgurURL = await uploadToImgur(imageURL);
+      const imgurURL = await uploadToImgur(req.file.path);
+
+      if (!imgurURL) {
+        return res
+          .status(500)
+          .json({ error: "Failed to upload image to Imgur." });
+      }
+
+      console.log(imgurURL);
+
       // апи работате для фоток с интернета, для фоток с моего компютера - нет. Надо каки-то образом сначала загружать картинку в облако,а потом ссылку на нее отправлять апи
       const response = await getJson({
         engine: "google_lens",
         api_key: config.get("apiKEY"),
-        // url: "https://i.imgur.com/HBrB8p0.png",
-        url: imageURL,
-        // url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Skoda_Kodiaq_Vienna_19-20_IMG_2247.jpg/640px-Skoda_Kodiaq_Vienna_19-20_IMG_2247.jpg',
-        // image_base64: imageBase64
+        url: imgurURL,
       });
+
+      const title = response.knowledge_graph ? response.knowledge_graph[0]?.title : 'not found'
       console.log(response);
       return res.json({
         message: "Photo for Ai successfully delivered to controller.",
+        // title: imgurURL,
+        // title: response.knowledge_graph[0]?.title || response.visual_matches[0]?.title,
+        title
       });
     } catch (err) {
       console.error(err);

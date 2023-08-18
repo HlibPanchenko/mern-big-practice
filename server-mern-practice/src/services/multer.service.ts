@@ -48,7 +48,7 @@ export class UploadService {
 
     this.upload = multer({
       storage: storage,
-      limits: config.limits || { fileSize: 1024 * 1024 },
+      limits: config.limits || { fileSize: 5 * 1024 * 1024 },
       fileFilter: config.fileFilter,
     });
 

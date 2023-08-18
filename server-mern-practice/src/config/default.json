@@ -2,5 +2,7 @@
   "dbUrl": "mongodb+srv://glebpanchenk7:Z1e8klcsx9ocyC51@big-practice.y3ekheg.mongodb.net/",
   "serverPORT": 4444,
   "apiKEY": "72f45a334b206b54bf0e31b07a5c233c619885a3a91150563ceaa285d2fb90e2",
+  "imgurClientId":"9ce650a4c67c002",
+  "imgurClientSecret":"745d5e2834a575da8e09ab21e5d65d7b1e777e8d",
   "staticPath": "C:\\Users\\Глеб\\Desktop\\Frontend\\node js\\mern-practice (all)\\mern-practice\\server-mern-practice\\static"
 }

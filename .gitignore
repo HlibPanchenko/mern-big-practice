@@ -2,5 +2,6 @@
 server-mern-practice/node_modules
 client-mern-practice/node_modules
 
-server-mern-practice/config/default.json
+server-mern-practice/src/config/default.json
 server-mern-practice/dist/
+server-mern-practice/src/api

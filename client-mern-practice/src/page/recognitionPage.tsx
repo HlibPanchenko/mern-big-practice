@@ -4,9 +4,12 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useAppSelector } from "../redux/hooks";
 import { BsCloudDownload } from "react-icons/bs";
+import { ThreeDots } from "react-loader-spinner";
 
 const RecognitionPage: React.FC = () => {
   const [images, setImages] = useState<FileList | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [brandCar, setBrandCar] = useState("");
 
   const token = localStorage.getItem("token");
   // const user = useSelector((state) => state.auth.user);
@@ -25,6 +28,8 @@ const RecognitionPage: React.FC = () => {
     console.log(formData);
 
     try {
+      setIsLoading(true);
+      setBrandCar('')
       const response = await axios.post(
         "http://localhost:4444/file/recognition",
         formData,
@@ -35,7 +40,8 @@ const RecognitionPage: React.FC = () => {
           },
         }
       );
-
+      setIsLoading(false);
+      setBrandCar(response.data.title);
       // Обработка успешного создания поста
       console.log(response.data);
       // Сброс формы после успешного создания поста
@@ -103,7 +109,8 @@ const RecognitionPage: React.FC = () => {
         <h2 className="recognition-title">
           AI will find all the neccesary information about your car for you!
         </h2>
-        <h3 className="recognition-subtitle">How it works?</h3>
+
+        <h3 className="recognition-subtitle">How does it work?</h3>
         <p>
           1. Upload photo of car <br />
           2. Wait <br />
@@ -134,22 +141,43 @@ const RecognitionPage: React.FC = () => {
                 </>
               )}
 
-              <div className="uploader-image-preview">
                 {images &&
-                  Array.from(images).map((image, index) => (
+              <div className="uploader-image-preview">
+                  {Array.from(images).map((image, index) => (
                     <>
-                      <img
-                        key={index}
-                        src={URL.createObjectURL(image)}
-                        alt={`Image ${index + 1}`}
-                      />
-                      <button className="uploader-btn" onClick={handleSubmit}>
-                        process Ai
-                      </button>
+                      <div className="uploader-image-content">
+                        <img
+                          key={index}
+                          src={URL.createObjectURL(image)}
+                          alt={`Image ${index + 1}`}
+                        />
+
+                        <button className="uploader-btn" onClick={handleSubmit}>
+                          process Ai
+                        </button>
+                      </div>
                     </>
                   ))}
-              </div>
+              </div>}
             </div>
+          </div>
+          <div className="uploader-result">
+            {!isLoading && <p> Ai result: </p>}
+            {brandCar && (
+              <div className="uploader-nameOfcar"> {brandCar}</div>
+            )}
+            {isLoading && (
+              <ThreeDots
+                height="80"
+                width="80"
+                radius="9"
+                color="#4fa94d"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                // wrapperClassName=""
+                visible={true}
+              />
+            )}
           </div>
         </div>
       </div>
