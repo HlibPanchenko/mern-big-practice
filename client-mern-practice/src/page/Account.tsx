@@ -57,8 +57,8 @@ const Account = () => {
         );
 
         console.log(response);
-        const { email, password, name, _id, avatar, __v, likedposts } = response.data;
-        const user = { email, password, name, avatar, _id, __v, likedposts };
+        const { email, password, name, _id, avatar, __v, likedposts, roles } = response.data;
+        const user = { email, password, name, avatar, _id, __v, likedposts, roles };
         dispatch(setUser(user));
 
         setIsEdit(false);

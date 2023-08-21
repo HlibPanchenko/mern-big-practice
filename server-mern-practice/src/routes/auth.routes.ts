@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import {UserController} from "../controllers/UserController.js";
 import { check } from "express-validator";
 import {checkAuth} from "../utils/checkAuth.js";
+import {checkRole} from "../utils/checkRole.js";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../utils/types.js";
 import { IUserController } from "../controllers/UserController.interface.js";
@@ -47,14 +48,15 @@ export class AuthRouter {
         check(
           "email",
           "Please enter your email address in format yourname@example.com"
-        ).isEmail(),
-        // check("password", "password must have 5+ symbols").isLength({ min: 5 }),
+        ).isEmail().notEmpty(),
+        check("password", "password must have 5+ symbols").isLength({ min: 5 }).notEmpty(),
       ],
       this.userController.register
     );
 
     this.router.post("/login", this.userController.login);
     this.router.get("/getuser", checkAuth, this.userController.getMe);
+    this.router.get("/getallusers", checkAuth,checkRole(["MANAGER"]), this.userController.getAllUsers);
     this.router.post("/updateuser", checkAuth, this.userController.updateUser);
   }
 

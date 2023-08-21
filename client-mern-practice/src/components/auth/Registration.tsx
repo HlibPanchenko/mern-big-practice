@@ -39,8 +39,8 @@ const Registration: React.FC = () => {
       setEmailError("");
       setDataForm(obj);
       console.log(response);
-      const { email, password, name, _id, avatar, __v, likedposts } = response.data;
-      const user = { email, password, name, avatar, _id, __v, likedposts };
+      const { email, password, name, _id, avatar, __v, likedposts, roles } = response.data;
+      const user = { email, password, name, avatar, _id, __v, likedposts, roles };
 
       dispatch(registerAction(user));
       if (response.data.token) {

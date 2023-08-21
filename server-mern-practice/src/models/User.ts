@@ -6,6 +6,7 @@ export interface IUser extends Document {
   name: string;
   avatar: string;
   likedposts: string[];
+  roles: string[];
 }
 
 const User = new mongoose.Schema<IUser>({
@@ -14,6 +15,7 @@ const User = new mongoose.Schema<IUser>({
   name: { type: String, required: true },
   avatar: { type: String, default: "" }, // Указываем значение по умолчанию как пустую строку
   likedposts: [{ type: String }],
+  roles: [{ type: String, ref: "Role" }],
 });
 
 export default mongoose.model<IUser>("User", User);

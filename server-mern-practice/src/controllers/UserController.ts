@@ -8,6 +8,7 @@ import { inject, injectable } from "inversify";
 import "reflect-metadata";
 import { TYPES } from "../utils/types.js";
 import { UpdateUserDTO, UserLoginDTO, UserRegistrationDTO } from "../dtos/user.dto.js";
+import User from "../models/User.js";
 
 // export const register = async (req: Request, res: Response) => {
 //   try {
@@ -219,6 +220,20 @@ export class UserController implements IUserController {
     try {
       const getUserResult = await this.userService.getUserService(req);
       return res.status(200).json(getUserResult);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "No access",
+      });
+    }
+  }
+  async getAllUsers(req: IUserIdRequest, res: Response) {
+    try {
+      const users = await User.find();
+      if (!users) {
+        throw new Error("User not found");
+      }
+      return res.status(200).json(users);
     } catch (error) {
       console.log(error);
       res.status(500).json({

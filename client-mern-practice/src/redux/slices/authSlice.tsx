@@ -9,6 +9,7 @@ interface User {
   _id: string;
   avatar: string;
   likedposts:string[];
+  roles: string[]
 }
 
 interface AuthState {

@@ -29,7 +29,7 @@ const Footer: React.FC = () => {
 
   return (
     <nav className="footer">
-      <div className="footer-container">Foooooooter</div>
+      <div className="footer-container">©2023 CFS. All rights reserved.</div>
     </nav>
   );
 };
