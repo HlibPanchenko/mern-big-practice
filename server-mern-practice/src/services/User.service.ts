@@ -33,6 +33,7 @@ export class UserService {
       const userRole = await Role.findOne({ value: "USER" });
       const adminRole = await Role.findOne({ value: "ADMIN" });
       const managerRole = await Role.findOne({ value: "MANAGER" });
+      const superAdminRole = await Role.findOne({value:"SUPERADMIN"});
       if (!userRole) {
         throw new Error(`such role doesn't exist`);
       }
@@ -42,12 +43,15 @@ export class UserService {
       if (!managerRole) {
         throw new Error(`such role doesn't exist`);
       }
+      if (!superAdminRole) {
+        throw new Error(`such role doesn't exist`);
+      }
       const user = new User({
         email,
         password: hashPassword,
         name,
         roles: [userRole.value]
-        // roles: [userRole.value, managerRole.value, adminRole.value],
+        // roles: [userRole.value, managerRole.value, adminRole.value, superAdminRole.value],
       });
       const savedUser = await user.save();
 

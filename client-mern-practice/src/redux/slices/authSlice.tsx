@@ -37,6 +37,7 @@ export const fetchAuthMe = createAsyncThunk<User, string>(
 
     return await response.data;
   }
+
 );
 
 const initialState: AuthState = {

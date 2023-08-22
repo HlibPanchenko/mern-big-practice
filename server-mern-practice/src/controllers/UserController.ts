@@ -7,8 +7,14 @@ import { IUserController } from "./UserController.interface.js";
 import { inject, injectable } from "inversify";
 import "reflect-metadata";
 import { TYPES } from "../utils/types.js";
-import { UpdateUserDTO, UserLoginDTO, UserRegistrationDTO } from "../dtos/user.dto.js";
+import {
+  UpdateUserDTO,
+  UserLoginDTO,
+  UserRegistrationDTO,
+} from "../dtos/user.dto.js";
 import User from "../models/User.js";
+import Role from "../models/Role.js";
+import { rolesMapper } from "../utils/upRoleUser.js";
 
 // export const register = async (req: Request, res: Response) => {
 //   try {
@@ -181,7 +187,11 @@ export class UserController implements IUserController {
     this.login = this.login.bind(this); // привязываем методы класса к его экземплярам
   }
 
-  async register(req: Request<{}, {}, UserRegistrationDTO>, res: Response, next: NextFunction) {
+  async register(
+    req: Request<{}, {}, UserRegistrationDTO>,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -201,7 +211,11 @@ export class UserController implements IUserController {
     }
   }
 
-  async login(req: Request<{}, {}, UserLoginDTO>, res: Response, next: NextFunction) {
+  async login(
+    req: Request<{}, {}, UserLoginDTO>,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const loginResult = await this.userService.loginService(req);
       return res.status(200).json({
@@ -233,6 +247,10 @@ export class UserController implements IUserController {
       if (!users) {
         throw new Error("User not found");
       }
+
+      // const superadmin = new Role({value:"SUPERADMIN"})
+      // await superadmin.save()
+
       return res.status(200).json(users);
     } catch (error) {
       console.log(error);
@@ -246,6 +264,86 @@ export class UserController implements IUserController {
     try {
       const updateUserResult = await this.userService.updateUserService(req);
       return res.status(200).json(updateUserResult);
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({
+        message: "User doesn't exist",
+      });
+    }
+  }
+  async upUserRole(req: IUserIdRequest, res: Response) {
+    try {
+      const IdUserToBeUpdated = req.params.id;
+      const userId = req.userId;
+      // const UserToBeUpdated = await User.findByIdAndUpdate()
+      if (!userId) {
+        return res.status(400).json({
+          message: "no userId",
+        });
+      }
+      // console.log(IdUserToBeUpdated);
+
+      const UserToBeUpdated = await User.findById(IdUserToBeUpdated);
+      if (!UserToBeUpdated) {
+        return res.status(400).json({
+          message: "User doesn't exist",
+        });
+      }
+      const newRole =
+        UserToBeUpdated.roles[UserToBeUpdated.roles.length - 1] === "USER"
+          ? "MANAGER"
+          : "ADMIN";
+
+      UserToBeUpdated.roles.push(newRole); // Добавляем новую роль в массив
+      await UserToBeUpdated.save(); // Сохраняем обновленного пользователя
+
+      const users = await User.find();
+      if (!users) {
+        throw new Error("User not found");
+      }
+
+      res.status(200).json({
+        message: "User role updated successfully",
+        // updatedUser: UserToBeUpdated,
+        users,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({
+        message: "User doesn't exist",
+      });
+    }
+  }
+  async downUserRole(req: IUserIdRequest, res: Response) {
+    try {
+      const IdUserToBeUpdated = req.params.id;
+      const userId = req.userId;
+      // const UserToBeUpdated = await User.findByIdAndUpdate()
+      if (!userId) {
+        return res.status(400).json({
+          message: "no userId",
+        });
+      }
+
+      const UserToBeUpdated = await User.findById(IdUserToBeUpdated);
+      if (!UserToBeUpdated) {
+        return res.status(400).json({
+          message: "User doesn't exist",
+        });
+      }
+
+      UserToBeUpdated.roles.pop(); // Удаляем последний элемент из массива
+      await UserToBeUpdated.save(); // Сохраняем обновленного пользователя
+
+      const users = await User.find();
+      if (!users) {
+        throw new Error("Users not found");
+      }
+
+      res.status(200).json({
+        message: "User role updated successfully",
+        users,
+      });
     } catch (error) {
       console.log(error);
       res.status(400).json({

@@ -7,6 +7,7 @@ import Registration from "./components/auth/Registration";
 import Footer from "./components/Footer/Footer";
 import Navbar from "./components/navbar/Navbar";
 import Account from "./page/Account";
+import AdminPage from "./page/AdminPage";
 import Collection from "./page/Collection";
 import CreatePost from "./page/createPost";
 import EachPost from "./page/eachPost";
@@ -42,6 +43,7 @@ const App: React.FC = () => {
         <Route path="/createpost" element={<CreatePost />} />
         <Route path="/myprofile/:postId" element={<EachPost />} />
         <Route path="/recognition" element={<RecognitionPage />} />
+        <Route path="/administration" element={<AdminPage />} />
       </Routes>
       <Footer />
     </div>

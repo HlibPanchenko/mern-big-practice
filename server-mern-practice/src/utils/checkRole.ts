@@ -23,8 +23,7 @@ export function checkRole(requiredRoles:string[]) {
 
       const { roles } = jwt.verify(token, secret) as JwtPayload;
 		console.log(roles);
-      // Данный код будет проверять, что каждая роль из requiredRoles присутствует в массиве roles из JWT.
-    let hasAllRoles = requiredRoles.every(role => roles.includes(role));
+    let hasAllRoles = requiredRoles.some(role => roles.includes(role));
 
       if (!hasAllRoles) {
         return res.status(403).json({ message: "User doesn't have the required permissions" });

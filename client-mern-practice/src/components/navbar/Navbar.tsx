@@ -12,6 +12,7 @@ const Navbar: React.FC = () => {
   const user = useAppSelector((state) => state.auth.user);
 
   const [isOpen, setIsOpen] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState(false);
   // Create a ref for the modal container
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -47,6 +48,16 @@ const Navbar: React.FC = () => {
   const classNameModal = isOpen
     ? "profile-modal profile-modal__open"
     : "profile-modal";
+
+  // function isUserAdmin() {
+  //   if (user?.roles.some((role) => role == "ADMIN")) {
+  //     setIsAdmin(true);
+  //   }
+  // }
+  // console.log(user);
+
+  const isUserAdmin = user?.roles.some((role) => role == "ADMIN");
+  console.log(isUserAdmin);
 
   return (
     <nav className="navbar">
@@ -90,6 +101,13 @@ const Navbar: React.FC = () => {
                     Create post
                   </Link>
                 </li>
+                {isUserAdmin && (
+                  <li className="navbar-menu-item">
+                    <Link className="linkNav" to="/administration">
+                      Admin
+                    </Link>
+                  </li>
+                )}
                 <div
                   // className={classNameModal}
                   ref={modalRef}

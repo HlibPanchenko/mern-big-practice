@@ -1,8 +1,8 @@
 import express, { Router } from "express";
-import {UserController} from "../controllers/UserController.js";
+import { UserController } from "../controllers/UserController.js";
 import { check } from "express-validator";
-import {checkAuth} from "../utils/checkAuth.js";
-import {checkRole} from "../utils/checkRole.js";
+import { checkAuth } from "../utils/checkAuth.js";
+import { checkRole } from "../utils/checkRole.js";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../utils/types.js";
 import { IUserController } from "../controllers/UserController.interface.js";
@@ -34,11 +34,12 @@ export class AuthRouter {
   private router: Router;
   // private userController: UserController;
 
-  constructor(@inject(TYPES.IUserController) private userController: IUserController) {
+  constructor(
+    @inject(TYPES.IUserController) private userController: IUserController
+  ) {
     this.router = Router();
     // this.userController = userController;
     this.configureRoutes();
-
   }
 
   private configureRoutes(): void {
@@ -48,16 +49,37 @@ export class AuthRouter {
         check(
           "email",
           "Please enter your email address in format yourname@example.com"
-        ).isEmail().notEmpty(),
-        check("password", "password must have 5+ symbols").isLength({ min: 5 }).notEmpty(),
+        )
+          .isEmail()
+          .notEmpty(),
+        check("password", "password must have 5+ symbols")
+          .isLength({ min: 5 })
+          .notEmpty(),
       ],
       this.userController.register
     );
 
     this.router.post("/login", this.userController.login);
     this.router.get("/getuser", checkAuth, this.userController.getMe);
-    this.router.get("/getallusers", checkAuth,checkRole(["MANAGER"]), this.userController.getAllUsers);
+    this.router.get(
+      "/getallusers",
+      checkAuth,
+      checkRole(["MANAGER", "ADMIN", "SUPERADMIN"]),
+      this.userController.getAllUsers
+    );
     this.router.post("/updateuser", checkAuth, this.userController.updateUser);
+    this.router.post(
+      "/upuserole/:id",
+      checkAuth,
+      checkRole(["SUPERADMIN", "ADMIN"]),
+      this.userController.upUserRole
+    );
+    this.router.post(
+      "/downuserole/:id",
+      checkAuth,
+      checkRole(["SUPERADMIN", "ADMIN"]),
+      this.userController.downUserRole
+    );
   }
 
   public getRouter(): Router {

@@ -7,6 +7,8 @@ interface IUserController {
   getMe: (req: IUserIdRequest, res: Response) => void;
   getAllUsers: (req: IUserIdRequest, res: Response) => void;
   updateUser: (req: Request, res: Response) => void;
+  upUserRole: (req: Request, res: Response) => void;
+  downUserRole: (req: Request, res: Response) => void;
 }
 
 export { IUserController };

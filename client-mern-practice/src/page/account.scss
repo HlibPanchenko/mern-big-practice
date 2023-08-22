@@ -71,24 +71,30 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
+  gap: 10px;
 
-
-button {
-  padding: 10px 20px;
-  // max-width: 100px;
-  width: 30%;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &[data-btn-numb="logout"] {
-    background-color: #CC0000;
-
+  @media (max-width: 900px) {
+    // flex-wrap: wrap;
+    flex-direction: column;
+  }
+  button {
+    padding: 10px 20px;
+    // max-width: 100px;
+    width: 200px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  
+    &[data-btn-numb="logout"] {
+      background-color: #CC0000;
+  
+    }
   }
 }
+
+
 
 .actions button:hover {
   background-color: #0056b3;
