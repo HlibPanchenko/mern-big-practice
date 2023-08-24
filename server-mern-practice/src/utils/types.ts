@@ -10,6 +10,8 @@ export const TYPES = {
   UploadService2: Symbol.for("UploadService2"),
   PostService: Symbol.for("PostService"),
   UserService: Symbol.for("UserService"),
+  MailService: Symbol.for("MailService"),
+  TokenService: Symbol.for("TokenService"),
   AuthRouter: Symbol.for("AuthRouter"),
   FileRouter: Symbol.for("FileRouter"),
   PostRouter: Symbol.for("PostRouter"),

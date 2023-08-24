@@ -19,6 +19,8 @@ import { IMyLogger } from "./logger/logger.interface.js";
 import { TYPES } from "./utils/types.js";
 import { IExceptionFilter } from "./errors/exception.filter.interface.js";
 import { IUserController } from "./controllers/UserController.interface.js";
+import { MailService } from "./services/MailService.js";
+import { TokenService } from "./services/Token.service..js";
 
 // oop
 // async function initApp() {
@@ -118,6 +120,8 @@ const servicesModule = new ContainerModule((bind: interfaces.Bind) => {
   appContainer.bind<FileService>(TYPES.FileService).to(FileService);
   appContainer.bind<PostService>(TYPES.PostService).to(PostService);
   appContainer.bind<UserService>(TYPES.UserService).to(UserService);
+  appContainer.bind<MailService>(TYPES.MailService).to(MailService);
+  appContainer.bind<TokenService>(TYPES.TokenService).to(TokenService);
 });
 
 const routesModule = new ContainerModule((bind: interfaces.Bind) => {

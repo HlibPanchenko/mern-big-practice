@@ -1,24 +1,23 @@
 import User from "../models/User.js";
 import Role from "../models/Role.js";
 import bcrypt from "bcryptjs";
-import { generateToken } from "../utils/generateJWTToken.js";
 import { IUserIdRequest } from "../utils/req.interface.js";
 import "reflect-metadata";
-import { injectable } from "inversify";
-import jwt from 'jsonwebtoken';
+import { injectable, inject } from "inversify";
+import jwt from "jsonwebtoken";
 import config from "config";
-
-const generateAccessToken = (id:any, roles:any) => {
-  const secret = config.get('secret') as string
-  const payload = {
-      id,
-      roles
-  }
-  return jwt.sign(payload, secret, {expiresIn: "24h"} )
-}
+import { uuid } from "uuidv4";
+import { TYPES } from "../utils/types.js";
+import { MailService } from "./MailService.js";
+import { TokenService } from "./Token.service..js";
 
 @injectable()
 export class UserService {
+  constructor(
+    @inject(TYPES.MailService) private MailService: MailService,
+    @inject(TYPES.TokenService) private TokenService: TokenService
+  ) {}
+
   async registerService(email: string, password: string, name: string) {
     try {
       const alreadyRegistered = await User.findOne({ email });
@@ -29,11 +28,12 @@ export class UserService {
 
       const salt = await bcrypt.genSalt(10);
       const hashPassword = await bcrypt.hash(password, salt);
+      const activationLink = uuid(); // ссылка для активации аккаунта
       //role
       const userRole = await Role.findOne({ value: "USER" });
       const adminRole = await Role.findOne({ value: "ADMIN" });
       const managerRole = await Role.findOne({ value: "MANAGER" });
-      const superAdminRole = await Role.findOne({value:"SUPERADMIN"});
+      const superAdminRole = await Role.findOne({ value: "SUPERADMIN" });
       if (!userRole) {
         throw new Error(`such role doesn't exist`);
       }
@@ -50,18 +50,33 @@ export class UserService {
         email,
         password: hashPassword,
         name,
-        roles: [userRole.value]
+        activationLink,
+        roles: [userRole.value],
         // roles: [userRole.value, managerRole.value, adminRole.value, superAdminRole.value],
       });
       const savedUser = await user.save();
 
-      // const token = generateToken(savedUser._id, savedUser.roles);
-      const token = generateAccessToken(savedUser._id, savedUser.roles);
+      await this.MailService.sendActivationMail(
+        email,
+        `${config.get("API_URL")}/auth/activate/${activationLink}`
+      );
 
+      // const token = generateToken(savedUser._id, savedUser.roles);
+      // const token = generateAccessToken(savedUser._id, savedUser.roles);
+      const { accessToken, refreshToken } =
+        await this.TokenService.generateTokens(
+          savedUser._id,
+          savedUser.roles,
+          savedUser.isActivated,
+          savedUser.email
+        );
+      // save refreshtoken to bd
+      await this.TokenService.saveRefreshToken(savedUser._id, refreshToken);
       return {
         message: "User was created",
         ...savedUser.toJSON(),
-        token,
+        token: accessToken,
+        refreshToken,
       };
     } catch (error) {
       console.log(error);
@@ -83,10 +98,28 @@ export class UserService {
         throw new Error("Invalid password");
       }
 
-      // const token = generateToken(user._id, user.roles);
-      const token = generateAccessToken(user._id, user.roles);
+      const { accessToken, refreshToken } =
+        await this.TokenService.generateTokens(
+          user._id,
+          user.roles,
+          user.isActivated,
+          user.email
+        );
 
-      const { email, name, avatar, _id, __v, likedposts, roles } = user;
+      // save refreshtoken to bd
+      await this.TokenService.saveRefreshToken(user._id, refreshToken);
+
+      const {
+        email,
+        name,
+        avatar,
+        _id,
+        __v,
+        likedposts,
+        roles,
+        activationLink,
+        isActivated,
+      } = user;
       return {
         message: "Login successful",
         email,
@@ -94,9 +127,12 @@ export class UserService {
         avatar,
         _id,
         __v,
-        token,
         likedposts,
-        roles
+        roles,
+        activationLink,
+        isActivated,
+        token: accessToken,
+        refreshToken,
       };
     } catch (error) {
       console.log(error);
@@ -147,6 +183,67 @@ export class UserService {
     } catch (error) {
       console.log(error);
       throw new Error("Failed to login");
+    }
+  }
+  async activateUserService(activationLink: string) {
+    try {
+      const user = await User.findOne({ activationLink });
+      if (!user) {
+        throw new Error("User with this activationLink not found");
+      }
+
+      user.isActivated = true;
+      await user.save();
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to activate user");
+    }
+  }
+  async logOutService(refreshToken: string) {
+    try {
+      // delete refreshToken from DB
+      const token = await this.TokenService.removeToken(refreshToken);
+      return token;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to activate user");
+    }
+  }
+  async refreshService(refreshToken: string) {
+    try {
+      if (!refreshToken) {
+        throw new Error("there's no refreshToken");
+      }
+      const userData = await this.TokenService.validateRefreshToken(
+        refreshToken
+      );
+      // проверяем есть ли токен в БД
+      const tokenFromDB = await this.TokenService.findToken(refreshToken);
+      if (!tokenFromDB || !userData) {
+        throw new Error("User isn't authorized");
+      }
+      if (typeof userData !== "object" || !userData.id) {
+        throw new Error("Invalid token payload");
+      }
+
+      const user = await User.findById(userData.id);
+
+      if (!user) {
+        throw new Error("Didn't find user");
+      }
+      const tokens = await this.TokenService.generateTokens(
+        user._id,
+        user.roles,
+        user.isActivated,
+        user.email
+      );
+
+      // save refreshtoken to bd
+      await this.TokenService.saveRefreshToken(user._id, refreshToken);
+      return { ...tokens, user };
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to activate user");
     }
   }
 }

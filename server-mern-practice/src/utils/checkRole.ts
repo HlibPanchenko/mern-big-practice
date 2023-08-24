@@ -19,7 +19,7 @@ export function checkRole(requiredRoles:string[]) {
       if (!token) {
         return res.status(403).json({ message: "Пользователь не авторизован" });
       }
-      const secret = config.get('secret') as string
+      const secret = config.get('JWT_ACCESS_SECRET') as string
 
       const { roles } = jwt.verify(token, secret) as JwtPayload;
 		console.log(roles);

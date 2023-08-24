@@ -21,7 +21,7 @@ export const checkAuth = (req: IUserIdRequest, res: Response, next: NextFunction
       // вшиваем расшифрованный Id с токена в req
       // чтобы использовать его в следующем контроллере
       // req.userId = decoded.userId;
-      const secret = config.get('secret') as string
+      const secret = config.get('JWT_ACCESS_SECRET') as string
 
       const decoded = jwt.verify(token, secret) as JwtPayload;
       // console.log(decoded);

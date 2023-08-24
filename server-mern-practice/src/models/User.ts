@@ -6,6 +6,8 @@ export interface IUser extends Document {
   name: string;
   avatar: string;
   likedposts: string[];
+  isActivated: boolean;
+  activationLink: string;
   roles: string[];
 }
 
@@ -15,6 +17,8 @@ const User = new mongoose.Schema<IUser>({
   name: { type: String, required: true },
   avatar: { type: String, default: "" }, // Указываем значение по умолчанию как пустую строку
   likedposts: [{ type: String }],
+  isActivated: { type: Boolean, default: false },
+  activationLink: { type: String },
   roles: [{ type: String, ref: "Role" }],
 });
 

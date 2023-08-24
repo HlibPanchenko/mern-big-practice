@@ -7,14 +7,14 @@ import { IUserController } from "./UserController.interface.js";
 import { inject, injectable } from "inversify";
 import "reflect-metadata";
 import { TYPES } from "../utils/types.js";
+import config from "config";
+
 import {
   UpdateUserDTO,
   UserLoginDTO,
   UserRegistrationDTO,
 } from "../dtos/user.dto.js";
 import User from "../models/User.js";
-import Role from "../models/Role.js";
-import { rolesMapper } from "../utils/upRoleUser.js";
 
 // export const register = async (req: Request, res: Response) => {
 //   try {
@@ -185,6 +185,9 @@ export class UserController implements IUserController {
     this.getMe = this.getMe.bind(this);
     this.updateUser = this.updateUser.bind(this);
     this.login = this.login.bind(this); // привязываем методы класса к его экземплярам
+    this.activateLink = this.activateLink.bind(this);
+    this.logout = this.logout.bind(this);
+    this.refreshToken = this.refreshToken.bind(this);
   }
 
   async register(
@@ -204,7 +207,11 @@ export class UserController implements IUserController {
         password,
         name
       );
-
+      // сохраним рефреш токен в куки
+      res.cookie("refreshToken", registrationResult.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // на 30 дней
+        httpOnly: true,
+      });
       return res.status(200).json(registrationResult);
     } catch (error) {
       next(new HTTPError(400, "Failed to register", "register"));
@@ -218,14 +225,15 @@ export class UserController implements IUserController {
   ) {
     try {
       const loginResult = await this.userService.loginService(req);
+      // сохраним рефреш токен в куки
+      res.cookie("refreshToken", loginResult.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // на 30 дней
+        httpOnly: true,
+      });
       return res.status(200).json({
         ...loginResult,
       });
     } catch (error) {
-      // console.log(error);
-      // res.status(401).json({
-      //   message: "User doesn't exist",
-      // });
       next(new HTTPError(401, "User doesn't exist", "login"));
     }
   }
@@ -343,6 +351,58 @@ export class UserController implements IUserController {
       res.status(200).json({
         message: "User role updated successfully",
         users,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({
+        message: "User doesn't exist",
+      });
+    }
+  }
+  async logout(req: IUserIdRequest, res: Response) {
+    try {
+      // из куки достаем рефреш токен
+      const { refreshToken } = req.cookies;
+      const logoutResult = await this.userService.logOutService(refreshToken);
+      // удаляем куки
+      res.clearCookie("refreshToken");
+      res.status(200).json({
+        message: "Successfully logged out",
+        logoutResult,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({
+        message: "Didn't manage to log out",
+      });
+    }
+  }
+  async activateLink(req: IUserIdRequest, res: Response) {
+    try {
+      const activationLink = req.params.link;
+      await this.userService.activateUserService(activationLink);
+      // после того как пользователь перешел по нашей ссылке, его надо редиректнуть на фронтенд
+      const frontendLink = config.get("API_CLIENT_URL") as string;
+      return res.redirect(frontendLink);
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({
+        message: "Didn't manage to activate user",
+      });
+    }
+  }
+  async refreshToken(req: IUserIdRequest, res: Response) {
+    try {
+      // из куки достаем рефреш токен
+      const { refreshToken } = req.cookies;
+      const refreshResult = await this.userService.refreshService(refreshToken);
+      // сохраним рефреш токен в куки
+      res.cookie("refreshToken", refreshResult.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // на 30 дней
+        httpOnly: true,
+      });
+      return res.status(200).json({
+        ...refreshResult,
       });
     } catch (error) {
       console.log(error);

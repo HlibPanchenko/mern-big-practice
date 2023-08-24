@@ -60,6 +60,9 @@ export class AuthRouter {
     );
 
     this.router.post("/login", this.userController.login);
+    this.router.post("/logout", this.userController.logout); // Здесь refreshToken будет удаляться из БД
+    this.router.get("/activate/:link", this.userController.activateLink); // активация аккаунта по ссылке
+    this.router.get("/refresh", this.userController.refreshToken); // перезаписывать access токен если он умер (будем отправлять рефреш токен и получать пару токенов)
     this.router.get("/getuser", checkAuth, this.userController.getMe);
     this.router.get(
       "/getallusers",

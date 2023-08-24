@@ -9,6 +9,9 @@ interface IUserController {
   updateUser: (req: Request, res: Response) => void;
   upUserRole: (req: Request, res: Response) => void;
   downUserRole: (req: Request, res: Response) => void;
+  logout: (req: Request, res: Response) => void;
+  activateLink: (req: Request, res: Response) => void;
+  refreshToken: (req: Request, res: Response) => void;
 }
 
 export { IUserController };
