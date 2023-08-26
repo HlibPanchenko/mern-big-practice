@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios, { AxiosResponse } from "axios";
+import $api from "../../http";
 
 interface User {
   password: string;
@@ -26,13 +27,15 @@ export const getAllUsers = createAsyncThunk<User[], string>(
   "auth/getAllUsers",
   async (token) => {
     // const token = localStorage.getItem("token");
-    const response: AxiosResponse<User[]> = await axios.get(
-      "http://localhost:4444/auth/getallusers",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    const response: AxiosResponse<User[]> = await $api.get(
+      "/auth/getallusers"
+    // const response: AxiosResponse<User[]> = await axios.get(
+    //   "http://localhost:4444/auth/getallusers",
+      // {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      // }
     );
 
     return await response.data;

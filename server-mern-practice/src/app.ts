@@ -4,7 +4,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import config from "config";
 import bodyParser from "body-parser";
-import cookieParser from 'cookie-parser'
+import cookieParser from "cookie-parser";
 
 import { AuthRouter } from "./routes/auth.routes.js";
 import { FileRouter } from "./routes/file.routes.js";
@@ -39,7 +39,12 @@ export class App {
     this.app.use(bodyParser.urlencoded({ extended: true }));
     this.app.use(bodyParser.json());
     this.app.use(cookieParser());
-    this.app.use(cors());
+    this.app.use(
+      cors({
+        origin: "http://localhost:3000",
+        credentials: true,
+      })
+    );
     this.app.use(express.static(config.get("staticPath")));
   }
 

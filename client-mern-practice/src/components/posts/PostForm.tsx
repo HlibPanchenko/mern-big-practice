@@ -3,6 +3,7 @@ import axios from "axios";
 import "./PostForm.scss";
 import { useNavigate } from "react-router-dom";
 import { BsCloudDownload } from "react-icons/bs";
+import $api from "../../http";
 const PostForm = () => {
   const [titlePost, settitlePost] = useState("");
   const [description, setDescription] = useState("");
@@ -86,15 +87,17 @@ const PostForm = () => {
     console.log(formData);
 
     try {
-      const response = await axios.post(
-        "http://localhost:4444/post/create",
-        formData,
-        {
-          headers: {
-            // "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      // const response = await axios.post(
+      //   "http://localhost:4444/post/create",
+      const response = await $api.post(
+        "/post/create",
+        formData
+        // {
+        //   headers: {
+        //     // "Content-Type": "multipart/form-data",
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // }
       );
 
       // Обработка успешного создания поста
@@ -196,7 +199,10 @@ const PostForm = () => {
             Привет, здесь ты можешь опубликовать информацию о своей
             коллекционной машинке всего в несколько кликов!
           </h2>
-          <div className="postformzero-btn zeropost-btn" onClick={() => setStep(1)}>
+          <div
+            className="postformzero-btn zeropost-btn"
+            onClick={() => setStep(1)}
+          >
             Перейти к созданию...
           </div>
         </div>
@@ -255,8 +261,12 @@ const PostForm = () => {
             <p style={{ color: "red" }}>Please upload at least one image.</p>
           )}
           <div className="image-drop-zone" onClick={openFileInput}>
-            <p>Choose a file or drag it here</p>
-            <BsCloudDownload className="image-drop-zone-icon" />
+            {!images && (
+              <>
+                <p>Choose a file or drag it here</p>
+                <BsCloudDownload className="image-drop-zone-icon" />
+              </>
+            )}
             <div className="image-preview">
               {images &&
                 Array.from(images).map((image, index) => (
@@ -344,15 +354,12 @@ const PostForm = () => {
                 ))}
             </div>
           </div>
-            <div className="preview-btn">
-              <div
-                className="postformzero-btn-back "
-                onClick={() => setStep(3)}
-              >
-                Вернуться назад...
-              </div>
-              <button onClick={handleSubmit}>Опубликовать</button>
+          <div className="preview-btn">
+            <div className="postformzero-btn-back " onClick={() => setStep(3)}>
+              Вернуться назад...
             </div>
+            <button onClick={handleSubmit}>Опубликовать</button>
+          </div>
         </div>
       )}
     </>

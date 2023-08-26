@@ -1,20 +1,21 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios, { AxiosResponse } from "axios";
-
-interface User {
-  password: string;
-  name: string;
-  email: string;
-  __v: number;
-  _id: string;
-  avatar: string;
-  likedposts:string[];
-  roles: string[]
-}
+import $api from "../../http";
+import { IUser } from "../../models/IUser";
+// interface User {
+//   password: string;
+//   name: string;
+//   email: string;
+//   __v: number;
+//   _id: string;
+//   avatar: string;
+//   likedposts:string[];
+//   roles: string[]
+// }
 
 interface AuthState {
   isAuth: boolean;
-  user: User | null;
+  user: IUser | null;
 }
 
 //async action
@@ -22,22 +23,23 @@ interface AuthState {
 // 1) то, что ожидаем вернуть с этой функции - IcreateAsyncThunk
 // 2) Первый параметр асинхронной функции - у нас undefined (потому что мы не передаем параметр)
 // 3) AsyncThunkConfig
-export const fetchAuthMe = createAsyncThunk<User, string>(
+export const fetchAuthMe = createAsyncThunk<IUser, string>(
   "auth/fetchAuthMe",
   async (token) => {
     // const token = localStorage.getItem("token");
-    const response: AxiosResponse<User> = await axios.get(
-      "http://localhost:4444/auth/getuser",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    const response: AxiosResponse<IUser> = await $api.get(
+      "/auth/getuser"
+      // const response: AxiosResponse<IUser> = await axios.get(
+      //   "http://localhost:4444/auth/getuser",
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //   }
     );
 
     return await response.data;
   }
-
 );
 
 const initialState: AuthState = {
@@ -51,20 +53,20 @@ const authSlice = createSlice({
   reducers: {
     // в PayloadAction передаем тип для нашего action.payload.
     // у нас в action.payload попадает объект { email, password }
-    registerAction(state, action: PayloadAction<User>) {
+    registerAction(state, action: PayloadAction<IUser>) {
       // console.log(action);
       state.isAuth = true;
       state.user = action.payload;
     },
-    loginAction(state, action: PayloadAction<User>) {
+    loginAction(state, action: PayloadAction<IUser>) {
       state.isAuth = true;
       state.user = action.payload;
     },
-    setUser(state, action: PayloadAction<User>) {
+    setUser(state, action: PayloadAction<IUser>) {
       state.isAuth = true;
       state.user = action.payload;
     },
-    updateUser(state, action: PayloadAction<User>) {
+    updateUser(state, action: PayloadAction<IUser>) {
       state.isAuth = true;
       state.user = action.payload;
     },

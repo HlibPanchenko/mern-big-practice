@@ -8,20 +8,18 @@ import { logoutSlice, setUser } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProfileIcon from "../components/navbar/ProfileIcon";
+import authService from "../services/auth.service";
 
 const Account = () => {
   const userInfo = useAppSelector((state) => state.auth.user);
-
   const [isEdit, setIsEdit] = React.useState(false);
-  // const [editName, setEditName] = React.useState(userInfo?.name);
   const [editName, setEditName] = React.useState<string>("");
-
-  console.log(userInfo);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const logOutHandler = () => {
+  const logOutHandler = async () => {
+    const response = await authService.LogOutHandler();
     dispatch(logoutSlice());
     localStorage.removeItem("token");
     navigate("/login");
@@ -35,13 +33,6 @@ const Account = () => {
   const editHandler = async (newName: string) => {
     try {
       const token = localStorage.getItem("token");
-
-      // if (userInfo) {
-      //   const updatedUser = { ...userInfo, name: newName };
-      //   console.log(updatedUser);
-      //   dispatch(setUser(updatedUser));
-      // }
-
       if (userInfo) {
         const updatedUser = { ...userInfo, name: newName };
         console.log(updatedUser);
@@ -57,8 +48,30 @@ const Account = () => {
         );
 
         console.log(response);
-        const { email, password, name, _id, avatar, __v, likedposts, roles } = response.data;
-        const user = { email, password, name, avatar, _id, __v, likedposts, roles };
+        const {
+          email,
+          password,
+          name,
+          _id,
+          avatar,
+          __v,
+          likedposts,
+          roles,
+          isActivated,
+          activationLink,
+        } = response.data;
+        const user = {
+          email,
+          password,
+          name,
+          avatar,
+          _id,
+          __v,
+          likedposts,
+          roles,
+          isActivated,
+          activationLink,
+        };
         dispatch(setUser(user));
 
         setIsEdit(false);
@@ -84,7 +97,7 @@ const Account = () => {
       <div className="profile">
         <div className="avatar">
           {/* <img src={avatar} alt="User Avatar" /> */}
-          <ProfileIcon size="large"/>
+          <ProfileIcon size="large" />
         </div>
         <div className="info">
           <div className="field">

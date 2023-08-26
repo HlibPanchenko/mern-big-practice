@@ -74,7 +74,8 @@ export class UserService {
       await this.TokenService.saveRefreshToken(savedUser._id, refreshToken);
       return {
         message: "User was created",
-        ...savedUser.toJSON(),
+        user: savedUser,
+        // ...savedUser.toJSON(),
         token: accessToken,
         refreshToken,
       };
@@ -109,28 +110,28 @@ export class UserService {
       // save refreshtoken to bd
       await this.TokenService.saveRefreshToken(user._id, refreshToken);
 
-      const {
-        email,
-        name,
-        avatar,
-        _id,
-        __v,
-        likedposts,
-        roles,
-        activationLink,
-        isActivated,
-      } = user;
+      // const {
+      //   email,
+      //   name,
+      //   avatar,
+      //   _id,
+      //   __v,
+      //   likedposts,
+      //   roles,
+      //   activationLink,
+      //   isActivated,
+      // } = user;
       return {
-        message: "Login successful",
-        email,
-        name,
-        avatar,
-        _id,
-        __v,
-        likedposts,
-        roles,
-        activationLink,
-        isActivated,
+        // email,
+        // name,
+        // avatar,
+        // _id,
+        // __v,
+        // likedposts,
+        // roles,
+        // activationLink,
+        // isActivated,
+        user,
         token: accessToken,
         refreshToken,
       };
@@ -217,8 +218,13 @@ export class UserService {
       const userData = await this.TokenService.validateRefreshToken(
         refreshToken
       );
+
+      console.log('user data!!!!: ', userData);
+      
       // проверяем есть ли токен в БД
       const tokenFromDB = await this.TokenService.findToken(refreshToken);
+      console.log('token from db!!!!: ', tokenFromDB);
+      
       if (!tokenFromDB || !userData) {
         throw new Error("User isn't authorized");
       }
@@ -227,6 +233,7 @@ export class UserService {
       }
 
       const user = await User.findById(userData.id);
+      console.log('user from db!!!!: ', user);
 
       if (!user) {
         throw new Error("Didn't find user");
@@ -237,9 +244,12 @@ export class UserService {
         user.isActivated,
         user.email
       );
+      
+      console.log('tokens: ', tokens);
+
 
       // save refreshtoken to bd
-      await this.TokenService.saveRefreshToken(user._id, refreshToken);
+      await this.TokenService.saveRefreshToken(user._id, tokens.refreshToken);
       return { ...tokens, user };
     } catch (error) {
       console.log(error);

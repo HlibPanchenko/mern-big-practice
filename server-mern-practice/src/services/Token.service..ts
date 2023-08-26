@@ -21,7 +21,7 @@ export class TokenService {
         email,
         isActivated,
       };
-      const accessToken = jwt.sign(payload, secretAccess, { expiresIn: "30s" });
+      const accessToken = jwt.sign(payload, secretAccess, { expiresIn: "1m" });
       const refreshToken = jwt.sign(payload, secretRefresh, {
         expiresIn: "30d",
       });
@@ -42,9 +42,13 @@ export class TokenService {
       // проверяем есть ли в БД по такому id токен
       const tokenData = await Token.findOne({ user: userId });
       // если есть, то перезаписываем рефрше токен
+      console.log("token in bd:", tokenData);
+
       if (tokenData) {
         tokenData.refreshToken = refreshToken;
-        return tokenData.save();
+        const updatedRefreshToken = await tokenData.save();
+        console.log("updated token in bd:", updatedRefreshToken);
+        return;
       }
       // если нету, значит пользователь логинится первый раз
       const newToken = new Token({ user: userId, refreshToken });
@@ -87,7 +91,7 @@ export class TokenService {
       const secretRefresh = config.get("JWT_REFRESH_SECRET") as string;
       const userData = jwt.verify(token, secretRefresh);
       console.log(userData);
-      
+
       return userData;
     } catch (error) {
       console.log(error);

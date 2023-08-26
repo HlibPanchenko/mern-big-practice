@@ -67,7 +67,7 @@ export class AuthRouter {
     this.router.get(
       "/getallusers",
       checkAuth,
-      checkRole(["MANAGER", "ADMIN", "SUPERADMIN"]),
+      // checkRole(["MANAGER", "ADMIN", "SUPERADMIN"]),
       this.userController.getAllUsers
     );
     this.router.post("/updateuser", checkAuth, this.userController.updateUser);

@@ -53,7 +53,8 @@ const AdminPage: React.FC = () => {
   // }, []);
 
   React.useEffect(() => {
-
+    console.log(token);
+    
     if (token) {
       dispatch(getAllUsers(token));
     }

@@ -83,6 +83,8 @@ const Navbar: React.FC = () => {
                 </Link>
               </li>
             )}
+            {user?.isActivated && 
+            <> 
             {isAuth && (
               <>
                 <li className="navbar-menu-item">
@@ -145,6 +147,8 @@ const Navbar: React.FC = () => {
                 {/* </Link> */}
               </>
             )}
+            </>
+            }
           </ul>
         </div>
       </div>

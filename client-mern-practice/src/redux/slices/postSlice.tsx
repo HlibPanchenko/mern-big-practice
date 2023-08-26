@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios, { AxiosResponse } from "axios";
+import $api from "../../http";
 import { PostData, IComment } from "../../page/Collection";
 
 interface PostState {
@@ -36,13 +37,15 @@ export const fetchGetPosts = createAsyncThunk(
   async (props: FetchPostsArgs) => {
     // const token = localStorage.getItem("token");
     const { token, currentPage, sortBy, searchInput } = props;
-    const { data } = await axios.get<responsePosts>(
-      `http://localhost:4444/post/getallposts?page=${currentPage}&limit=5&sortBy=${sortBy}&search=${searchInput}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    const { data } = await $api.get<responsePosts>(
+      `/post/getallposts?page=${currentPage}&limit=5&sortBy=${sortBy}&search=${searchInput}`
+      // const { data } = await axios.get<responsePosts>(
+      //   `http://localhost:4444/post/getallposts?page=${currentPage}&limit=5&sortBy=${sortBy}&search=${searchInput}`,
+      // {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      // }
     );
 
     return await data;

@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 import "./auth.scss";
 import { useAppDispatch } from "../../redux/hooks";
+import authService from '../../services/auth.service'
 
 type UserSubmitForm = {
   email: string;
@@ -24,36 +25,29 @@ const Login: React.FC = () => {
     formState: { errors, isValid },
   } = useForm<UserSubmitForm>({ mode: "onChange" });
 
-  // const previousEmail = watch('email'); // Получение предыдущего значения поля "email"
-
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   // функция отправки данных на сервер
   const LoginHandler = async (obj: UserSubmitForm) => {
     try {
-      const response = await axios.post(
-        "http://localhost:4444/auth/login",
-        obj
-      );
+      // const response = await axios.post(
+      //   "http://localhost:4444/auth/login",
+      //   obj
+      // );
+      const response = await authService.LoginHandler(obj);
       setEmailError("");
-      // setDataForm(obj);
-      const { email, password, name, avatar, _id,__v, likedposts, roles } = response.data;
-      const user = { email, password, name, avatar, _id,__v, likedposts, roles };
+      const { user, refreshToken, token } = response.data;
+      // const user = { email, password, name, avatar, _id,__v, likedposts, roles };
 
       dispatch(loginAction(user));
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
       }
-
       reset();
       navigate("/");
     } catch (error: any) {
-      // console.log(error);
       console.log(error.response?.data?.message);
-      // console.log(error?.response.data.errors.errors[0].msg);
-      // const customEmailError = error?.response.data.errors.errors[0].msg;
-      // setEmailError(customEmailError);
       setEmailError(error.response?.data?.message);
     }
   };
