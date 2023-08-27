@@ -21,7 +21,7 @@ export class TokenService {
         email,
         isActivated,
       };
-      const accessToken = jwt.sign(payload, secretAccess, { expiresIn: "1m" });
+      const accessToken = jwt.sign(payload, secretAccess, { expiresIn: "30m" });
       const refreshToken = jwt.sign(payload, secretRefresh, {
         expiresIn: "30d",
       });

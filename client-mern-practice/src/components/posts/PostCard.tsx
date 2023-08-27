@@ -10,6 +10,9 @@ import { GrView } from "react-icons/gr";
 import { formatDate, isLessThanTwoDaysOld } from "../../../src/utils/date.util";
 import axios from "axios";
 import { updateUser } from "../../redux/slices/authSlice";
+import { AiOutlineDelete } from "react-icons/ai";
+import postService from "../../services/post.service";
+import { deleteArchievedPost } from "../../redux/slices/postSlice";
 
 export interface Author {
   _id: string;
@@ -63,7 +66,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
   const [likes, setLikes] = React.useState(post.likes.length);
   // const [isLikedByUser, setIsLikedByUser] = React.useState(false);
   // const [isViewed, setIsViewed] = React.useState(false);
-  const { title, description, images, views, comments, author } = post;
+  const { title, description, images, views, comments, author, _id } = post;
   const userInfo = useAppSelector((state) => state.auth);
   const user = useAppSelector((state) => state.auth.user);
   const dispatch = useAppDispatch();
@@ -122,6 +125,17 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
     }
   }
 
+  const archieveHandler = async (postId: string) => {
+    try {
+      const response = await postService.archivePostHandler(postId);
+      console.log(response.data);
+
+      dispatch(deleteArchievedPost(postId));
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
   // Function to extract the filename from the file path
   const getFileNameFromPath = (filePath: string): string => {
     const parts = filePath.split("\\"); // Split by backslash to handle Windows file paths
@@ -134,7 +148,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
 
     // return `${API_URL}/${folder}/${fileName}`;
     return `${API_URL}/${filePath}`;
-
   };
 
   const firstImage = images.length > 0 ? images[0] : null;
@@ -146,6 +159,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
   // Проверка, содержит ли массив likedposts строку post._id
   const isLiked = user?.likedposts.includes(post._id);
 
+  const isUserAdmin = user?.roles.some((role) => role == "ADMIN");
+
   return (
     <div className="post-card-box">
       <Link className="linkCard" key={post._id} to={`/myprofile/${post._id}`}>
@@ -155,14 +170,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
             <p className="post-card-description">{description}</p>
           </div>
           <div className="post-card-box-content-right">
-            {/* {images.map((image) => (
-        <img
-          src={convertToLocalURL(image)}
-          alt="Photo"
-          className="post-card-image"
-          key={image}
-        />
-      ))} */}
             {firstImage && (
               <img
                 src={convertToLocalURL(firstImage)}
@@ -176,10 +183,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
       </Link>
 
       <div className="post-card-box-info infocard">
-        {/* author: Maxim Kuchka.   Date: 25/02/2023. Likes: 0. Commets: 3. */}
-        {/* <div className="infocard-viewed">
-          {isViewed && <span className="viewed-label">Просмотрено</span>}
-        </div> */}
         <div className="infocard-authorblock">
           <div className="infocard-image">
             <img src={avatar} alt="Profile Icon" />
@@ -201,9 +204,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
             ) : (
               <AiOutlineHeart
                 className="infocard-like"
-                // color="black"
-                // fill={isLikedByUser ? "red" : "black"}
-                // color={isLikedByUser ? "red" : "black"}
                 fill={isLiked ? "red" : "black"}
                 onClick={likePostHandler}
               />
@@ -219,6 +219,14 @@ const PostCard: React.FC<PostCardProps> = ({ post, quantity }) => {
           </div>
         </div>
       </div>
+      {isUserAdmin && (
+        <div
+          className="post-card-delete"
+          onClick={() => archieveHandler(post._id)}
+        >
+          <AiOutlineDelete post-card-delete_btn />
+        </div>
+      )}
     </div>
   );
 };

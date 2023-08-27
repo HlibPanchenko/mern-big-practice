@@ -25,6 +25,7 @@ export class PostController {
     this.getonepost = this.getonepost.bind(this);
     this.getallposts = this.getallposts.bind(this);
     this.likepost = this.likepost.bind(this);
+    this.archivePost = this.archivePost.bind(this);
     this.commentpost = this.commentpost.bind(this);
     this.subcommentpost = this.subcommentpost.bind(this);
   }
@@ -96,6 +97,16 @@ export class PostController {
       return res
         .status(500)
         .json({ error: "Не удалось лайкнуть/анлайкнуть пост." });
+    }
+  }
+  async archivePost(req: IUserIdRequest, res: Response) {
+    try {
+      const archievePostResult = await this.postService.archivePostService(req);
+      return res.status(200).json(archievePostResult);
+    } catch (err) {
+      console.log(err);
+
+      return res.status(500).json({ error: "Failed to arhieve post" });
     }
   }
 

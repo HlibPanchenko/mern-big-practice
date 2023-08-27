@@ -1,10 +1,11 @@
 import express, { Router } from "express";
-import {PostController} from "../controllers/PostController.js";
+import { PostController } from "../controllers/PostController.js";
 import { checkAuth } from "../utils/checkAuth.js";
 import { UploadService } from "../services/multer.service.js";
 import "reflect-metadata";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../utils/types.js";
+import { checkRole } from "../utils/checkRole.js";
 
 // functional
 // const postRouter = express.Router();
@@ -39,10 +40,9 @@ export class PostRouter {
   // private multerService: UploadService;
 
   constructor(
-    @inject(TYPES.PostController) private postController: PostController, 
-    @inject(TYPES.UploadService2) private multerService: UploadService, 
-    
-    ) {
+    @inject(TYPES.PostController) private postController: PostController,
+    @inject(TYPES.UploadService2) private multerService: UploadService
+  ) {
     this.router = Router();
     // this.postController = postController;
     // this.multerService = multerService;
@@ -73,6 +73,13 @@ export class PostRouter {
 
     this.router.get("/getallposts", checkAuth, this.postController.getallposts);
     this.router.post("/likepost/:id", checkAuth, this.postController.likepost);
+
+    this.router.post(
+      "/archivepost/:id",
+      checkAuth,
+      checkRole(["MANAGER", "ADMIN", "SUPERADMIN"]),
+      this.postController.archivePost
+    );
 
     this.router.post(
       "/comment/:id",

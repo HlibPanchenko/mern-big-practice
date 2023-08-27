@@ -57,7 +57,6 @@ const Navbar: React.FC = () => {
   // console.log(user);
 
   const isUserAdmin = user?.roles.some((role) => role == "ADMIN");
-  console.log(isUserAdmin);
 
   return (
     <nav className="navbar">

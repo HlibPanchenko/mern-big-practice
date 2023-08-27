@@ -9,6 +9,7 @@ import Comment from "../models/Comment.js";
 import SubComment from "../models/SubComment.js";
 import "reflect-metadata";
 import { injectable } from "inversify";
+import ArchievePost from "../models/ArchivePost.js";
 
 @injectable()
 export class PostService {
@@ -290,6 +291,51 @@ export class PostService {
       throw new Error("Failed to like the post");
     }
   }
+  async archivePostService(req: IUserIdRequest) {
+    try {
+      const postId = req.params.id;
+      const userId = req.userId;
+      const post = await Post.findById(postId);
+      // const post = await Post.findById(postId).populate("author");
+
+      if (!post) {
+        throw new Error("Failed to find post to be liked");
+      }
+
+      if (!userId) {
+        throw new Error("User ID not provided");
+      }
+
+      const archievedPost = new ArchievePost({
+        // originalPost: post._id,
+        originalPost: {
+          // Копируем соответствующие поля из исходного поста
+          author: post.author,
+          title: post.title,
+          description: post.description,
+          images: [...post.images],
+          likes: [...post.likes],
+          views: post.views,
+          comments: [...post.comments],
+          date: post.date,
+        },
+        initiatedPerson: userId,
+      });
+
+      await archievedPost.save();
+
+      // Remove the original post
+      await Post.deleteOne({ _id: post._id });
+
+      return {
+        message: "The post was archieved",
+        archievedPost,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to archieve post");
+    }
+  }
   async commentpostService(req: IUserIdRequest) {
     try {
       const postId = req.params.id;
@@ -351,11 +397,11 @@ export class PostService {
       const user = await User.findById(userId);
 
       if (!comment) {
-			throw new Error("Failed to find the comment to be subcommented");
+        throw new Error("Failed to find the comment to be subcommented");
       }
-    
+
       if (!user) {
-			throw new Error("Failed to find the user who wants to comment");
+        throw new Error("Failed to find the user who wants to comment");
       }
 
       const subcomment = new SubComment({

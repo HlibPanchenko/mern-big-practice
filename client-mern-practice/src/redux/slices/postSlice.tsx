@@ -64,9 +64,9 @@ const postSlice = createSlice({
   reducers: {
     // // в PayloadAction передаем тип для нашего action.payload.
     // // у нас в action.payload попадает объект { email, password }
-    // updateComment(state, action: PayloadAction<PostData[]>) {
-    //   state.post = action.payload;
-    // },
+    deleteArchievedPost(state, action: PayloadAction<string>) {
+      state.post = state.post.filter((el) => el._id != action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchGetPosts.pending, (state) => {
@@ -97,5 +97,5 @@ const postSlice = createSlice({
   // },
 });
 
-// export const { updateComment } = postSlice.actions;
+export const { deleteArchievedPost } = postSlice.actions;
 export default postSlice.reducer;

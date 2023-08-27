@@ -11,6 +11,7 @@
     gap: 7px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     transition: transform 0.2s ease;
+    position: relative;
 
     &:hover {
       transform: translateY(-4px);
@@ -113,6 +114,28 @@
       height: 90px;
     }
   }
+
+  &-delete {
+    position: absolute;
+    right: 14px;
+    font-size: 20px;
+    background-color: rgb(239, 238, 238);
+    border: 2px solid #000;
+    border-radius: 5px;
+    // padding: 0px 0px 0px 0px;
+    padding: 1px;
+    line-height:0;
+    margin: 0px 0px 0px 0px;
+    &:hover{
+      color: red;
+    border: 2px solid red;
+    font-size: 22px;
+
+    }
+    &_btn {
+      
+    }
+  }
 }
 
 .infocard {
@@ -120,7 +143,7 @@
   gap: 10px;
   align-items: center;
   justify-content: space-between;
-//   padding: 0px 0px 10px 0px;
+  //   padding: 0px 0px 10px 0px;
 
   &-authorblock {
     display: flex;
@@ -141,7 +164,7 @@
   }
 
   &-author {
-	overflow: hidden;
+    overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box; /* Чтобы использовать многократные строки с префиксом -webkit- */
     -webkit-line-clamp: 1; /* Ограничиваем количество строк до двух */
@@ -150,7 +173,7 @@
   }
 
   &-createdAt {
-	overflow: hidden;
+    overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box; /* Чтобы использовать многократные строки с префиксом -webkit- */
     -webkit-line-clamp: 1; /* Ограничиваем количество строк до двух */
@@ -162,27 +185,26 @@
     display: flex;
     gap: 10px;
     align-items: center;
-    
   }
 
   &-icon {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 3px;
-	p {
-		padding: 0px 0px 0px 0px;
-		margin: 0px 0px 0px 0px;
-	}
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3px;
+    p {
+      padding: 0px 0px 0px 0px;
+      margin: 0px 0px 0px 0px;
+    }
   }
-  .infocard-like ,
-  .infocard-comment ,
-  .infocard-view  {
-	//  fill: black;
-	 cursor: pointer;
+  .infocard-like,
+  .infocard-comment,
+  .infocard-view {
+    //  fill: black;
+    cursor: pointer;
 
-   &:hover {
-    font-size: 17px;
-   }
+    &:hover {
+      font-size: 17px;
+    }
   }
 }

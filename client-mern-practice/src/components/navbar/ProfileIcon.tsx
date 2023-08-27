@@ -15,7 +15,7 @@ const ProfileIcon: React.FC<ProfileIconProps> = ({ size }) => {
   const [isAvatar, setIsAvatar] = useState(false);
   const disptach = useAppDispatch();
   const userInfo = useAppSelector((state) => state.auth);
-  console.log(userInfo);
+  // console.log(userInfo);
 
   const avatar = userInfo?.user?.avatar
     ? `${API_URL + userInfo?.user?._id + "/" + userInfo.user.avatar}`
@@ -51,7 +51,7 @@ const ProfileIcon: React.FC<ProfileIconProps> = ({ size }) => {
             },
           }
         );
-        console.log(response.data.user);
+        // console.log(response.data.user);
 
         setIsAvatar(true);
         disptach(setUser(response.data.user));
